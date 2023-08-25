@@ -1,8 +1,8 @@
 import React from 'react'
 
-const ProfileImage = () => {
+const ProfileImage = ({size}) => {
   return (
-    <div className='w-12 h-12 rounded-xl overflow-hidden bg-indigo-500'>
+    <div className={`rounded-xl overflow-hidden bg-indigo-500 ${size==="m"?'w-14 h-14':'w-11 h-11'}`}>
         <img src="images/profile.jpg" alt="" className='w-full h-full'/>
     </div>
   )

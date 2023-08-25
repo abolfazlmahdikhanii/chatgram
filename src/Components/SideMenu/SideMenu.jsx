@@ -7,7 +7,7 @@ import ProfileImage from "../ProfileImage/ProfileImage";
 const SideMenu = () => {
   return (
     <Box>
-      <section className="flex flex-col items-center justify-between h-full overflow-y-auto overflow-x-hidden">
+      <section className="flex flex-col items-center justify-between overflow-y-auto overflow-x-hidden h-screen ">
         {/* top */}
         <div>
           {/* logo */}
@@ -36,7 +36,7 @@ const SideMenu = () => {
           </nav>
         </div>
         {/* footer */}
-        <div className="flex flex-col gap-y-4 items-center mt-3">
+        <div className="flex flex-col gap-y-4 items-center mt-3 mb-9">
           <ThemSwitch/>
           <ProfileImage/>
         </div>
