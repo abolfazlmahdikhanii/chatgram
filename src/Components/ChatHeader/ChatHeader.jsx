@@ -3,15 +3,15 @@ import { BiDotsHorizontalRounded } from "react-icons/bi";
 import Box from "../UI/Box/Box";
 import Profile from "../Profile/Profile";
 
-const ChatHeader = () => {
+const ChatHeader = ({info}) => {
   return (
     <Box >
       <section className="px-5 flex items-center justify-between">
         <div className="flex gap-4">
-          <Profile />
+          <Profile path={info?.profileImg}/>
           <div className="w-full flex-col   flex">
             <p className="font-semibold  text-white capitalize text-[17px]">
-              User
+              {info?.userName}
             </p>
             <p className="text-gray-400 text-[11px] capitalize">Online</p>
           </div>
