@@ -16,7 +16,7 @@ let icon=null
   if (messages[messages.length - 1].read ) {
     icon=<PiChecksBold size={18} color="#818cf8"/>
   } else if (messages[messages.length - 1].send ) {
-    icon=<PiCheck size={16} color="#6b7280"/>
+    icon=<PiCheck size={16} color="#9ca3af"/>
   }
 
   return (
