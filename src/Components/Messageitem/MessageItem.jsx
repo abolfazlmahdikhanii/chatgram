@@ -1,5 +1,6 @@
 import React from "react";
 import { PiChecksBold } from "react-icons/pi";
+import { PiCheck } from "react-icons/pi";
 import Profile from "../Profile/Profile";
 import NotifyNumber from "../UI/NotifyNumber/NotifyNumber";
 import { Link } from "react-router-dom";
@@ -11,6 +12,13 @@ const MessageItem = ({ id, userName, profileImg, messages }) => {
       minute: "2-digit",
     }).format(date);
   };
+let icon=null
+  if (messages[messages.length - 1].read ) {
+    icon=<PiChecksBold size={18} color="#818cf8"/>
+  } else if (messages[messages.length - 1].send ) {
+    icon=<PiCheck size={16} color="#6b7280"/>
+  }
+
   return (
     <Link to={`/chat/${id}`} className="message-item ">
       <Profile size="m" path={profileImg} />
@@ -30,9 +38,7 @@ const MessageItem = ({ id, userName, profileImg, messages }) => {
           <p className="text-gray-400 text-[13px] truncate max-w-[140px]">
             {messages[messages.length - 1].messageDis}
           </p>
-          <p>
-          <PiChecksBold size={19} color="#818cf8"/>
-        </p>
+          <p>{icon}</p>
           {/* <NotifyNumber /> */}
         </div>
       </div>
