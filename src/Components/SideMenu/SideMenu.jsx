@@ -7,30 +7,30 @@ import ProfileImage from "../ProfileImage/ProfileImage";
 const SideMenu = () => {
   return (
     <Box>
-      <section className="flex flex-col items-center justify-between overflow-y-auto overflow-x-hidden h-screen ">
+      <section className="side-menu ">
         {/* top */}
         <div>
           {/* logo */}
           <div className="w-[80px] h-[80px]">
             <img
-              src="images/logo.png"
+              src="../../../src/assets/images/logo.png"
               alt="logo"
               className="w-full h-full object-cover"
             />
           </div>
           {/* menu */}
           <nav className="flex flex-col items-center justify-center mt-1.5">
-            <ul className="flex flex-col  gap-6 ">
+            <ul className="side-menu--list ">
              <SideMenuItem name="chat"/>
              <SideMenuItem name="save"/>
             </ul>
-            <p className="w-9/12 mx-auto my-6 h-[1px] bg-gray-700"></p>
-            <ul className="flex flex-col  gap-6 ">
+            <p className="side-menu--border"></p>
+            <ul className="side-menu--list">
             <SideMenuItem name="chanel"/>
              <SideMenuItem name="profile"/>
             </ul>
-            <p className="w-9/12 mx-auto my-6 h-[1px] bg-gray-700"></p>
-            <ul className="flex flex-col  gap-6 ">
+            <p className="side-menu--border"></p>
+            <ul className="side-menu--list">
             <SideMenuItem name="setting"/>
             </ul>
           </nav>

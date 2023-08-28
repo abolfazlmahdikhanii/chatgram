@@ -5,7 +5,7 @@ import Profile from "../Profile/Profile";
 
 const ChatHeader = () => {
   return (
-    <Box>
+    <Box >
       <section className="px-5 flex items-center justify-between">
         <div className="flex gap-4">
           <Profile />
@@ -20,6 +20,9 @@ const ChatHeader = () => {
         {/* right-side */}
 
         <div className="flex items-center gap-x-5">
+          <p>
+            <BiDotsHorizontalRounded size={20} color="#9ca3af" />
+          </p>
           <p>
             <svg
               width={20}
@@ -36,9 +39,6 @@ const ChatHeader = () => {
                 strokeLinejoin="round"
               />
             </svg>
-          </p>
-          <p>
-            <BiDotsHorizontalRounded size={20} color="#9ca3af"/>
           </p>
         </div>
       </section>

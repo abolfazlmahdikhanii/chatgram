@@ -1,37 +1,42 @@
 import React from "react";
 import { PiChecksBold } from "react-icons/pi";
 import Profile from "../Profile/Profile";
+import NotifyNumber from "../UI/NotifyNumber/NotifyNumber";
+import { Link } from "react-router-dom";
 
-const MessageItem = () => {
+const MessageItem = ({ id, userName, profileImg, messages }) => {
+  const formatTime = (date) => {
+    return new Intl.DateTimeFormat("tr", {
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(date);
+  };
   return (
-    <li className="flex  p-2.5 w-full gap-5 transition-all duration-300 hover:bg-indigo-200/20 rounded-lg cursor-pointer ">
-      <Profile size="m" />
+    <Link to={`/chat/${id}`} className="message-item ">
+      <Profile size="m" path={profileImg} />
 
       <div className="w-full flex-col gap-1 flex">
         {/* top */}
         <div className="flex items-center justify-between w-full">
           <p className="font-semibold  text-white capitalize text-[17px]">
-            User
+            {userName}
           </p>
-          <p className="text-[11px] text-gray-400">12:23</p>
+          <p className="text-[11px] text-gray-400">
+            {formatTime(messages[messages.length - 1].date)}
+          </p>
         </div>
         {/* bottom */}
         <div className="flex items-center justify-between w-full">
-          <p className="text-gray-400 text-[13px] truncate max-w-[180px]">
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Sequi ex
-            nihil deserunt consequuntur maxime quia ipsam praesentium labore
-            amet. Sit consequuntur magni minima est culpa. Quia aperiam facilis
-            repellat distinctio?
+          <p className="text-gray-400 text-[13px] truncate max-w-[140px]">
+            {messages[messages.length - 1].messageDis}
           </p>
-          {/* <p>
+          <p>
           <PiChecksBold size={19} color="#818cf8"/>
-        </p> */}
-          <p className="px-2 min-h-[20px] min-w-[20px] rounded-full bg-indigo-600 text-indigo-200  text-xs flex items-center justify-center z-10">
-            91
-          </p>
+        </p>
+          {/* <NotifyNumber /> */}
         </div>
       </div>
-    </li>
+    </Link>
   );
 };
 

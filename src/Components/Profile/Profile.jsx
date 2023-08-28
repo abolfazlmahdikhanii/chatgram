@@ -1,10 +1,10 @@
 import React from "react";
 import ProfileImage from "../ProfileImage/ProfileImage";
 
-const Profile = ({size}) => {
+const Profile = ({size,path}) => {
   return (
     <div className="flex gap-5 ">
-      <ProfileImage size={size}/>
+      <ProfileImage size={size} src={path}/>
   
     </div>
   );
