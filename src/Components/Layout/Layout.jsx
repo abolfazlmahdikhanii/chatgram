@@ -45,7 +45,7 @@ const Layout = () => {
       <SideMenu />
       <MessageList chats={chats}/>
       <Routes>
-        <Route path="/chat/:id" element={<Chat />} />
+        <Route path="/chat/:id" element={<Chat chat={chats} />} />
       </Routes>
 
       <ChatInfo />
