@@ -3,6 +3,10 @@ import Box from "../UI/Box/Box";
 import MessageItem from "../Messageitem/MessageItem";
 
 const MessageList = ({chats}) => {
+<<<<<<< HEAD
+=======
+    
+>>>>>>> 3e4f26d (display message with emoji and text)
 
   return (
     <Box style={"ml-3"}>
