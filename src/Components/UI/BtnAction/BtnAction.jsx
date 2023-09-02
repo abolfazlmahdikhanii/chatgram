@@ -6,6 +6,10 @@ const BtnAction = () => {
     <svg
       width={19}
       height={19}
+<<<<<<< HEAD
+=======
+      className='pointer-events-none'
+>>>>>>> 30cbb69 (modified)
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
