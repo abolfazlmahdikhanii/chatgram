@@ -12,19 +12,17 @@ const MessageItem = ({ id, userName, profileImg, messages }) => {
       minute: "2-digit",
     }).format(date);
   };
-let icon=null
-<<<<<<< HEAD
-  if (messages[messages.length - 1].read ) {
-    icon=<PiChecksBold size={18} color="#818cf8"/>
-  } else if (messages[messages.length - 1].send ) {
-=======
-  if (messages[messages.length - 1]?.read ) {
-    icon=<PiChecksBold size={18} color="#818cf8"/>
-  } else if (messages[messages.length - 1]?.send ) {
->>>>>>> 3e4f26d (display message with emoji and text)
-    icon=<PiCheck size={16} color="#9ca3af"/>
-  }
+  let icon = null;
 
+  if (messages[messages.length - 1]?.read) {
+    icon = <PiChecksBold size={18} color="#818cf8" />;
+  } else if (messages[messages.length - 1]?.send) {
+    if (messages[messages.length - 1]?.read) {
+      icon = <PiChecksBold size={18} color="#818cf8" />;
+    } else if (messages[messages.length - 1]?.send) {
+      icon = <PiCheck size={16} color="#9ca3af" />;
+    }
+  }
   return (
     <Link to={`/chat/${id}`} className="message-item ">
       <Profile size="m" path={profileImg} />
@@ -36,23 +34,17 @@ let icon=null
             {userName}
           </p>
           <p className="text-[11px] text-gray-400">
-<<<<<<< HEAD
-            {formatTime(messages[messages.length - 1].date)}
-=======
             {formatTime(messages[messages.length - 1]?.date)}
->>>>>>> 3e4f26d (display message with emoji and text)
           </p>
         </div>
         {/* bottom */}
         <div className="flex items-center justify-between w-full">
-<<<<<<< HEAD
-          <p className="text-gray-400 text-[13px] truncate max-w-[140px]">
-            {messages[messages.length - 1].messageDis}
-=======
-          <p className="text-gray-400 text-[13px] truncate max-w-[140px]" dangerouslySetInnerHTML={{__html:messages[messages.length - 1]?.messageDis}}>
-            
->>>>>>> 3e4f26d (display message with emoji and text)
-          </p>
+          <p
+            className="text-gray-400 text-[13px] truncate max-w-[140px]"
+            dangerouslySetInnerHTML={{
+              __html: messages[messages.length - 1]?.messageDis,
+            }}
+          ></p>
           <p>{icon}</p>
           {/* <NotifyNumber /> */}
         </div>

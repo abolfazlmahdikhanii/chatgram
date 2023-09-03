@@ -10,12 +10,12 @@
   .message-item {
     @apply flex  p-2.5 w-full gap-5 transition-all duration-300 hover:bg-indigo-200/20 rounded-lg cursor-pointer;
   }
-<<<<<<< HEAD
-=======
+
+
   .chat__input{
     @apply appearance-none px-3 py-2 placeholder:text-xs w-full text-gray-50 bg-transparent focus-visible:outline-none
   }
->>>>>>> 5b8b344 (modified)
+
   .message {
     @apply px-[12px] py-1 rounded-3xl whitespace-pre-wrap break-words  text-white text-sm max-w-[60%] min-w-[100px] leading-relaxed;
   }

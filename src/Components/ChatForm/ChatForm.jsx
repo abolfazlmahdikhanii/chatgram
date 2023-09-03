@@ -1,12 +1,5 @@
-<<<<<<< HEAD
-import React from "react";
-import BtnAction from "../UI/BtnAction/BtnAction";
-import BtnUploader from "../BtnUploader/BtnUploader";
 
-const ChatForm = () => {
-  return (
-    <form action="#" className=" w-11/12 mx-auto  mb-24 flex gap-3.5 h-[48px]">
-=======
+
 import React, { useRef, useEffect, useState } from "react";
 
 import Picker from "@emoji-mart/react";
@@ -48,21 +41,15 @@ const ChatForm = ({ set }) => {
       className=" w-11/12 mx-auto  mb-24 flex gap-3.5 h-[48px] max-w-2xl"
       onSubmit={submitFormHandler}
     >
->>>>>>> 63e42ce (add emoji)
-      {/* input */}
       <div className="bg-gray-900 flex items-center justify-between py-1.5 rounded-xl w-full px-3">
-        <div className="flex items-center gap-0.5 w-full">
-          {/* emoji */}
-<<<<<<< HEAD
-          <button className="text-yellow-500 grid place-items-center">
-=======
+      <div className="flex items-center gap-0.5 w-full">
           <button
             className="text-yellow-500 grid place-items-center"
             onMouseEnter={() => {
               setShowEmoji((prev) => !prev);
             }}
           >
->>>>>>> 63e42ce (add emoji)
+
             <svg
               width={24}
               height={24}
@@ -88,26 +75,11 @@ const ChatForm = ({ set }) => {
             </svg>
           </button>
 
-<<<<<<< HEAD
-          <input
-            type="text"
-            placeholder="Write message to User..."
-            className="appearance-none px-3 py-2 placeholder:text-xs w-full text-gray-50 bg-transparent focus-visible:outline-none "
-          />
-        </div>
-        {/* action */}
-        <div>
-          <BtnUploader/>
-        </div>
-      </div>
-   
-   <BtnAction/>
-=======
           <div
-            type="text"
-            placeholder="Write message to User..."
+      
+
             className="chat__input overflow-hidden"
-            // onInput={(e) => setText(e.target.innerHTML)}
+
             ref={inputRef}
             contentEditable
             suppressContentEditableWarning={true}
@@ -120,7 +92,7 @@ const ChatForm = ({ set }) => {
               />
             ))}
           </div>
-        </div>
+     </div>
         {/* action */}
         <div>
           <BtnUploader />
@@ -151,7 +123,7 @@ const ChatForm = ({ set }) => {
           />
         )}
       </div>
->>>>>>> 63e42ce (add emoji)
+
     </form>
   );
 };
