@@ -34,7 +34,7 @@ const Message = ({ from, messageDis, date,read,send, userInfo }) => {
 
   return (
     <div
-      className={`message ${
+      className={`message  ${
         from === "user" ? "message--user" : "message--client"
       }`}
     >
