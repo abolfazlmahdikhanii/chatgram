@@ -17,7 +17,6 @@
         "react-dom": "^18.2.0",
         "react-icons": "^4.10.1",
         "react-input-emoji": "^5.3.1",
-
         "react-loader-spinner": "^5.4.5",
         "react-router-dom": "^6.15.0"
     },
@@ -26,6 +25,7 @@
         "@types/react-dom": "^18.2.7",
         "@vitejs/plugin-react": "^4.0.3",
         "autoprefixer": "^10.4.15",
+        "daisyui": "^3.6.4",
         "eslint": "^8.45.0",
         "eslint-plugin-react": "^7.32.2",
         "eslint-plugin-react-hooks": "^4.6.0",
