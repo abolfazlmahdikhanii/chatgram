@@ -7,6 +7,7 @@ import Picker from "@emoji-mart/react";
 import BtnAction from "../UI/BtnAction/BtnAction";
 import BtnUploader from "../BtnUploader/BtnUploader";
 import ContentWrapper from "../ContentWrapper/ContentWrapper";
+import SelectBox from "../UI/SelectBox/SelectBox";
 
 const ChatForm = ({ set }) => {
   const [text, setText] = useState("");
@@ -94,9 +95,8 @@ const ChatForm = ({ set }) => {
           </div>
      </div>
         {/* action */}
-        <div>
           <BtnUploader />
-        </div>
+       
       </div>
 
       <BtnAction />
@@ -123,6 +123,7 @@ const ChatForm = ({ set }) => {
           />
         )}
       </div>
+      <SelectBox/>
 
     </form>
   );
