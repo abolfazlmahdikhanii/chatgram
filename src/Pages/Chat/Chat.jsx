@@ -3,6 +3,7 @@ import ChatHeader from "../../Components/ChatHeader/ChatHeader";
 import Message from "../../Components/Message/Message";
 import ChatForm from "../../Components/ChatForm/ChatForm";
 import { useParams } from "react-router-dom";
+import Uploader from "../../Components/Uploader/Uploader";
 
 
 
@@ -18,17 +19,11 @@ const Chat = ({ chat,setChat }) => {
    
   }, [match,message]);
 
-
   const filterChat = (id) => {
     let findChat = chat.find((item) => item.id == id);
 
-  
     setMessage(findChat);
   };
-
-
-
-
 
   const sendMessageHandler = (txt) => {
 
@@ -63,7 +58,9 @@ const Chat = ({ chat,setChat }) => {
         {/* FORM */}
         <ChatForm set={sendMessageHandler} />
 
+
       </main>
+      <Uploader/>
     </div>
   );
 };
