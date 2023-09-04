@@ -2,7 +2,7 @@ import React from "react";
 
 const SelectBox = () => {
   return (
-    <div className=" rounded-xl bg-[rgba(33,33,33,.85)] backdrop:backdrop-blur-[50px] absolute bottom-20 right-24 w-[190px] py-1.5 px-1.5">
+    <div className=" rounded-xl bg-[rgba(33,33,33,.80)] shadow-gray-800/30 shadow-lg  backdrop:backdrop-blur-[50px] absolute bottom-20 right-24 w-[190px] py-1.5 px-1.5">
       {/* item1 */}
       <div className="flex items-center gap-5 text-white py-1.5 px-3 transition-all duration-300 hover:bg-[rgba(170,170,170,0.08)] rounded-lg cursor-pointer">
         {/* icon */}
