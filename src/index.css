@@ -3,8 +3,23 @@
 @tailwind utilities;
 
 @layer base {
+  ::-webkit-scrollbar{
+    @apply w-[9px] 
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-transparent  border-4 border-white
+  }
+  ::-webkit-scrollbar-trak{
+    @apply bg-transparent
+  }
+  .scroll-hover::-webkit-scrollbar-thumb{
+    @apply transition-all duration-300
+  }
+  .scroll-hover:hover::-webkit-scrollbar-thumb{
+    @apply bg-gray-600/50
+  }
   body {
-    @apply bg-gray-950;
+    @apply bg-gray-950 scroll-smooth;
   }
 
   .message-item {
@@ -43,5 +58,11 @@
   }
   .switch__item {
     @apply rounded-xl  p-2.5;
+  }
+  .modal-preview{
+    @apply justify-items-start [overflow-y:hidden] px-0 max-h-[600px] -translate-x-1/2 left-1/2 pt-0 mt-0
+  }
+  .modal-body{
+    @apply w-full overflow-y-auto  px-4 py-3    rounded-xl scroll-hover  
   }
 }
