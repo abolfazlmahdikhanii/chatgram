@@ -42,7 +42,7 @@ const ChatForm = ({ set }) => {
       className=" w-11/12 mx-auto  mb-24 flex gap-3.5 h-[48px] max-w-2xl"
       onSubmit={submitFormHandler}
     >
-      <div className="bg-gray-900 flex items-center justify-between py-1.5 rounded-xl w-full px-3">
+      <div className="bg-base-200 flex items-center justify-between py-1.5 rounded-xl w-full px-3">
       <div className="flex items-center gap-0.5 w-full">
           <button
             className="text-yellow-500 grid place-items-center"

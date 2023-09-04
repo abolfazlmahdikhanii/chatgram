@@ -41,7 +41,7 @@ const Message = ({ from, messageDis, date,read,send, userInfo }) => {
 
       
 
-      <div className="pt-2 pb-1 px-1.5" dangerouslySetInnerHTML={{__html:messageDis}}></div>
+      <div className="pt-2 pb-1 px-1.5 " dangerouslySetInnerHTML={{__html:messageDis}}></div>
 
       <div className=" flex items-center gap-1.5 mb-0.5 px-1">
         <p className="text-gray-400 text-[10px]">{formatTime(date)}</p>

@@ -58,9 +58,9 @@ const Chat = ({ chat,setChat }) => {
         {/* FORM */}
         <ChatForm set={sendMessageHandler} />
 
-
+        <Uploader/>
       </main>
-      <Uploader/>
+  
     </div>
   );
 };
