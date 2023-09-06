@@ -3,7 +3,7 @@ import ModalPerview from "../UI/ModalPerview/ModalPerview";
 import ModalPerviewFile from "../UI/ModalPerviewFile/ModalPerviewFile";
 import Backdrop from "../UI/Backdrop/Backdrop";
 
-const Uploader = ({ showImage, showFile, closeImage, closeFile ,files,images}) => {
+const Uploader = ({ showImage, showFile, closeImage, closeFile ,files,images,remove}) => {
 
   return (
     <div>
@@ -12,7 +12,7 @@ const Uploader = ({ showImage, showFile, closeImage, closeFile ,files,images}) =
         show={showFile ? showFile : showImage}
        
       />
-      <ModalPerviewFile show={showFile} close={closeFile} files={files} />
+      <ModalPerviewFile show={showFile} close={closeFile} files={files} onRemove={remove}/>
       <ModalPerview show={showImage} close={closeImage} images={images}/>
     </div>
   );
