@@ -59,10 +59,22 @@
   .switch__item {
     @apply rounded-xl  p-2.5;
   }
+  .select-box{
+    @apply rounded-xl bg-[rgba(33,33,33,.80)] shadow-gray-800/30 shadow-lg  backdrop:backdrop-blur-[50px] absolute bottom-20 right-24 w-[190px] py-1.5 px-1.5 scale-0 opacity-0  transition-all duration-300
+  }
+  .select-box--item{
+    @apply flex items-center gap-5 text-white py-1.5 px-3 transition-all duration-300 hover:bg-[rgba(170,170,170,0.08)] rounded-lg cursor-pointer
+  }
   .modal-preview{
     @apply justify-items-start [overflow-y:hidden] px-0 max-h-[600px] -translate-x-1/2 left-1/2 pt-0 mt-0
   }
   .modal-body{
     @apply w-full overflow-y-auto  px-4 py-3    rounded-xl scroll-hover  
+  }
+  .file-item{
+    @apply flex gap-5 transition-all duration-300 hover:bg-gray-700/30 select-none cursor-pointer py-2 px-3 rounded-lg overflow-hidden 
+  }
+  .file-icon{
+    @apply flex items-center justify-center px-3 rounded-lg relative before:absolute before:w-6 before:h-6 before:inline-block before:bg-[linear-gradient(45deg,rgba(0,0,0,0.3)_50%,#1D232A_50%)] before:-top-0.5 before:-right-0.5 before:rounded-sm w-[68px]  h-[81px]
   }
 }
