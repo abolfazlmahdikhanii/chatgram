@@ -2,7 +2,7 @@ import React from "react";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import FileIcon from "../UI/FIleIcon/FileIcon";
 
-const FileItem = ({ type, src = null, name, size }) => {
+const FileItem = ({ type, src = null, name, size,onRemove }) => {
   const formatSize=(bytes)=>{
 if(bytes == 0) return '0 Bytes';
    var k = 1024,
@@ -23,7 +23,7 @@ if(bytes == 0) return '0 Bytes';
         <p className="">{formatSize(size)}</p>
       </div>
       <div className="self-center  w-full flex justify-end">
-        <button className="btn btn-square btn-sm ">
+        <button className="btn btn-square btn-sm " onClick={onRemove}>
           <MdOutlineDeleteOutline size={21} />
         </button>
       </div>
