@@ -2,7 +2,7 @@ import React from 'react'
 
 const BtnAction = () => {
   return (
-    <button className="h-full px-[16px] btn btn-primary rounded-xl">
+    <button className="h-full px-[16px] btn btn-primary rounded-xl" >
     <svg
       width={19}
       height={19}
