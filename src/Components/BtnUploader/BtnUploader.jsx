@@ -1,9 +1,9 @@
 import React from "react";
 
-const BtnUploader = () => {
+const BtnUploader = ({click}) => {
   return (
-    <div>
-      <button className="text-gray-400 grid place-items-center">
+    <>
+      <button className="text-gray-400 grid place-items-center" onMouseEnter={()=>click(true)}>
         <svg
           width={24}
           height={24}
@@ -20,7 +20,7 @@ const BtnUploader = () => {
           />
         </svg>
       </button>
-    </div>
+    </>
   );
 };
 
