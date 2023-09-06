@@ -27,12 +27,21 @@ const ChatForm = ({ set }) => {
     if (inputRef.current.innerHTML !== "") {
       set(text.innerHTML);
       inputRef.current.innerHTML = "";
-    }
+    } 
   };
+  const uploadFileHandler=()=>{
+    if(filesUpload) set(filesUpload)
+ 
+    
+  }
+  const uploadImageHandler=()=>{
+    if(imagesUpload)  set(imagesUpload)
+    
+  }
   const closeEmojiPicker = () => {
     setTimeout(() => {
       setShowEmoji(false);
-    }, 500);
+    }, 100);
   };
   const closeUploader = () => {
     setTimeout(() => {
@@ -129,6 +138,8 @@ const ChatForm = ({ set }) => {
         images={imagesUpload}
         filesUpload={filesUpload}
         setFilesUpload={setFilesUpload}
+        onUploadImage={uploadImageHandler}
+        onUploadFile={uploadFileHandler}
       />
     </form>
   );
