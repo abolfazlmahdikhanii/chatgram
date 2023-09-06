@@ -32,10 +32,10 @@
   }
 
   .message {
-    @apply px-[12px] py-1 rounded-3xl whitespace-pre-wrap break-words  text-white text-sm max-w-[60%] min-w-[100px] leading-relaxed;
+    @apply px-[12px] py-1 rounded-3xl whitespace-pre-wrap break-words  text-white text-sm max-w-[60%] min-w-min leading-relaxed;
   }
   .message--user {
-    @apply bg-gradient-to-tl from-indigo-500 to-indigo-700 self-end rounded-tr-none;
+    @apply bg-primary self-end rounded-tr-none;
   }
   .message--client {
     @apply bg-gray-800 self-start rounded-tl-none;
@@ -76,5 +76,14 @@
   }
   .file-icon{
     @apply flex items-center justify-center px-3 rounded-lg relative before:absolute before:w-6 before:h-6 before:inline-block before:bg-[linear-gradient(45deg,rgba(0,0,0,0.3)_50%,#1D232A_50%)] before:-top-0.5 before:-right-0.5 before:rounded-sm w-[68px]  h-[81px]
+  }
+  .file-icon--2{
+    @apply before:bg-[linear-gradient(45deg,rgba(0,0,0,0.3)_50%,#641AE6_50%)] w-[65px]  h-[70px]
+  }
+  .grid-1{
+    @apply grid grid-cols-2 w-full gap-4 [grid-auto-rows:minmax(140px,1fr)]
+  }
+  .grid-2{
+    @apply grid grid-cols-1 w-full  
   }
 }
