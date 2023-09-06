@@ -4,7 +4,7 @@ import ActionModal from "../ActionModal/ActionModal";
 import HeaderModal from "../HeaderModal/HeaderModal";
 import Backdrop from "../Backdrop/Backdrop";
 
-const ModalPerviewFile = ({ show, close, files }) => {
+const ModalPerviewFile = ({ show, close, files,onRemove }) => {
   return (
     <dialog
       id="my_modal_1"
@@ -21,9 +21,10 @@ const ModalPerviewFile = ({ show, close, files }) => {
             <FileItem 
             key={file.id} 
              name={file.name}
-             type={file.name.split(".")[1]}
+             type={file.name.split(".").pop()}
              src={file?.src}
              size={file.size}
+             onRemove={()=>onRemove(file?.id)}
             />
           ))}
         </ul>
