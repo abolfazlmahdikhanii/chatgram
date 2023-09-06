@@ -3,8 +3,8 @@ import { BiCheckDouble } from "react-icons/bi";
 import { BiCheck } from "react-icons/bi";
 import { Watch } from "react-loader-spinner";
 import ProfileImage from "../ProfileImage/ProfileImage";
-const Message = ({ from, messageDis, date,read,send, userInfo }) => {
-
+import FileType from "../FileType/FileType";
+const Message = ({ from, messageDis, date, read, send, userInfo }) => {
   const formatTime = (date) => {
     return new Intl.DateTimeFormat("tr", {
       hour: "2-digit",
@@ -38,15 +38,24 @@ const Message = ({ from, messageDis, date,read,send, userInfo }) => {
         from === "user" ? "message--user" : "message--client"
       }`}
     >
-
-      
-
-      <div className="pt-2 pb-1 px-1.5 " dangerouslySetInnerHTML={{__html:messageDis}}></div>
+      {typeof messageDis === "string" ? (
+        <div
+          className="pt-2 pb-1 px-1.5 "
+          dangerouslySetInnerHTML={{ __html: messageDis }}
+        ></div>
+      ) : (
+        <ul className={`${messageDis[0].type==="file"?'grid-2':'grid-1'}`}>
+        {  
+        messageDis?.map((content)=>(
+           <FileType key={content.id} {...content}  />
+        ))
+        }
+        </ul>
+      )}
 
       <div className=" flex items-center gap-1.5 mb-0.5 px-1">
         <p className="text-gray-400 text-[10px]">{formatTime(date)}</p>
 
-    
         {icon}
       </div>
     </div>

@@ -1,6 +1,6 @@
 import React from "react";
 
-const ActionModal = () => {
+const ActionModal = ({click}) => {
   return (
     <div className=" pl-2  w-full flex items-center justify-between gap-3 pr-5   pt-3">
       <textarea
@@ -8,7 +8,7 @@ const ActionModal = () => {
         placeholder="Add a Caption"
       ></textarea>
 
-      <button className="btn btn-primary px-6">Send</button>
+      <button className="btn btn-primary px-6" onClick={click}>Send</button>
     </div>
   );
 };
