@@ -1,5 +1,3 @@
-
-
 import React, { useRef, useEffect, useState } from "react";
 
 import Picker from "@emoji-mart/react";
@@ -13,27 +11,33 @@ const ChatForm = ({ set }) => {
   const [text, setText] = useState("");
   const [emoji, setEmoji] = useState([]);
   const [showEmoji, setShowEmoji] = useState(false);
+  const [showUploader, setShowUploader] = useState(false);
+  const [imagesUpload, setImagesUpload] = useState([]);
+  const [filesUpload, setFilesUpload] = useState([]);
 
   const inputRef = useRef(null);
 
-  useEffect(()=>{
+  useEffect(() => {
     setText(inputRef.current);
-
-  },[inputRef])
+  }, [inputRef]);
 
   // find chat with id and store  in the object in the place
   const submitFormHandler = (e) => {
     e.preventDefault();
-    if (inputRef.current.innerHTML!=="") {
-      
+    if (inputRef.current.innerHTML !== "") {
       set(text.innerHTML);
-      inputRef.current.innerHTML=""
+      inputRef.current.innerHTML = "";
     }
   };
   const closeEmojiPicker = () => {
     setTimeout(() => {
       setShowEmoji(false);
     }, 500);
+  };
+  const closeUploader = () => {
+    setTimeout(() => {
+      setShowUploader(false);
+    }, 200);
   };
 
   return (
@@ -43,14 +47,13 @@ const ChatForm = ({ set }) => {
       onSubmit={submitFormHandler}
     >
       <div className="bg-base-200 flex items-center justify-between py-1.5 rounded-xl w-full px-3">
-      <div className="flex items-center gap-0.5 w-full">
+        <div className="flex items-center gap-0.5 w-full">
           <button
             className="text-yellow-500 grid place-items-center"
             onMouseEnter={() => {
               setShowEmoji((prev) => !prev);
             }}
           >
-
             <svg
               width={24}
               height={24}
@@ -77,10 +80,7 @@ const ChatForm = ({ set }) => {
           </button>
 
           <div
-      
-
             className="chat__input overflow-hidden"
-
             ref={inputRef}
             contentEditable
             suppressContentEditableWarning={true}
@@ -93,10 +93,9 @@ const ChatForm = ({ set }) => {
               />
             ))}
           </div>
-     </div>
+        </div>
         {/* action */}
-          <BtnUploader />
-       
+        <BtnUploader click={setShowUploader} />
       </div>
 
       <BtnAction />
@@ -123,8 +122,14 @@ const ChatForm = ({ set }) => {
           />
         )}
       </div>
-      <SelectBox/>
-
+      <SelectBox
+        show={showUploader}
+        close={closeUploader}
+        setImages={setImagesUpload}
+        images={imagesUpload}
+        filesUpload={filesUpload}
+        setFilesUpload={setFilesUpload}
+      />
     </form>
   );
 };
