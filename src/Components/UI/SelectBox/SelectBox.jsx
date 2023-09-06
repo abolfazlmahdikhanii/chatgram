@@ -11,6 +11,7 @@ const SelectBox = ({
 }) => {
   const [showUploader, setShowUploader] = useState(false);
   const [showImageUploader, setShowImageUploader] = useState(false);
+  // uploader image
   const uploadImageHandler = (e) => {
     let images = [];
 
@@ -27,8 +28,8 @@ const SelectBox = ({
       setShowImageUploader(true);
     }
   };
+  // upload file
   const uploadFileHandler = (e) => {
-
     let files = [];
 
     for (let i = 0; i < e.target.files.length; i++) {
@@ -36,16 +37,22 @@ const SelectBox = ({
         id: crypto.randomUUID(),
         src: URL.createObjectURL(e.target.files[i]),
         size: e.target.files[i].size,
-        type:e.target.files[i].type,
-        name:e.target.files[i].name
+        type: e.target.files[i].type,
+        name: e.target.files[i].name,
       });
     }
     setFilesUpload(files);
-  
 
     if (e.target.files?.length > 0) {
       setShowUploader(true);
     }
+  };
+
+  // remove file
+  const removeFileHandler = (id) => {
+    const filterdFile = filesUpload.filter((file) => file.id !== id);
+    setFilesUpload(filterdFile)
+    if(!filterdFile.length) setShowUploader(false)
   };
   return (
     <>
@@ -129,16 +136,16 @@ const SelectBox = ({
           <p className="font-[500] text-[14px]">Document</p>
         </label>
       </div>
-    
-          <Uploader
-            showImage={showImageUploader}
-            showFile={showUploader}
-            closeImage={() => setShowImageUploader(false)}
-            closeFile={() => setShowUploader(false)}
-            images={images}
-            files={filesUpload}
-          />
-        
+
+      <Uploader
+        showImage={showImageUploader}
+        showFile={showUploader}
+        closeImage={() => setShowImageUploader(false)}
+        closeFile={() => setShowUploader(false)}
+        images={images}
+        files={filesUpload}
+        remove={removeFileHandler}
+      />
     </>
   );
 };
