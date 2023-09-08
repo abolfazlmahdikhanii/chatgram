@@ -20,7 +20,7 @@ const HeaderModal = ({title,clickClose}) => {
           </svg>
         </button>
 
-        <p className="text-2xl font-semibold text-white">{title}</p>
+        <p className="text-2xl font-semibold text-white capitalize">{title}</p>
       </div>
   )
 }
