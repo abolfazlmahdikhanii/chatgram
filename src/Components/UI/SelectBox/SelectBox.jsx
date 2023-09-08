@@ -8,18 +8,36 @@ const SelectBox = ({
   setImages,
   setFilesUpload,
   images,
+  onUploadImage,
+  onUploadFile,
 }) => {
   const [showUploader, setShowUploader] = useState(false);
   const [showImageUploader, setShowImageUploader] = useState(false);
+
+
+
+  const checkIsimageOrIsVideo = (type) => {
+    if (type === "video/mp4" || type === "video/webm") return "video";
+    else if (
+      type === "image/png" ||
+      type === "image/jpeg" ||
+      type === "image/gif"
+    )
+      return "img";
+  };
   // uploader image
   const uploadImageHandler = (e) => {
     let images = [];
+    console.log(e)
 
-    for (let i = 0; i < e.target.files.length; i++) {
+    for (let i = 0; i < e?.target.files?.length; i++) {
+
       images.push({
         id: crypto.randomUUID(),
         src: URL.createObjectURL(e.target.files[i]),
         size: e.target.files[i].size,
+        type: checkIsimageOrIsVideo(e.target.files[i]?.type),
+        progress : e.target.onloaded
       });
     }
     setImages(images);
@@ -37,8 +55,8 @@ const SelectBox = ({
         id: crypto.randomUUID(),
         src: URL.createObjectURL(e.target.files[i]),
         size: e.target.files[i].size,
-        type: e.target.files[i].type,
         name: e.target.files[i].name,
+        type: "file",
       });
     }
     setFilesUpload(files);
@@ -51,8 +69,8 @@ const SelectBox = ({
   // remove file
   const removeFileHandler = (id) => {
     const filterdFile = filesUpload.filter((file) => file.id !== id);
-    setFilesUpload(filterdFile)
-    if(!filterdFile.length) setShowUploader(false)
+    setFilesUpload(filterdFile);
+    if (!filterdFile.length) setShowUploader(false);
   };
   return (
     <>
@@ -145,6 +163,8 @@ const SelectBox = ({
         images={images}
         files={filesUpload}
         remove={removeFileHandler}
+        onUploadFile={onUploadFile}
+        onUploadImage={onUploadImage}
       />
     </>
   );

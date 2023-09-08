@@ -4,7 +4,7 @@ import ActionModal from "../ActionModal/ActionModal";
 import HeaderModal from "../HeaderModal/HeaderModal";
 import Backdrop from "../Backdrop/Backdrop";
 
-const ModalPerviewFile = ({ show, close, files,onRemove }) => {
+const ModalPerviewFile = ({ show, close, files, onRemove, onUpload }) => {
   return (
     <dialog
       id="my_modal_1"
@@ -18,19 +18,24 @@ const ModalPerviewFile = ({ show, close, files,onRemove }) => {
 
         <ul className="  w-full  flex flex-col gap-3 ">
           {files?.map((file) => (
-            <FileItem 
-            key={file.id} 
-             name={file.name}
-             type={file.name.split(".").pop()}
-             src={file?.src}
-             size={file.size}
-             onRemove={()=>onRemove(file?.id)}
+            <FileItem
+              key={file.id}
+              name={file.name}
+              type={file.name.split(".").pop()}
+              src={file?.src}
+              size={file.size}
+              onRemove={() => onRemove(file?.id)}
             />
           ))}
         </ul>
       </div>
 
-      <ActionModal />
+      <ActionModal
+        click={() => {
+          onUpload();
+          close();
+        }}
+      />
     </dialog>
   );
 };
