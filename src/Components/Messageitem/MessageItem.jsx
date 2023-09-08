@@ -1,9 +1,11 @@
 import React from "react";
 import { PiChecksBold } from "react-icons/pi";
+
 import { PiCheck } from "react-icons/pi";
 import Profile from "../Profile/Profile";
 import NotifyNumber from "../UI/NotifyNumber/NotifyNumber";
 import { Link } from "react-router-dom";
+import MessageItemContent from "../MessageItemContent/MessageItemContent";
 
 const MessageItem = ({ id, userName, profileImg, messages }) => {
   const formatTime = (date) => {
@@ -23,11 +25,12 @@ const MessageItem = ({ id, userName, profileImg, messages }) => {
       icon = <PiCheck size={16} color="#9ca3af" />;
     }
   }
+
   return (
     <Link to={`/chat/${id}`} className="message-item ">
       <Profile size="m" path={profileImg} />
 
-      <div className="w-full flex-col gap-1 flex">
+      <div className="w-full flex-col gap-2 flex">
         {/* top */}
         <div className="flex items-center justify-between w-full">
           <p className="font-semibold  text-white capitalize text-[17px]">
@@ -39,12 +42,7 @@ const MessageItem = ({ id, userName, profileImg, messages }) => {
         </div>
         {/* bottom */}
         <div className="flex items-center justify-between w-full">
-          <p
-            className="text-gray-400 text-[13px] truncate max-w-[140px]"
-            dangerouslySetInnerHTML={{
-              __html: messages[messages.length - 1]?.messageDis,
-            }}
-          ></p>
+          <MessageItemContent message={messages[messages.length - 1]}/>
           <p>{icon}</p>
           {/* <NotifyNumber /> */}
         </div>
