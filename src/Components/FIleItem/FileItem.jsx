@@ -1,6 +1,7 @@
 import React from "react";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import FileIcon from "../UI/FIleIcon/FileIcon";
+import ProgressFile from "../UI/ProgressFile/ProgressFile";
 
 const FileItem = ({
   type,
@@ -9,6 +10,7 @@ const FileItem = ({
   size,
   onRemove,
   message = false,
+  from,
 }) => {
   const formatSize = (bytes) => {
     if (bytes == 0) return "0 Bytes";
@@ -18,15 +20,29 @@ const FileItem = ({
     return parseFloat((bytes / Math.pow(k, i)).toFixed()) + " " + sizes[i];
   };
   return (
-    <li className={`file-item w-full ${message?'hover:bg-transparent':''}`}>
+    <li
+      className={`file-item relative  w-full ${
+        message ? "hover:bg-transparent" : "px-3"
+      }`}
+    >
       <div>
-        <FileIcon type={type} path={src ? src : ""} message={message}/>
+        <FileIcon
+          type={type}
+          path={src ? src : ""}
+          message={message}
+          from={from}
+        />
       </div>
-      <div className="flex flex-col gap-1 max-w-[300px]">
-        <p className={`${!message?'text-lg':'text-sm'} text-white font-semibold truncate w-full `}>
+      <div className="flex flex-col gap-2 max-w-[200px]">
+        <p
+          className={`${
+            !message ? "text-lg" : "text-sm"
+          } text-white font-semibold truncate w-full `}
+        >
           {name}
         </p>
-        <p className="">{formatSize(size)}</p>
+        <p className={`${message ? "text-xs" : ""}`}>{formatSize(size)}</p>
+        {message && <ProgressFile />}
       </div>
       {!message && (
         <div className="self-center  w-full flex justify-end">
