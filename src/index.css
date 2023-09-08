@@ -32,7 +32,7 @@
   }
 
   .message {
-    @apply px-[12px] py-1 rounded-3xl whitespace-pre-wrap break-words  text-white text-sm max-w-[60%] min-w-min leading-relaxed;
+    @apply  rounded-2xl whitespace-pre-wrap break-words  text-white text-sm max-w-full  leading-relaxed w-auto min-w-[80px] 
   }
   .message--user {
     @apply bg-primary self-end rounded-tr-none;
@@ -72,18 +72,24 @@
     @apply w-full overflow-y-auto  px-4 py-3    rounded-xl scroll-hover  
   }
   .file-item{
-    @apply flex gap-5 transition-all duration-300 hover:bg-gray-700/30 select-none cursor-pointer py-2 px-3 rounded-lg overflow-hidden 
+    @apply flex gap-5 transition-all duration-300 hover:bg-gray-700/30 select-none cursor-pointer py-2 rounded-lg overflow-hidden 
   }
   .file-icon{
-    @apply flex items-center justify-center px-3 rounded-lg relative before:absolute before:w-6 before:h-6 before:inline-block before:bg-[linear-gradient(45deg,rgba(0,0,0,0.3)_50%,#1D232A_50%)] before:-top-0.5 before:-right-0.5 before:rounded-sm w-[68px]  h-[81px]
+    @apply flex items-center justify-center px-3 rounded-xl relative before:absolute before:w-6 before:h-6 before:inline-block before:bg-[linear-gradient(45deg,rgba(0,0,0,0.3)_50%,#1D232A_50%)] before:-top-0.5 before:-right-0.5 before:rounded-sm w-[68px]  h-[81px]
   }
   .file-icon--2{
     @apply before:bg-[linear-gradient(45deg,rgba(0,0,0,0.3)_50%,#641AE6_50%)] w-[65px]  h-[70px]
   }
+  .file-icon--3{
+    @apply before:bg-[linear-gradient(45deg,rgba(0,0,0,0.3)_50%,#2A323C_50%)] w-[65px]  h-[70px]
+  }
   .grid-1{
-    @apply grid grid-cols-2 w-full gap-4 [grid-auto-rows:minmax(140px,1fr)]
+    @apply flex  items-center w-full gap-y-3 flex-wrap-reverse justify-between gap-x-2.5
   }
   .grid-2{
     @apply grid grid-cols-1 w-full  
+  }
+  .progress{
+    @apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-base-100/40 border-[6px] border-transparent cursor-pointer
   }
 }
