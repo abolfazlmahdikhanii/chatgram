@@ -1,10 +1,10 @@
 import React from "react";
-import { BiCheckDouble } from "react-icons/bi";
-import { BiCheck } from "react-icons/bi";
-import { Watch } from "react-loader-spinner";
+
 import ProfileImage from "../ProfileImage/ProfileImage";
 import FileType from "../FileType/FileType";
-const Message = ({ from, messageDis, date, read, send, userInfo }) => {
+import FooterMessage from "../FooterMessage/FooterMessage";
+import MessageMenu from "../UI/MessageMenu/MessageMenu";
+const Message = ({ from, messageDis, date, read, send, userInfo,remove }) => {
   const formatTime = (date) => {
     return new Intl.DateTimeFormat("tr", {
       hour: "2-digit",
@@ -12,54 +12,42 @@ const Message = ({ from, messageDis, date, read, send, userInfo }) => {
     }).format(date);
   };
 
-  let icon = null;
-  if (read) {
-    icon = <BiCheckDouble size={14} color="" />;
-  } else if (send) {
-    icon = <BiCheck size={14} color="" />;
-  } else {
-    icon = (
-      <Watch
-        height="10"
-        width="10"
-        radius="48"
-        color="#ffff"
-        ariaLabel="watch-loading"
-        wrapperStyle={{}}
-        wrapperClassName=""
-        visible={true}
-      />
-    );
-  }
+  
+
+
 
   return (
     <div
-      className={`message  ${
-        from === "user" ? "message--user" : "message--client"
-      }`}
+      className={`chat ${ from === "user" ? "chat-end" : "chat-start"} `}
     >
+      <div className={`chat-bubble  ${ from === "user" ? "chat-bubble-primary" : "chat-bubble"}  ${messageDis[0]?.type === "file"||typeof messageDis==="string"?'max-w-[345px]':'max-w-[420px] px-1.5 py-1.5'} `}>
       {typeof messageDis === "string" ? (
-        <div
-          className="pt-2 pb-1 px-1.5 "
-          dangerouslySetInnerHTML={{ __html: messageDis }}
-        ></div>
+        
+          <div
+            className=" "
+            dangerouslySetInnerHTML={{ __html: messageDis }}
+          ></div>
+       
       ) : (
-        <ul className={`${messageDis[0].type==="file"?'grid-2':'grid-1'}`}>
-        {  
-        messageDis?.map((content)=>(
-           <FileType key={content.id} {...content}  />
-        ))
-        }
+        <ul
+          className={`${
+            messageDis[0]?.type === "file" ? "grid-2" : "grid-1"
+          }  `}
+        >
+          {messageDis?.map((content) => (
+            <FileType key={content.id} {...content} onRemove={remove} from={from}/>
+          ))}
         </ul>
       )}
 
-      <div className=" flex items-center gap-1.5 mb-0.5 px-1">
-        <p className="text-gray-400 text-[10px]">{formatTime(date)}</p>
-
-        {icon}
+      <FooterMessage message={messageDis[0]} date={formatTime(date)} read={read} send={send} />
       </div>
+
+      {/* menu */}
+      <MessageMenu/>
     </div>
   );
 };
 
 export default Message;
+
