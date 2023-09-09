@@ -28,7 +28,7 @@ const SelectBox = ({
   // uploader image
   const uploadImageHandler = (e) => {
     let images = [];
-    console.log(e)
+
 
     for (let i = 0; i < e?.target.files?.length; i++) {
 

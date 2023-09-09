@@ -4,10 +4,10 @@ import Message from "../../Components/Message/Message";
 import ChatForm from "../../Components/ChatForm/ChatForm";
 import { useParams } from "react-router-dom";
 import Uploader from "../../Components/Uploader/Uploader";
+import MessageMenu from "../../Components/UI/MessageMenu/MessageMenu";
 
 const Chat = ({ chat, setChat }) => {
   const [message, setMessage] = useState();
-  const [newChat, setNewChat] = useState([]);
 
   const match = useParams();
 
@@ -39,13 +39,27 @@ const Chat = ({ chat, setChat }) => {
     setChat(newChat);
   };
   const removeMessageFile = (id) => {
-  
+    const newChat = [...chat];
 
-    // const filterd = newChat?.messages
-    //   ?.map((message) => message?.messageDis)
-    //   .map((item) => item).filterd?.findIndex((item) => item?.id !== id);
+    const findedChat = newChat.find((item) => item.id == match?.id);
+    const newMessge = findedChat?.messages;
+    const findMessage = newMessge?.map((item) => item?.messageDis);
 
-    
+    let index = null;
+
+    for (const item of findMessage) {
+      for (const val of item) {
+        if (val.id === id) {
+          index = item.indexOf(val);
+          item.splice(index, 1);
+        }
+      }
+    }
+
+   findedChat.messages=newMessge.filter((item)=>item.messageDis.length!==0)
+
+    findedChat.messages.messageDis = findMessage;
+    setChat(newChat);
   };
 
   return (
@@ -53,19 +67,21 @@ const Chat = ({ chat, setChat }) => {
       <ChatHeader info={message} />
       <main className="flex flex-col justify-between h-full  overflow-hidden">
         <section className="h-[90%] overflow-y-auto px-5 flex flex-col gap-2.5 mt-1 mb-1.5 transition-all duration-200">
-          {message?.messages?.map((item) => (
-            <Message
-              key={item.messageId}
-              from={item.from}
-              {...item}
-              remove={removeMessageFile}
-            />
-          ))}
+          {message?.messages?.messageDis !== null &&
+            message?.messages?.map((item) => (
+              <Message
+                key={item.messageId}
+                from={item.from}
+                {...item}
+                remove={removeMessageFile}
+              />
+            ))}
         </section>
 
         {/* FORM */}
         <ChatForm set={sendMessageHandler} />
-
+        {/* menu */}
+        <MessageMenu />
         <Uploader />
       </main>
     </div>
