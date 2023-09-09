@@ -16,9 +16,9 @@ const MessageItem = ({ id, userName, profileImg, messages }) => {
   };
   let icon = null;
 
-  if (messages[messages.length - 1]?.read) {
+  if (messages[messages?.length - 1]?.read) {
     icon = <PiChecksBold size={18} color="#818cf8" />;
-  } else if (messages[messages.length - 1]?.send) {
+  } else if (messages[messages?.length - 1]?.send) {
     if (messages[messages.length - 1]?.read) {
       icon = <PiChecksBold size={18} color="#818cf8" />;
     } else if (messages[messages.length - 1]?.send) {
