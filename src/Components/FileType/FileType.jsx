@@ -8,7 +8,7 @@ const FileType = ({ type, src, name, size,progress,onRemove,id,from }) => {
 
 
   let file = null;
-  console.log(src);
+
   if (type == "video") {
     file = (
       <li className="w-full h-full overflow-hidden  rounded-xl flex-auto relative">
