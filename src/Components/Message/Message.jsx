@@ -1,9 +1,8 @@
 import React from "react";
-
 import ProfileImage from "../ProfileImage/ProfileImage";
 import FileType from "../FileType/FileType";
 import FooterMessage from "../FooterMessage/FooterMessage";
-import MessageMenu from "../UI/MessageMenu/MessageMenu";
+
 const Message = ({ from, messageDis, date, read, send, userInfo,remove }) => {
   const formatTime = (date) => {
     return new Intl.DateTimeFormat("tr", {
@@ -43,8 +42,7 @@ const Message = ({ from, messageDis, date, read, send, userInfo,remove }) => {
       <FooterMessage message={messageDis[0]} date={formatTime(date)} read={read} send={send} />
       </div>
 
-      {/* menu */}
-      <MessageMenu/>
+     
     </div>
   );
 };
