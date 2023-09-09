@@ -20,7 +20,7 @@ const Progress = ({ size,onRemove }) => {
  
   return (
     <div
-      className={`radial-progress absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-base-100/40 border-[6px] border-transparent cursor-pointer z-10 ${size===100?'hidden':''}`}
+      className={`radial-progress absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-base-100/40 border-[6px] border-transparent cursor-pointer  ${size===100?'hidden':''}`}
       style={{ "--value": size, "--size": "3rem", "--thickness": "2px" }}
       onClick={onRemove}
     >
