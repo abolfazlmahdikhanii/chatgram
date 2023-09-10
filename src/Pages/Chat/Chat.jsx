@@ -8,6 +8,9 @@ import MessageMenu from "../../Components/UI/MessageMenu/MessageMenu";
 
 const Chat = ({ chat, setChat }) => {
   const [message, setMessage] = useState();
+  const [pageX, setPageX] = useState(null);
+  const [pageY, setPageY] = useState(null);
+  const [showContextMenu, setShowContextMenu] = useState(false);
 
   const match = useParams();
 
@@ -62,8 +65,17 @@ const Chat = ({ chat, setChat }) => {
     setChat(newChat);
   };
 
+  const contextmenuHandler=(e)=>{
+    e.preventDefault()
+    setShowContextMenu(prev=>!prev)
+    setPageX(e.pageX)
+    setPageY(e.pageY)
+  }
+
   return (
-    <div className="bg-[url('../../../src/assets/images/bg-pattern.svg')] h-screen relative">
+    <div className="bg-[url('../../../src/assets/images/bg-pattern.svg')] h-screen relative overflow-hidden"
+    onContextMenu={(e)=>e.preventDefault()}
+    >
       <ChatHeader info={message} />
       <main className="flex flex-col justify-between h-full  overflow-hidden">
         <section className="h-[90%] overflow-y-auto px-5 flex flex-col gap-2.5 mt-1 mb-1.5 transition-all duration-200">
@@ -74,6 +86,7 @@ const Chat = ({ chat, setChat }) => {
                 from={item.from}
                 {...item}
                 remove={removeMessageFile}
+                onContext={contextmenuHandler}
               />
             ))}
         </section>
@@ -81,7 +94,7 @@ const Chat = ({ chat, setChat }) => {
         {/* FORM */}
         <ChatForm set={sendMessageHandler} />
         {/* menu */}
-        <MessageMenu />
+        <MessageMenu pageX={pageX} pageY={pageY} show={showContextMenu} setClose={setShowContextMenu}/>
         <Uploader />
       </main>
     </div>
