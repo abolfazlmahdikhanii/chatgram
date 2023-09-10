@@ -3,7 +3,7 @@ import ProfileImage from "../ProfileImage/ProfileImage";
 import FileType from "../FileType/FileType";
 import FooterMessage from "../FooterMessage/FooterMessage";
 
-const Message = ({ from, messageDis, date, read, send, userInfo,remove }) => {
+const Message = ({ from, messageDis, date, read, send, userInfo,remove,onContext }) => {
   const formatTime = (date) => {
     return new Intl.DateTimeFormat("tr", {
       hour: "2-digit",
@@ -17,7 +17,8 @@ const Message = ({ from, messageDis, date, read, send, userInfo,remove }) => {
 
   return (
     <div
-      className={`chat ${ from === "user" ? "chat-end" : "chat-start"} `}
+      className={`chat relative w-full ${ from === "user" ? "chat-end" : "chat-start"} `}
+      onContextMenu={onContext}
     >
       <div className={`chat-bubble  ${ from === "user" ? "chat-bubble-primary" : "chat-bubble"}  ${messageDis[0]?.type === "file"||typeof messageDis==="string"?'max-w-[345px]':'max-w-[420px] px-1.5 py-1.5'} `}>
       {typeof messageDis === "string" ? (
