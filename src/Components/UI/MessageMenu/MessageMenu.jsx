@@ -4,11 +4,14 @@ import { FiEdit3 } from "react-icons/fi";
 import { MdDeleteOutline } from "react-icons/md";
 import { TbSquareRoundedCheck } from "react-icons/tb";
 
-const MessageMenu = () => {
+const MessageMenu = ({show,setClose,pageX,pageY}) => {
   return (
     <div
-      className={`menu bg-[rgba(33,33,33,.75)]  backdrop-blur-[40px] scale-100  rounded-xl absolute w-[190px] 
-      gap-1.5`}
+      className={`menu bg-[rgba(33,33,33,.75)]  backdrop-blur-[40px]   rounded-xl fixed w-[190px] 
+      gap-1.5 transition-all duration-200 z-20 ${show?'[scale-z:1] opacity-100 ':'[scale-z:0] opacity-0'}`}
+      style={{left:`${pageX}px`,top:`${pageY}px`}}
+
+      onMouseLeave={()=>setClose(false)}
     >
       {/* item1 */}
       <label className="select-box--item ">
