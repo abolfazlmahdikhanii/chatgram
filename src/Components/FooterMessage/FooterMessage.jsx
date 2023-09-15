@@ -25,7 +25,7 @@ const FooterMessage = ({message,date,read,send}) => {
 
   return (
     <>
-      {message?.type === "file" || typeof message === "string" ? (
+      {message?.type === "file"||message?.type === "mp3" || typeof message === "string" ? (
         <div className=" flex items-center gap-1 mt-1 px-3 justify-end chat-footer -mr-4">
           <p className="text-gray-400 text-[10px]">{date}</p>
 
