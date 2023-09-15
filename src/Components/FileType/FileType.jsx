@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import FileItem from "../FIleItem/FileItem";
 import Progress from "../UI/Progress/Progress";
+import AudioFile from "../AudioFIle/AudioFile";
 
 const FileType = ({ type, src, name, size,progress,onRemove,id,from }) => {
 
@@ -18,7 +19,13 @@ const FileType = ({ type, src, name, size,progress,onRemove,id,from }) => {
         </video>
       </li>
     );
-  } else if (type == "img") {
+  } 
+  else if (type == "mp3") {
+    file = (
+      <AudioFile path={src} size={size} name={name} />
+    );
+  } 
+  else if (type == "img") {
     file = (
       <li className=" h-[210px] overflow-hidden inline-block rounded-xl basis-[40%]  bg-gray-200/20 flex-grow flex-1 relative">
         <Progress size={progress} onRemove={()=>onRemove(id)}/>
@@ -29,7 +36,11 @@ const FileType = ({ type, src, name, size,progress,onRemove,id,from }) => {
         />
       </li>
     );
-  } else {
+  } 
+  
+  
+  
+  else {
     file = (
       <FileItem
         name={name}
