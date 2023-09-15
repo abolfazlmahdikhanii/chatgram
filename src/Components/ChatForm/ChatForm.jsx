@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 
 import Picker from "@emoji-mart/react";
+import data from "@emoji-mart/data/sets/14/apple.json";
 
 import BtnAction from "../UI/BtnAction/BtnAction";
 import BtnUploader from "../BtnUploader/BtnUploader";
@@ -14,11 +15,13 @@ const ChatForm = ({ set }) => {
   const [showUploader, setShowUploader] = useState(false);
   const [imagesUpload, setImagesUpload] = useState([]);
   const [filesUpload, setFilesUpload] = useState([]);
+  const [content,setContent]=useState("")
 
   const inputRef = useRef(null);
 
   useEffect(() => {
     setText(inputRef.current);
+    console.log(text);
   }, [inputRef]);
 
   // find chat with id and store  in the object in the place
@@ -27,17 +30,14 @@ const ChatForm = ({ set }) => {
     if (inputRef.current.innerHTML !== "") {
       set(text.innerHTML);
       inputRef.current.innerHTML = "";
-    } 
+    }
   };
-  const uploadFileHandler=()=>{
-    if(filesUpload) set(filesUpload)
- 
-    
-  }
-  const uploadImageHandler=()=>{
-    if(imagesUpload)  set(imagesUpload)
-    
-  }
+  const uploadFileHandler = () => {
+    if (filesUpload) set(filesUpload);
+  };
+  const uploadImageHandler = () => {
+    if (imagesUpload) set(imagesUpload);
+  };
   const closeEmojiPicker = () => {
     setTimeout(() => {
       setShowEmoji(false);
@@ -52,11 +52,11 @@ const ChatForm = ({ set }) => {
   return (
     <form
       action="#"
-      className=" w-11/12 mx-auto  mb-24 flex gap-3.5 h-[48px] max-w-2xl"
+      className=" w-11/12 mx-auto  mb-24 flex gap-3.5 h-[48px] max-w-2xl items-center"
       onSubmit={submitFormHandler}
     >
-      <div className="bg-base-200 flex items-center justify-between py-1.5 rounded-xl w-full px-3">
-        <div className="flex items-center gap-0.5 w-full">
+      <div className="bg-base-200 flex items-center justify-between py-1.5 rounded-xl w-full px-3 ">
+        <div className="flex items-center gap-0.5 w-full relative">
           <button
             className="text-yellow-500 grid place-items-center"
             onMouseEnter={() => {
@@ -87,12 +87,18 @@ const ChatForm = ({ set }) => {
               />
             </svg>
           </button>
-
+         
           <div
-            className="chat__input overflow-hidden"
+            className="chat__input overflow-hidden  z-10"
             ref={inputRef}
+            onInput={(e)=>setContent(e.target.textContent )}
+            autoFocus
             contentEditable
+            placeholder="message"
             suppressContentEditableWarning={true}
+            onKeyDown={(e) => {
+              e.key === "Enter" ? submitFormHandler(e) : null;
+            }}
           >
             {emoji.map((item, i) => (
               <img
@@ -107,7 +113,7 @@ const ChatForm = ({ set }) => {
         <BtnUploader click={setShowUploader} />
       </div>
 
-      <BtnAction />
+      <BtnAction isText={content}/>
       {/* emoji */}
       <div className="absolute bottom-20 left-14" onMouseOut={closeEmojiPicker}>
         {showEmoji && (
@@ -128,6 +134,7 @@ const ChatForm = ({ set }) => {
             previewPosition="none"
             value={text}
             set={"apple"}
+            data={data}
           />
         )}
       </div>

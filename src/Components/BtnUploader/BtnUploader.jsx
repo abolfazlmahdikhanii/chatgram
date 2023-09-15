@@ -3,7 +3,7 @@ import React from "react";
 const BtnUploader = ({click}) => {
   return (
     <>
-      <button className="text-gray-400 grid place-items-center" onMouseEnter={()=>click(true)}>
+      <button className="text-gray-400 grid place-items-center" onClick={()=>click(true)}>
         <svg
           width={24}
           height={24}
