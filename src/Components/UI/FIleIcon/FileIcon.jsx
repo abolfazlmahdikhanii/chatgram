@@ -1,8 +1,15 @@
-import React, { useState } from "react";
+import React, { useState,useRef } from "react";
 
 const FileIcon = ({ type,path=null,message=false,from }) => {
+
+
   let color = null;
   let fileColor=null;
+
+
+
+
+
 
   const imgFormarts = ["svg", "jpg", "png", "jpeg", "webp", "gif"];
   switch (type) {
@@ -33,6 +40,10 @@ const FileIcon = ({ type,path=null,message=false,from }) => {
   else{
     fileColor=""
   }
+
+
+
+
   return (
     <>
       {!imgFormarts.includes(type)? (
