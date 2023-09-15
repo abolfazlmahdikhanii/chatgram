@@ -24,7 +24,7 @@ const Message = ({ from, messageDis, date, read, send, userInfo,remove,onContext
       {typeof messageDis === "string" ? (
         
           <div
-            className=" "
+            className="text-white"
             dangerouslySetInnerHTML={{ __html: messageDis }}
           ></div>
        
