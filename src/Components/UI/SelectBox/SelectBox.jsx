@@ -14,30 +14,28 @@ const SelectBox = ({
   const [showUploader, setShowUploader] = useState(false);
   const [showImageUploader, setShowImageUploader] = useState(false);
 
-
-
   const checkIsimageOrIsVideo = (type) => {
-    if (type === "video/mp4" || type === "video/webm") return "video";
-    else if (
+    if (type === "video/mp4" || type === "video/webm") {
+      return "video";
+    } else if (
       type === "image/png" ||
       type === "image/jpeg" ||
       type === "image/gif"
-    )
+    ) {
       return "img";
+    }
   };
   // uploader image
   const uploadImageHandler = (e) => {
     let images = [];
 
-
     for (let i = 0; i < e?.target.files?.length; i++) {
-
       images.push({
         id: crypto.randomUUID(),
         src: URL.createObjectURL(e.target.files[i]),
         size: e.target.files[i].size,
         type: checkIsimageOrIsVideo(e.target.files[i]?.type),
-        progress : e.target.onloaded
+        progress: e.target.duration,
       });
     }
     setImages(images);
@@ -56,7 +54,7 @@ const SelectBox = ({
         src: URL.createObjectURL(e.target.files[i]),
         size: e.target.files[i].size,
         name: e.target.files[i].name,
-        type: "file",
+        type: e.target.files[i]?.type.startsWith("audio/") ? "mp3" : "file",
       });
     }
     setFilesUpload(files);
@@ -78,7 +76,7 @@ const SelectBox = ({
         className={`select-box ${
           show ? "scale-100 opacity-100 " : "scale-0 opacity-0 "
         }`}
-        onMouseOut={close}
+        onMouseLeave={close}
       >
         {/* item1 */}
         <label htmlFor="img" className="select-box--item" onClick={close}>

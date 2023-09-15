@@ -77,8 +77,9 @@ const Chat = ({ chat, setChat }) => {
     onContextMenu={(e)=>e.preventDefault()}
     >
       <ChatHeader info={message} />
-      <main className="flex flex-col justify-between h-full  overflow-hidden">
-        <section className="h-[90%] overflow-y-auto px-5 flex flex-col gap-2.5 mt-1 mb-1.5 transition-all duration-200">
+      <main className="flex flex-col justify-between h-screen  overflow-hidden">
+        <section className=".
+        h-[90%] overflow-y-auto px-5 flex flex-col gap-2.5 mt-1 mb-1.5 transition-all duration-200">
           {message?.messages?.messageDis !== null &&
             message?.messages?.map((item) => (
               <Message
