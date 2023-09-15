@@ -3,20 +3,20 @@
 @tailwind utilities;
 
 @layer base {
-  ::-webkit-scrollbar{
-    @apply w-[9px] 
+  ::-webkit-scrollbar {
+    @apply w-[9px];
   }
   ::-webkit-scrollbar-thumb {
-    @apply rounded-full bg-transparent  border-4 border-white
+    @apply rounded-full bg-transparent  border-4 border-white;
   }
-  ::-webkit-scrollbar-trak{
-    @apply bg-transparent
+  ::-webkit-scrollbar-trak {
+    @apply bg-transparent;
   }
-  .scroll-hover::-webkit-scrollbar-thumb{
-    @apply transition-all duration-300
+  .scroll-hover::-webkit-scrollbar-thumb {
+    @apply transition-all duration-300;
   }
-  .scroll-hover:hover::-webkit-scrollbar-thumb{
-    @apply bg-gray-600/50
+  .scroll-hover:hover::-webkit-scrollbar-thumb {
+    @apply bg-gray-600/50;
   }
   body {
     @apply bg-gray-950 scroll-smooth;
@@ -26,13 +26,12 @@
     @apply flex  p-2.5 w-full gap-5 transition-all duration-300 hover:bg-indigo-200/20 rounded-lg cursor-pointer;
   }
 
-
-  .chat__input{
-    @apply appearance-none px-3 py-2 placeholder:text-xs w-full text-gray-50 bg-transparent focus-visible:outline-none
+  .chat__input {
+    @apply appearance-none px-3 py-2 placeholder:text-xs w-full text-gray-50 bg-transparent focus-visible:outline-none break-all transition-all duration-300 ;
   }
 
   .message {
-    @apply  rounded-2xl whitespace-pre-wrap break-words  text-white text-sm max-w-full  leading-relaxed w-auto min-w-[80px] 
+    @apply rounded-2xl whitespace-pre-wrap break-words  text-white text-sm max-w-full  leading-relaxed w-auto min-w-[80px];
   }
   .message--user {
     @apply bg-primary self-end rounded-tr-none;
@@ -44,7 +43,7 @@
     @apply rounded-xl overflow-hidden bg-indigo-500;
   }
   .side-menu {
-    @apply flex flex-col items-center justify-between overflow-y-auto overflow-x-hidden h-screen ;
+    @apply flex flex-col items-center justify-between overflow-y-auto overflow-x-hidden h-screen;
   }
   .side-menu--list {
     @apply flex flex-col gap-6;
@@ -59,38 +58,46 @@
   .switch__item {
     @apply rounded-xl  p-2.5;
   }
-  .select-box{
-    @apply rounded-xl bg-[rgba(33,33,33,.75)] shadow-gray-800/30 shadow-lg backdrop-blur-[40px] absolute bottom-20 right-24 w-[190px] py-1.5 px-1.5 scale-0 opacity-0  transition-all duration-300
+  .select-box {
+    @apply rounded-xl bg-[rgba(33,33,33,.75)] shadow-gray-800/30 shadow-lg backdrop-blur-[40px] absolute bottom-20 right-24 w-[190px] py-1.5 px-1.5 scale-0 opacity-0  transition-all duration-300;
   }
- 
-  .select-box--item{
-    @apply flex items-center gap-5 text-white py-1.5 px-3 transition-all duration-300 hover:bg-[rgba(170,170,170,0.08)] rounded-lg cursor-pointer
+
+  .select-box--item {
+    @apply flex items-center gap-5 text-white py-1.5 px-3 transition-all duration-300 hover:bg-[rgba(170,170,170,0.08)] rounded-lg cursor-pointer;
   }
-  .modal-preview{
-    @apply justify-items-start [overflow-y:hidden] px-0 max-h-[600px] -translate-x-1/2 left-1/2 pt-0 mt-0
+  .modal-preview {
+    @apply justify-items-start [overflow-y:hidden] px-0 max-h-[600px] -translate-x-1/2 left-1/2 pt-0 mt-0;
   }
-  .modal-body{
-    @apply w-full overflow-y-auto  px-4 py-3    rounded-xl scroll-hover  
+  .modal-body {
+    @apply w-full overflow-y-auto  px-4 py-3    rounded-xl scroll-hover;
   }
-  .file-item{
-    @apply flex gap-5 transition-all duration-300 hover:bg-gray-700/30 select-none cursor-pointer py-2 rounded-lg overflow-hidden 
+  .file-item {
+    @apply flex gap-5 transition-all duration-300 hover:bg-gray-700/30 select-none cursor-pointer py-2 rounded-lg overflow-hidden;
   }
-  .file-icon{
-    @apply flex items-center justify-center px-3 rounded-xl relative before:absolute before:w-6 before:h-6 before:inline-block before:bg-[linear-gradient(45deg,rgba(0,0,0,0.3)_50%,#1D232A_50%)] before:-top-0.5 before:-right-0.5 before:rounded-sm w-[68px]  h-[81px]
+  .file-icon {
+    @apply flex items-center justify-center px-3 rounded-xl relative before:absolute before:w-6 before:h-6 before:inline-block before:bg-[linear-gradient(45deg,rgba(0,0,0,0.3)_50%,#1D232A_50%)] before:-top-0.5 before:-right-0.5 before:rounded-sm w-[68px]  h-[81px];
   }
-  .file-icon--2{
-    @apply before:bg-[linear-gradient(45deg,rgba(0,0,0,0.3)_50%,#641AE6_50%)] w-[65px]  h-[70px]
+  .file-icon--2 {
+    @apply before:bg-[linear-gradient(45deg,rgba(0,0,0,0.3)_50%,#641AE6_50%)] w-[65px]  h-[70px];
   }
-  .file-icon--3{
-    @apply before:bg-[linear-gradient(45deg,rgba(0,0,0,0.3)_50%,#2A323C_50%)] w-[65px]  h-[70px]
+  .file-icon--3 {
+    @apply before:bg-[linear-gradient(45deg,rgba(0,0,0,0.3)_50%,#2A323C_50%)] w-[65px]  h-[70px];
   }
-  .grid-1{
-    @apply flex  items-center w-full gap-y-3 flex-wrap-reverse justify-between gap-x-2.5
+  .grid-1 {
+    @apply flex  items-center w-full gap-y-3 flex-wrap-reverse justify-between gap-x-2.5;
   }
-  .grid-2{
-    @apply grid grid-cols-1 w-full  
+  .grid-2 {
+    @apply grid grid-cols-1 w-full;
   }
-  .progress{
-    @apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-base-100/40 border-[6px] border-transparent cursor-pointer
+  .progress {
+    @apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-base-100/40 border-[6px] border-transparent cursor-pointer;
+  }
+  div[contenteditable="true"]:empty:before {
+    @apply [content:attr(placeholder)] absolute left-10 text-gray-400 transition-all duration-200 translate-x-0 opacity-100 text-sm capitalize scale-100  top-1/2 -translate-y-1/2
+
+  }
+  div[contenteditable="true"]:before {
+    @apply [content:attr(placeholder)] absolute left-10 text-gray-400 transition-all duration-200 translate-x-[40px] opacity-0 text-sm capitalize scale-50  top-1/2 -translate-y-1/2
+
   }
 }
