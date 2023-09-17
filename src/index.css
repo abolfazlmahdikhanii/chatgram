@@ -100,4 +100,8 @@
     @apply [content:attr(placeholder)] absolute left-10 text-gray-400 transition-all duration-200 translate-x-[40px] opacity-0 text-sm capitalize scale-50  top-1/2 -translate-y-1/2
 
   }
+  .audio-recorder {
+    @apply [display:none!important]
+  }
+  
 }
