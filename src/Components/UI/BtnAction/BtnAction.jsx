@@ -1,8 +1,13 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-const BtnAction = ({ isText = false }) => {
+const BtnAction = ({  setRecord,isText=false,record}) => {
+  const [recorder,setRecorder]=useState(record)
+  console.log(record)
+
   return (
-    <button className="h-full px-[16px] btn btn-primary rounded-xl flex items-center justify-center  overflow-hidden max-w-[60px] flex-nowrap">
+    <button className="h-full px-[16px] btn btn-primary rounded-xl flex items-center justify-center  overflow-hidden max-w-[60px] flex-nowrap"
+    onClick={()=>!isText?setRecord(true):null}
+    >
       <div
         className={`grid place-items-center transition-all duration-300 ${
           isText
@@ -27,12 +32,14 @@ const BtnAction = ({ isText = false }) => {
           />
         </svg>
       </div>
+   
       <div
         className={`grid place-items-center transition-all duration-300 ${
-          !isText
+          !isText||isText.length===0
             ? "-translate-x-[60%] opacity-100 scale-100"
             : " opacity-0 scale-0"
         }`}
+      
       >
         <svg
           width={22}
@@ -58,6 +65,8 @@ const BtnAction = ({ isText = false }) => {
           />
         </svg>
       </div>
+      
+
     </button>
   );
 };
