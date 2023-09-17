@@ -43,29 +43,10 @@ const AudioFile = ({ path, size, name }) => {
       });
     }
 
-    console.log(wavesurfRef);
 
     return () => wavesurfRef.current.destroy();
 
-    // if (waveFormRef.current) {
-    //   setWave(
-    //     WaveSurfer.create({
-    //       barWidth: 3,
-    //       barRadius: 3,
-    //       barGap: 4,
-    //       barMinHeight: 1,
-    //       cursorWidth: 1,
-    //       container: waveFormRef.current,
-    //       backend: "WebAudio",
-    //       height: 40,
-    //       progressColor: "#2D5BFF",
-    //       responsive: true,
-    //       waveColor: "#EFEFEF",
-    //       cursorColor: "transparent",
-    //       url: audioRef.current.src,
-    //     })
-    //   );
-    // }
+   
   }, [path]);
 
   useEffect(() => {
@@ -74,13 +55,7 @@ const AudioFile = ({ path, size, name }) => {
       setDuration(audio.duration);
     });
   }, [path, audioRef]);
-  useEffect(() => {
-    const audio = audioRef.current;
-    console.log(waveFormRef);
-    wave?.on("audioprocess", function() {
-      setCurrentTime(wave.getCurrentTime());
-    });
-  }, [path]);
+ 
   const controlAudioHandler = () => {
     setIsPlaying((prev) => !prev);
     wavesurfRef.current.playPause();
@@ -104,7 +79,7 @@ const AudioFile = ({ path, size, name }) => {
     >
       <div className="">
         <button className="btn btn-square" onClick={controlAudioHandler}>
-          {isPlaying ? <FaPlay /> : <FaPause />}
+          {!isPlaying ? <FaPlay /> : <FaPause />}
         </button>
       </div>
       <div className="flex flex-col gap-2 max-w-[90%] w-full">
