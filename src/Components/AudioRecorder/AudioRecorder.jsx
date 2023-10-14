@@ -1,75 +1,139 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+
 import { AudioVisualizer, LiveAudioVisualizer } from "react-audio-visualize";
-import { AudioRecorder, useAudioRecorder } from "react-audio-voice-recorder";
 import { FaPlay, FaPause } from "react-icons/fa";
 import { MdDeleteOutline } from "react-icons/md";
 
-const AudioRecorders = ({ record = false, setRecord }) => {
-  const [duration, setDuration] = useState(0);
-  const [audio, setAudioData] = useState([]);
-  const [recorder, setRecorder] = useState(true);
-  const [min, setMin] = useState(0);
-  const [second, setSecond] = useState(0);
-
-  const {
-    startRecording,
-    stopRecording,
-    togglePauseResume,
-    recordingBlob,
-    isRecording,
-    isPaused,
-    recordingTime,
-    mediaRecorder,
-  } = useAudioRecorder();
+const AudioRecorders = ({ record = false, setRecord, setMessage }) => {
+  const [recording, setRecording] = useState(false);
+  const [paused, setPaused] = useState(false);
+  const [audioChunks, setAudioChunks] = useState([]);
+  const [mediaRecorder, setMediaRecorder] = useState(null);
+  const [audioStream, setAudioStream] = useState(null);
+  const [timer, setTimer] = useState(0);
+  const [audioUrl,setAudioUrl]=useState("")
 
   useEffect(() => {
-    if (record&&!isRecording) handleStartRecording();
-       
-  }, []);
 
-  const handleStopRecording = () => {
-    stopRecording()
-    setDuration(0)
-    setRecord(false)
-  };
+    navigator.mediaDevices
+      .getUserMedia({ audio: true })
+      .then((stream) => {
+        setAudioStream(stream);
+        const recorder = new MediaRecorder(stream);
 
-  const handleStartRecording = () => {
-    if (record) {
-      startRecording();
+        recorder.ondataavailable=(e) => {
+          setAudioChunks((chunks) => [...chunks, e.data]);
+        };
+
+        recorder.onstop = () => {
+          const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+          const audioUrl = URL.createObjectURL(audioBlob);
+          setAudioUrl(audioUrl)
+        };
+
+        setMediaRecorder(recorder);
+      })
+      .catch((err) => console.log(err));
+
       
-    }
-   
-  };
-  const formatTimer=(time)=>{
-    const second=time% 60
-    const min=Math.floor(time/60)
 
+    return () => {
+      if (audioStream) {
+        audioStream.getTracks().forEach((track) => track.stop());
+      }
+    };
+  }, []);
+  useEffect(()=>{
 
-    return `${min<10?`0${min}`:`${min}`} : ${second<10?`0${second}`:`${second}`}`
-
-  }
-
+  startRecordingHandler()
  
+  },[record,mediaRecorder])
+  useEffect(() => {
+    let intervalId;
+
+    if (recording && !paused) {
+      intervalId = setInterval(() => {
+        setTimer((prevTimer) => prevTimer + 1);
+      }, 1000);
+    }
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [recording, paused]);
+
+  const startRecordingHandler = () => {
+    if (!recording && mediaRecorder) {
+      mediaRecorder.start();
+      setRecording(true);
+      setPaused(false);
+      setTimer(0);
+    }
+  };
+
+  const togglePauseResume = () => {
+    if (recording && mediaRecorder) {
+      if (!paused) {
+        mediaRecorder.pause();
+        setPaused(true);
+       
+      } if(paused) {
+        mediaRecorder.resume();
+        setPaused(false);
+      }
+    }
+  };
+  const formatTimer = (time) => {
+    const second = time % 60;
+    const min = Math.floor(time / 60);
+
+    return `${min < 10 ? `0${min}` : `${min}`} : ${
+      second < 10 ? `0${second}` : `${second}`
+    }`;
+  };
+  const stopRecording = () => {
+    if (recording && mediaRecorder) {
+      mediaRecorder.stop();
+      setRecording(false);
+      setPaused(false);
+      setAudioChunks([]);
+      setTimer(0);
+
+      if (audioStream) {
+        audioStream.getTracks().forEach((track) => track.stop());
+      }
+    }
+  };
+  const sendAudioHandler = (url) => {
+
+    // stop and reset recorder
+console.log(url)
+    const audioMessage = {
+      id: crypto.randomUUID(),
+      src: url,
+      size: audioUrl?.size,
+      name: "",
+      type: "mp3",
+    };
+    console.log(audioMessage);
+
+    // send
+    // setMessage(audioMessage)
+  };
 
   return (
     <div className="flex items-stretch gap-4">
       <div
-        className={`py-2 px-3 bg-base-200   rounded-xl  items-center ${
+        className={`py-2 px-3 bg-base-200   rounded-xl recorder-box  items-center ${
           record ? "flex" : "hidden"
         } `}
       >
-        <AudioRecorder
-          onRecordingComplete={setAudioData}
-          onRecordingStart={handleStartRecording}
-          onRecordingStop={stopRecording}
-          recorderControls={false}
-        />
         <div className="w-full flex items-center gap-5">
           <button
             className="bg-indigo-600 py-2.5 px-[18px] text-white h-12 rounded-xl mask-squircle mask"
-            onClick={togglePauseResume }
+            onClick={togglePauseResume}
           >
-            {!isPaused ? <FaPause /> : <FaPlay />}
+            {!paused? <FaPause /> : <FaPlay />}
           </button>
           <div className="w-full">
             {mediaRecorder && (
@@ -89,7 +153,9 @@ const AudioRecorders = ({ record = false, setRecord }) => {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-300 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-4 w-4 bg-red-500"></span>
             </span>
-            <span className="text-white whitespace-nowrap text-sm">{formatTimer(recordingTime)}</span>
+            <span className="text-white whitespace-nowrap text-sm">
+              {formatTimer(timer)}
+            </span>
           </p>
         </div>
       </div>
@@ -98,13 +164,16 @@ const AudioRecorders = ({ record = false, setRecord }) => {
       <div className="flex items-center gap-2.5 ml-1">
         <button
           className="bg-neutral py-1  text-white  rounded-xl mask-squircle mask h-full px-[14px]"
-          onClick={handleStopRecording}
+          onClick={()=>setRecord(false)}
         >
           <MdDeleteOutline size={26} color="#dc2626" />
         </button>
         <button
           className="h-full px-[16px] btn btn-primary rounded-xl max-w-[60px] mask-squircle mask"
-          onClick={stopRecording}
+          onClick={()=>{
+            stopRecording()
+            sendAudioHandler(audioUrl)
+          }}
         >
           <svg
             width={19}
