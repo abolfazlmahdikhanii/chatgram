@@ -73,6 +73,7 @@ const AudioFile = ({ path, size, name }) => {
     let sec = Math.floor(time - min * 60);
     return `${min} : ${sec < 10 ? `0${sec}` : sec}`;
   };
+  
   return (
     <li
       className={`file-item relative  w-full hover:bg-transparent h-fit min-w-[300px] px-2 py-3 gap-2`}
