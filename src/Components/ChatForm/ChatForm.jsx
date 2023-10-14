@@ -123,7 +123,7 @@ const ChatForm = ({ set }) => {
         <BtnAction isText={content} setRecord={setRecord}/>
        </>
       ) : (
-        <AudioRecorders record={record} setRecord={setRecord} />
+        <AudioRecorders record={record} setRecord={setRecord} setMessage={set} />
       )}
       
       {/* emoji */}
