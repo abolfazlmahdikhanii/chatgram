@@ -35,7 +35,7 @@ const BtnAction = ({  setRecord,isText=false,record}) => {
    
       <div
         className={`grid place-items-center transition-all duration-300 ${
-          !isText||isText.length===0
+          !isText
             ? "-translate-x-[60%] opacity-100 scale-100"
             : " opacity-0 scale-0"
         }`}
