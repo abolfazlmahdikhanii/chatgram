@@ -16,7 +16,7 @@ const formWaveSurferOptions = (ref) => ({
   height: 40,
   backend: "WebAudio",
   cursorColor: "transparent",
-  
+
   // If true, normalize by the maximum peak instead of 1.0.
   normalize: true,
   // Use the PeakCache to improve rendering speed of large waveforms.
@@ -38,24 +38,20 @@ const AudioFile = ({ path, size, name }) => {
       wavesurfRef.current = WaveSurfer.create(option);
 
       wavesurfRef.current.load(audioRef.current.src);
-      wavesurfRef.current.on("audioprocess", function() {
+      wavesurfRef.current.on("ready", function () {
+        setDuration(wavesurfRef.current.getDuration());
+      });
+      wavesurfRef.current.on("audioprocess", function () {
         setCurrentTime(wavesurfRef.current.getCurrentTime());
       });
     }
 
-
     return () => wavesurfRef.current.destroy();
-
-   
   }, [path]);
 
-  useEffect(() => {
-    const audio = audioRef.current;
-    audio.addEventListener("loadedmetadata", () => {
-      setDuration(audio.duration);
-    });
-  }, [path, audioRef]);
- 
+  const handleLoadedMetadata = () => {
+    setDuration(audioRef.current.duration);
+  };
   const controlAudioHandler = () => {
     setIsPlaying((prev) => !prev);
     wavesurfRef.current.playPause();
@@ -68,12 +64,13 @@ const AudioFile = ({ path, size, name }) => {
       i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed()) + " " + sizes[i];
   };
-  const formatTime = function(time) {
+  const formatTime = function (time) {
+   
     let min = Math.floor(time / 60);
     let sec = Math.floor(time - min * 60);
-    return `${min} : ${sec < 10 ? `0${sec}` : sec}`;
+    return `${min} : ${sec < 10 ? ` 0 ${sec}` : sec}`;
   };
-  
+
   return (
     <li
       className={`file-item relative  w-full hover:bg-transparent h-fit min-w-[300px] px-2 py-3 gap-2`}
@@ -97,7 +94,12 @@ const AudioFile = ({ path, size, name }) => {
             {formatTime(duration)}
           </p>
         </div>
-        <audio src={path} ref={audioRef} id="track"></audio>
+        <audio
+          src={path}
+          ref={audioRef}
+          id="track"
+          // onLoadedMetadata={handleLoadedMetadata}
+        ></audio>
 
         <div className="flex items-center self-end gap-2">
           <p className="text-[11px]">{formatSize(size)}</p>
