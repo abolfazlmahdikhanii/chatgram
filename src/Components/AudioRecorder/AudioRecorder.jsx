@@ -11,31 +11,42 @@ const AudioRecorders = ({ record = false, setRecord, setMessage }) => {
   const [mediaRecorder, setMediaRecorder] = useState(null);
   const [audioStream, setAudioStream] = useState(null);
   const [timer, setTimer] = useState(0);
-  const [audioUrl,setAudioUrl]=useState("")
+  const [audioUrl, setAudioUrl] = useState("");
+  const audios = [];
 
   useEffect(() => {
-
     navigator.mediaDevices
-      .getUserMedia({ audio: true })
+      .getUserMedia({ audio: true,video:false })
       .then((stream) => {
+        const chunks = [];
         setAudioStream(stream);
         const recorder = new MediaRecorder(stream);
 
-        recorder.ondataavailable=(e) => {
-          setAudioChunks((chunks) => [...chunks, e.data]);
+        recorder.ondataavailable = (e) => {
+       
+          chunks.push(e.data);
         };
 
+
         recorder.onstop = () => {
-          const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
-          const audioUrl = URL.createObjectURL(audioBlob);
-          setAudioUrl(audioUrl)
+
+         
+          const audioBlob = new Blob(chunks,{type:"audio/webm"});
+
+          
+      
+ 
+        
+            if(audioBlob.size===0) return
+            sendAudioHandler(audioBlob);
+        
+        
+      
         };
 
         setMediaRecorder(recorder);
       })
       .catch((err) => console.log(err));
-
-      
 
     return () => {
       if (audioStream) {
@@ -43,11 +54,9 @@ const AudioRecorders = ({ record = false, setRecord, setMessage }) => {
       }
     };
   }, []);
-  useEffect(()=>{
-
-  startRecordingHandler()
- 
-  },[record,mediaRecorder])
+  useEffect(() => {
+    startRecordingHandler();
+  }, [record, mediaRecorder]);
   useEffect(() => {
     let intervalId;
 
@@ -76,8 +85,8 @@ const AudioRecorders = ({ record = false, setRecord, setMessage }) => {
       if (!paused) {
         mediaRecorder.pause();
         setPaused(true);
-       
-      } if(paused) {
+      }
+      if (paused) {
         mediaRecorder.resume();
         setPaused(false);
       }
@@ -105,20 +114,20 @@ const AudioRecorders = ({ record = false, setRecord, setMessage }) => {
     }
   };
   const sendAudioHandler = (url) => {
-
     // stop and reset recorder
-console.log(url)
+  
     const audioMessage = {
       id: crypto.randomUUID(),
-      src: url,
-      size: audioUrl?.size,
+      src: URL.createObjectURL(url),
+      size: url?.size,
       name: "",
       type: "mp3",
     };
+    audios.push(audioMessage);
     console.log(audioMessage);
-
+    setRecord(false)
     // send
-    // setMessage(audioMessage)
+    setMessage(audios);
   };
 
   return (
@@ -133,7 +142,7 @@ console.log(url)
             className="bg-indigo-600 py-2.5 px-[18px] text-white h-12 rounded-xl mask-squircle mask"
             onClick={togglePauseResume}
           >
-            {!paused? <FaPause /> : <FaPlay />}
+            {!paused ? <FaPause /> : <FaPlay />}
           </button>
           <div className="w-full">
             {mediaRecorder && (
@@ -158,22 +167,20 @@ console.log(url)
             </span>
           </p>
         </div>
+        {audioUrl && <audio src={URL.createObjectURL(audioUrl)} controls></audio>}
       </div>
 
       {/* action */}
       <div className="flex items-center gap-2.5 ml-1">
         <button
           className="bg-neutral py-1  text-white  rounded-xl mask-squircle mask h-full px-[14px]"
-          onClick={()=>setRecord(false)}
+          onClick={() => setRecord(false)}
         >
           <MdDeleteOutline size={26} color="#dc2626" />
         </button>
         <button
           className="h-full px-[16px] btn btn-primary rounded-xl max-w-[60px] mask-squircle mask"
-          onClick={()=>{
-            stopRecording()
-            sendAudioHandler(audioUrl)
-          }}
+          onClick={stopRecording}
         >
           <svg
             width={19}
