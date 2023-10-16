@@ -43,6 +43,7 @@ const FileItem = ({
          size={size}
          name={name}
          formatSize={formatSize}
+         onRemove={onRemove}
         />
       )
      }
@@ -81,7 +82,7 @@ const DefaultFile=({type,src,message,from,size,name,onRemove,formatSize})=>{
   </li>
   )
 }
-const MessageFile=({type,src,message,from,size,name,formatSize})=>{
+const MessageFile=({type,src,message,from,size,name,formatSize,onRemove})=>{
   return(
   <li
   className={`file-item relative  w-full hover:bg-transparent`}
@@ -101,7 +102,7 @@ const MessageFile=({type,src,message,from,size,name,formatSize})=>{
       {name}
     </p>
     <p className={`text-xs`}>{formatSize(size)}</p>
-    <ProgressFile />
+    <ProgressFile onRemove={onRemove} />
   </div>
  
 </li>
