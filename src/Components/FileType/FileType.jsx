@@ -22,7 +22,7 @@ const FileType = ({ type, src, name, size,progress,onRemove,id,from }) => {
   } 
   else if (type == "mp3") {
     file = (
-      <AudioFile path={src} size={size} name={name} />
+      <AudioFile path={src} size={size} name={name} onRemove={()=>onRemove(id)} />
     );
   } 
   else if (type == "img") {
@@ -49,6 +49,7 @@ const FileType = ({ type, src, name, size,progress,onRemove,id,from }) => {
         size={size}
         message={true}
         from={from}
+        onRemove={()=>onRemove(id)}
       />
     );
   }
