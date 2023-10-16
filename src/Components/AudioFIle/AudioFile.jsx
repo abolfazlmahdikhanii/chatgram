@@ -23,7 +23,7 @@ const formWaveSurferOptions = (ref) => ({
   partialRender: true,
 });
 
-const AudioFile = ({ path, size, name }) => {
+const AudioFile = ({ path, size, name,onRemove }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [wave, setWave] = useState(null);
   const [currentTime, setCurrentTime] = useState(0);
@@ -104,7 +104,7 @@ const AudioFile = ({ path, size, name }) => {
         <div className="flex items-center self-end gap-2">
           <p className="text-[11px]">{formatSize(size)}</p>
 
-          <ProgressFile />
+          <ProgressFile onRemove={onRemove}/>
         </div>
       </div>
     </li>
