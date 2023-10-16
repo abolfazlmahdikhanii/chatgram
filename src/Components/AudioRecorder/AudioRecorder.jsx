@@ -144,7 +144,7 @@ const AudioRecorders = ({ record = false, setRecord, setMessage }) => {
           >
             {!paused ? <FaPause /> : <FaPlay />}
           </button>
-          <div className="w-full">
+          <div className="w-[390px]">
             {mediaRecorder && (
               <LiveAudioVisualizer
                 mediaRecorder={mediaRecorder}
