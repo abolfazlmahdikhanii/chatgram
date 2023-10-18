@@ -1,16 +1,22 @@
 import React, { useEffect, useState } from "react";
 
-const BtnAction = ({  setRecord,isText=false,record}) => {
-  const [recorder,setRecorder]=useState(record)
-  console.log(record)
+const BtnAction = ({ setRecord, isText, record, setText }) => {
+  const [recorder, setRecorder] = useState(record);
+  const [content, setContent] = useState(isText);
+  function hasImage(img) {
 
+    const imageRegex = /<img\b[^>]*>/i;
+
+    return imageRegex.test(img);
+  }
   return (
-    <button className="h-full px-[16px] btn btn-primary rounded-xl flex items-center justify-center  overflow-hidden max-w-[60px] flex-nowrap"
-    onClick={()=>!isText?setRecord(true):null}
+    <button
+      className="h-full px-[16px] btn btn-primary rounded-xl flex items-center justify-center  overflow-hidden max-w-[60px] flex-nowrap"
+      onClick={() => (isText.innerHTML === "" ? setRecord(true) : null)}
     >
       <div
         className={`grid place-items-center transition-all duration-300 ${
-          isText
+          isText.innerHTML !== "" || hasImage(isText.innerHTML)
             ? "translate-x-[76%] opacity-100 scale-100"
             : " opacity-0 scale-0"
         }`}
@@ -32,14 +38,13 @@ const BtnAction = ({  setRecord,isText=false,record}) => {
           />
         </svg>
       </div>
-   
+
       <div
         className={`grid place-items-center transition-all duration-300 ${
-          !isText
+          isText.innerHTML === "" && !hasImage(isText.innerHTML)
             ? "-translate-x-[60%] opacity-100 scale-100"
             : " opacity-0 scale-0"
         }`}
-      
       >
         <svg
           width={22}
@@ -65,8 +70,6 @@ const BtnAction = ({  setRecord,isText=false,record}) => {
           />
         </svg>
       </div>
-      
-
     </button>
   );
 };
