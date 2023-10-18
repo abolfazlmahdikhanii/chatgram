@@ -22,9 +22,25 @@ const ChatForm = ({ set }) => {
   const inputRef = useRef(null);
 
   useEffect(() => {
-    if(inputRef.current)setText(inputRef.current);
-    console.log(text);
-  }, [inputRef]);
+
+    if(inputRef.current){
+   
+      setText(inputRef.current)
+
+    }
+
+  
+
+    if(record) {
+      setText("")
+      setEmoji([])
+    }
+    
+
+  
+
+  }, [inputRef,text,record,emoji]);
+
 
   // find chat with id and store  in the object in the place
   const submitFormHandler = (e) => {
@@ -65,7 +81,7 @@ const ChatForm = ({ set }) => {
           <div className="flex items-center gap-0.5 w-full relative">
             <button
               className="text-yellow-500 grid place-items-center"
-              onMouseEnter={() => {
+              onClick={() => {
                 setShowEmoji((prev) => !prev);
               }}
             >
@@ -97,16 +113,18 @@ const ChatForm = ({ set }) => {
             <div
               className="chat__input overflow-hidden  z-10"
               ref={inputRef}
-              onInput={(e) => setContent(e.target.textContent)}
+              onInput={(e) => setContent(inputRef.current.innerHTML)}
               autoFocus
               contentEditable
               placeholder="message"
               suppressContentEditableWarning={true}
               onKeyDown={(e) => {
                 e.key === "Enter" ? submitFormHandler(e) : null;
+                setContent(inputRef.current.innerHTML)
               }}
+              
             >
-              {emoji.map((item, i) => (
+              {emoji&&emoji?.map((item, i) => (
                 <img
                   key={i}
                   src={`https://cdn.jsdelivr.net/npm/emoji-datasource-apple@14.0.0/img/apple/64/${item.unified}.png`}
@@ -120,14 +138,14 @@ const ChatForm = ({ set }) => {
           <BtnUploader click={setShowUploader} />
          
         </div>
-        <BtnAction isText={content} setRecord={setRecord}/>
+        <BtnAction isText={text} setRecord={setRecord} setText={setEmoji} emoji={emoji}/>
        </>
       ) : (
         <AudioRecorders record={record} setRecord={setRecord} setMessage={set} />
       )}
       
       {/* emoji */}
-      <div className="absolute bottom-20 left-14" onMouseOut={closeEmojiPicker}>
+      <div className="absolute bottom-16 left-10" onMouseOut={closeEmojiPicker}>
         {showEmoji && (
           <Picker
             onEmojiSelect={(e) =>
