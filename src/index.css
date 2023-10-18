@@ -59,7 +59,7 @@
     @apply rounded-xl  p-2.5;
   }
   .select-box {
-    @apply rounded-xl bg-[rgba(33,33,33,.75)] shadow-gray-800/30 shadow-lg backdrop-blur-[40px] absolute bottom-20 right-24 w-[190px] py-1.5 px-1.5 scale-0 opacity-0  transition-all duration-300;
+    @apply rounded-xl bg-[rgba(33,33,33,.75)] shadow-gray-800/30 shadow-lg backdrop-blur-[40px] absolute bottom-16 right-20 w-[190px] py-1.5 px-1.5 scale-0 opacity-0  transition-all duration-300;
   }
 
   .select-box--item {
