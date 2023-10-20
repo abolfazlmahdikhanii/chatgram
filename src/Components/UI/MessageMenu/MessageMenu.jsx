@@ -4,8 +4,9 @@ import { FiEdit3 } from "react-icons/fi";
 
 import { MdDeleteOutline } from "react-icons/md";
 import { TbSquareRoundedCheck } from "react-icons/tb";
+import ReactionEmoji from "../ReactionEmoji/ReactionEmoji";
 
-const MessageMenu = ({ show, setClose, pageX, pageY }) => {
+const MessageMenu = ({ show, setClose, pageX, pageY,onRemove,messageID }) => {
   const [emoji, setEmoji] = useState([
     {
       id: crypto.randomUUID(),
@@ -145,7 +146,8 @@ const MessageMenu = ({ show, setClose, pageX, pageY }) => {
           </svg>
       ,
       title: "Delete",
-      styleTitle:'ml-1'
+      styleTitle:'ml-1',
+      event:()=>onRemove(messageID)
     },
   ];
   return (
@@ -163,7 +165,7 @@ const MessageMenu = ({ show, setClose, pageX, pageY }) => {
       >
       {
         selectItems.map((item)=>(
-          <label key={item.id} className={`select-box--item ${item.style?item.style:''}`} >
+          <label key={item.id} className={`select-box--item ${item.style?item.style:''}`} onClick={item?.event}>
           {/* icon */}
           {item.icon}
           <p className={`font-[700] text-[14px] ${item.styleTitle?item.styleTitle:''}` }>{item.title}</p>
@@ -179,18 +181,7 @@ const MessageMenu = ({ show, setClose, pageX, pageY }) => {
       gap-2.5  w-[190px]   flex items-center mt-1 p-3"
       >
         {emoji.map((item) => (
-          <picture key={item.id} className="cursor-pointer">
-            <source
-              srcSet={`https://fonts.gstatic.com/s/e/notoemoji/latest/${item.emojiName}/512.webp`}
-              type="image/webp"
-            />
-            <img
-              src={`https://fonts.gstatic.com/s/e/notoemoji/latest/${item.emojiName}/512.gif`}
-              alt={item.alt}
-              width="23"
-              height="23"
-            />
-          </picture>
+         <ReactionEmoji key={item.id} {...item}/>
         ))}
       </div>
     </div>
