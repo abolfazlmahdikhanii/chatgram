@@ -11,6 +11,7 @@ const Chat = ({ chat, setChat }) => {
   const [pageX, setPageX] = useState(null);
   const [pageY, setPageY] = useState(null);
   const [showContextMenu, setShowContextMenu] = useState(false);
+  const [messageID,setMessageID]=useState(null)
 
   const match = useParams();
 
@@ -42,6 +43,7 @@ const Chat = ({ chat, setChat }) => {
     setChat(newChat);
   };
   const removeMessageFile = (id) => {
+    console.log(id)
     const newChat = [...chat];
 
     const findedChat = newChat.find((item) => item.id == match?.id);
@@ -65,11 +67,13 @@ const Chat = ({ chat, setChat }) => {
     setChat(newChat);
   };
 
-  const contextmenuHandler=(e)=>{
+  const contextmenuHandler=(e,id)=>{
     e.preventDefault()
     setShowContextMenu(prev=>!prev)
     setPageX(e.pageX)
     setPageY(e.pageY)
+  
+    setMessageID(id)
   }
 
   return (
@@ -86,6 +90,7 @@ const Chat = ({ chat, setChat }) => {
                 key={item.messageId}
                 from={item.from}
                 {...item}
+            
                 remove={removeMessageFile}
                 onContext={contextmenuHandler}
               />
@@ -95,7 +100,14 @@ const Chat = ({ chat, setChat }) => {
         {/* FORM */}
         <ChatForm set={sendMessageHandler} />
         {/* menu */}
-        <MessageMenu pageX={pageX} pageY={pageY} show={showContextMenu} setClose={setShowContextMenu}/>
+        <MessageMenu 
+        pageX={pageX}
+         pageY={pageY}
+          show={showContextMenu}
+           setClose={setShowContextMenu}
+           onRemove={removeMessageFile}
+           messageID={messageID}
+           />
         <Uploader />
       </main>
     </div>
