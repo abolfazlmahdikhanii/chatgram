@@ -3,7 +3,7 @@ import ProfileImage from "../ProfileImage/ProfileImage";
 import FileType from "../FileType/FileType";
 import FooterMessage from "../FooterMessage/FooterMessage";
 
-const Message = ({ from, messageDis, date, read, send, userInfo,remove,onContext }) => {
+const Message = ({ from, messageDis, date, read, send, userInfo,remove,onContext,messageId }) => {
   const formatTime = (date) => {
     return new Intl.DateTimeFormat("tr", {
       hour: "2-digit",
@@ -17,8 +17,8 @@ const Message = ({ from, messageDis, date, read, send, userInfo,remove,onContext
 
   return (
     <div
-      className={`chat relative w-full ${ from === "user" ? "chat-end" : "chat-start"} `}
-      onContextMenu={onContext}
+      className={`chat relative flex justify-between  w-10/12 items-end ${ from === "user" ? "chat-end" : "chat-start"} `}
+      onContextMenu={(e)=>onContext(e,messageId)}
     >
       <div className={`chat-bubble  ${ from === "user" ? "chat-bubble-primary" : "chat-bubble"}  ${messageDis[0]?.type === "file"||typeof messageDis==="string"?'max-w-[345px]':'max-w-[420px] px-1.5 py-1.5'} `}>
       {typeof messageDis === "string" ? (
@@ -43,7 +43,7 @@ const Message = ({ from, messageDis, date, read, send, userInfo,remove,onContext
       <FooterMessage message={messageDis[0]} date={formatTime(date)} read={read} send={send} />
       </div>
 
-     
+     <input type="checkbox" className="checkbox checkbox-primary" />
     </div>
   );
 };
