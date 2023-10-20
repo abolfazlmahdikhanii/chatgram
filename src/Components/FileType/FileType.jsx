@@ -7,7 +7,7 @@ const FileType = ({ type, src, name, size,progress,onRemove,id,from }) => {
 
  
 
-
+console.log(id)
   let file = null;
 
   if (type == "video") {
