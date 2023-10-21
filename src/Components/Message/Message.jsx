@@ -3,7 +3,7 @@ import ProfileImage from "../ProfileImage/ProfileImage";
 import FileType from "../FileType/FileType";
 import FooterMessage from "../FooterMessage/FooterMessage";
 
-const Message = ({ from, messageDis, date, read, send, userInfo,remove,onContext,messageId }) => {
+const Message = ({ from, messageDis, date, read, send, userInfo,remove,onContext,messageId,CheckMessage }) => {
 
  const [check,setCheck]=useState(false)
 
