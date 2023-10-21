@@ -1,9 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import ProfileImage from "../ProfileImage/ProfileImage";
 import FileType from "../FileType/FileType";
 import FooterMessage from "../FooterMessage/FooterMessage";
 
 const Message = ({ from, messageDis, date, read, send, userInfo,remove,onContext,messageId }) => {
+
+ const [check,setCheck]=useState(false)
+
+
   const formatTime = (date) => {
     return new Intl.DateTimeFormat("tr", {
       hour: "2-digit",
@@ -11,13 +15,17 @@ const Message = ({ from, messageDis, date, read, send, userInfo,remove,onContext
     }).format(date);
   };
 
+  const checkHandler=()=>{
+    setCheck(prev=>!prev)
+  }
+
   
 
 
 
   return (
     <div
-      className={`chat relative flex justify-between  w-10/12 items-end ${ from === "user" ? "chat-end" : "chat-start"} `}
+      className={`chat relative flex justify-between px-6 py-3 items-end ${ from === "user" ? "chat-end" : "chat-start"} ${check?"bg-indigo-300/10":""} transition-all duration-200`}
       onContextMenu={(e)=>onContext(e,messageId)}
     >
       <div className={`chat-bubble  ${ from === "user" ? "chat-bubble-primary" : "chat-bubble"}  ${messageDis[0]?.type === "file"||typeof messageDis==="string"?'max-w-[345px]':'max-w-[420px] px-1.5 py-1.5'} `}>
@@ -43,7 +51,7 @@ const Message = ({ from, messageDis, date, read, send, userInfo,remove,onContext
       <FooterMessage message={messageDis[0]} date={formatTime(date)} read={read} send={send} />
       </div>
 
-     <input type="checkbox" className="checkbox checkbox-primary" />
+     <input type="checkbox" className="checkbox checkbox-primary mr-16" checked={check} onChange={checkHandler}/>
     </div>
   );
 };
