@@ -12,6 +12,7 @@ const Chat = ({ chat, setChat }) => {
   const [pageY, setPageY] = useState(null);
   const [showContextMenu, setShowContextMenu] = useState(false);
   const [messageID,setMessageID]=useState(null)
+  const [checkMessage,setCheckMessage]=useState([])
 
   const match = useParams();
 
@@ -75,7 +76,13 @@ const Chat = ({ chat, setChat }) => {
   
     setMessageID(id)
   }
+const checkMessageHandler=(id)=>{
+  const newMessage=[...message?.messages]
 
+  const findCheck=newMessage.find((item)=>item.messageId===id)
+
+  setCheckMessage(prev=>[...prev,findCheck])
+}
   return (
     <div className="bg-[url('../../../src/assets/images/bg-pattern.svg')] h-screen relative overflow-hidden"
     onContextMenu={(e)=>e.preventDefault()}
@@ -83,7 +90,7 @@ const Chat = ({ chat, setChat }) => {
       <ChatHeader info={message} />
       <main className="flex flex-col justify-between h-screen  overflow-hidden">
         <section className=".
-        h-[90%] overflow-y-auto px-5 flex flex-col gap-2.5 mt-1 mb-1.5 transition-all duration-200">
+        h-[90%] overflow-y-auto  flex flex-col  mt-1 mb-1.5 transition-all duration-200">
           {message?.messages?.messageDis !== null &&
             message?.messages?.map((item) => (
               <Message
@@ -92,6 +99,7 @@ const Chat = ({ chat, setChat }) => {
                 {...item}
             
                 remove={removeMessageFile}
+                setCheckMessage={setCheckMessage}
                 onContext={contextmenuHandler}
               />
             ))}
