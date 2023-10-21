@@ -3,7 +3,7 @@ import ProfileImage from "../ProfileImage/ProfileImage";
 import FileType from "../FileType/FileType";
 import FooterMessage from "../FooterMessage/FooterMessage";
 
-const Message = ({ from, messageDis, date, read, send, userInfo,remove,onContext,messageId,CheckMessage }) => {
+const Message = ({ from, messageDis, date, read, send, userInfo,remove,onContext,messageId,onCheck }) => {
 
  const [check,setCheck]=useState(false)
 
@@ -15,8 +15,9 @@ const Message = ({ from, messageDis, date, read, send, userInfo,remove,onContext
     }).format(date);
   };
 
-  const checkHandler=()=>{
+  const checkHandler=(id,check)=>{
     setCheck(prev=>!prev)
+    onCheck(id,check)
   }
 
   
@@ -51,7 +52,7 @@ const Message = ({ from, messageDis, date, read, send, userInfo,remove,onContext
       <FooterMessage message={messageDis[0]} date={formatTime(date)} read={read} send={send} />
       </div>
 
-     <input type="checkbox" className="checkbox checkbox-primary mr-16" checked={check} onChange={checkHandler}/>
+     <input type="checkbox" className="checkbox checkbox-primary mr-16" checked={check} onChange={(e)=>checkHandler(messageId,e.target.checked)}/>
     </div>
   );
 };
