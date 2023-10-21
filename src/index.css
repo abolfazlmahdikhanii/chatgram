@@ -103,5 +103,11 @@
  .recorder-box .audio-recorder {
     @apply [display:none!important]
   }
+  .check-message{
+    @apply py-3 px-2 bg-base-200 rounded-xl recorder-box   w-10/12 mx-auto  mb-24 flex gap-3.5 h-[60px] max-w-lg items-center relative
+  }
+  .check-message--btn{
+    @apply flex items-center gap-3 transition-all duration-300 px-4 py-2 rounded-xl w-auto
+  }
   
 }
