@@ -6,7 +6,7 @@ import { MdDeleteOutline } from "react-icons/md";
 import { TbSquareRoundedCheck } from "react-icons/tb";
 import ReactionEmoji from "../ReactionEmoji/ReactionEmoji";
 
-const MessageMenu = ({ show, setClose, pageX, pageY,onRemove,messageID }) => {
+const MessageMenu = ({ show, setClose, pageX, pageY,onRemove,messageID,onSelect }) => {
   const [emoji, setEmoji] = useState([
     {
       id: crypto.randomUUID(),
@@ -126,6 +126,7 @@ const MessageMenu = ({ show, setClose, pageX, pageY,onRemove,messageID }) => {
         />
       ),
       title: "Select",
+      event:()=>onSelect(messageID,true)
     },
     {
       id: crypto.randomUUID(),
