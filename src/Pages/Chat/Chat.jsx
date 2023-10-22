@@ -14,12 +14,14 @@ const Chat = ({ chat, setChat }) => {
   const [showContextMenu, setShowContextMenu] = useState(false);
   const [messageID, setMessageID] = useState(null);
   const [checkMessage, setCheckMessage] = useState([]);
+  const [showCheckBox, setShowCheckBox] = useState(false);
 
   const match = useParams();
 
   useEffect(() => {
     filterChat(match.id);
-  }, [match, chat, message]);
+    displayCheckBoxHandler(checkMessage);
+  }, [match, chat, message,checkMessage ]);
 
   const filterChat = (id) => {
     let findChat = chat.find((item) => item.id == id);
@@ -36,6 +38,7 @@ const Chat = ({ chat, setChat }) => {
       date: new Date(),
       read: false,
       send: true,
+      check:false
     };
     const newChat = [...chat];
 
@@ -82,16 +85,34 @@ const Chat = ({ chat, setChat }) => {
   const checkMessageHandler = (id, check) => {
     const newMessage = [...message?.messages];
     const findCheck = newMessage.find((item) => item.messageId === id);
+    findCheck.check=check
 
     setCheckMessage((prev) => [...prev, findCheck]);
     if (!check) {
-      
-    
-    
-      const filterCheck = checkMessage.filter((item) => item.messageId !== id);
-    
-      setCheckMessage(filterCheck)
+      const filterCheck = checkMessage.filter((item) => item.check);
+
+      setCheckMessage(filterCheck);
     }
+    
+  };
+  const selectHandler = ( id ) => {
+    const newCheckMessage = [...checkMessage];
+
+    const findCheckMessage = newCheckMessage.find((item) => item.messageId === id);
+
+    findCheckMessage.check = !findCheckMessage?.check;
+
+    setCheckMessage(newCheckMessage);
+
+    if (!findCheckMessage?.check) {
+      const filterCheck = newCheckMessage.filter((item) => item.check);
+
+      setCheckMessage(filterCheck);
+    }
+  };
+  const displayCheckBoxHandler = (arr) => {
+    const isCheck = arr.some((item) => item.check);
+    setShowCheckBox(isCheck);
   };
   return (
     <div
@@ -105,7 +126,7 @@ const Chat = ({ chat, setChat }) => {
         h-[90%] overflow-y-auto  flex flex-col  mt-1 mb-1.5 transition-all duration-200"
         >
           {message?.messages?.messageDis !== null &&
-            message?.messages?.map((item) => (
+            message?.messages?.map((item, i) => (
               <Message
                 key={item.messageId}
                 from={item.from}
@@ -114,24 +135,22 @@ const Chat = ({ chat, setChat }) => {
                 setCheckMessage={setCheckMessage}
                 onContext={contextmenuHandler}
                 onCheck={checkMessageHandler}
+                setCheck={selectHandler}
+                checkArr={checkMessage}
+                showCheck={showCheckBox}
               />
             ))}
         </section>
 
         {/* FORM */}
-        {
-          !checkMessage.length? 
-          (
+        {!checkMessage.length ? (
           <ChatForm set={sendMessageHandler} />
-          )
-          :
-          (
-            <CheckMessageBox 
+        ) : (
+          <CheckMessageBox
             checkMessage={checkMessage}
             setCheckMessage={setCheckMessage}
-            />
-          )
-        }
+          />
+        )}
         {/* menu */}
         <MessageMenu
           pageX={pageX}
@@ -140,9 +159,9 @@ const Chat = ({ chat, setChat }) => {
           setClose={setShowContextMenu}
           onRemove={removeMessageFile}
           messageID={messageID}
+          onSelect={checkMessageHandler}
         />
         <Uploader />
-
       </main>
     </div>
   );
