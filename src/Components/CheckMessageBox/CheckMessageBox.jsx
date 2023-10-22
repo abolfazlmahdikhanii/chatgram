@@ -3,7 +3,12 @@ import {AiOutlineClose} from "react-icons/ai"
 import {TiArrowForwardOutline} from "react-icons/ti"
 import {MdOutlineDeleteOutline} from "react-icons/md"
 
-const CheckMessageBox = ({checkMessage,setCheckMessage}) => {
+const CheckMessageBox = ({checkMessage,setCheckMessage,setCheck}) => {
+  
+  const cancelSelectHandler=()=>{
+    setCheckMessage([])
+  
+  }
   return (
     <div className={`check-message flex items-center justify-between`}>        
 
