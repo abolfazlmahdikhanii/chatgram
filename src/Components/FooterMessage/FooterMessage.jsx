@@ -2,7 +2,7 @@ import React from 'react'
 import { BiCheckDouble } from "react-icons/bi";
 import { BiCheck } from "react-icons/bi";
 import { Watch } from "react-loader-spinner";
-const FooterMessage = ({message,date,read,send}) => {
+const FooterMessage = ({message,date,read,send,edited}) => {
   let icon = null;
   if (read) {
     icon = <BiCheckDouble size={14} color="" />;
@@ -27,14 +27,15 @@ const FooterMessage = ({message,date,read,send}) => {
     <>
       {message?.type === "file"||message?.type === "mp3" || typeof message === "string" ? (
         <div className=" flex items-center gap-1 mt-1 px-3 justify-end chat-footer -mr-4">
+          <p className="text-gray-400 text-[12px] mr-0.5 italic">{edited?'edited':''}</p>
           <p className="text-gray-400 text-[10px]">{date}</p>
-
+        
           {icon}
         </div>
       ) : (
         <div className=" flex items-center gap-1  px-1.5 absolute bottom-2 right-4 bg-gray-700/60 rounded-lg py-[1px]">
           <p className="text-gray-200 text-[10px]">{date}</p>
-
+        
           {icon}
         </div>
       )}
