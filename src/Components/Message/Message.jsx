@@ -17,6 +17,7 @@ const Message = ({
   setCheck,
   checkArr,
   showCheck,
+  edited
 }) => {
   const formatTime = (date) => {
     return new Intl.DateTimeFormat("tr", {
@@ -27,8 +28,7 @@ const Message = ({
 
   const checkHandler = (id, check) => {
     onCheck(id, check);
-    // setCheck(id);
-    console.log(checkArr);
+   
   };
   let arr = checkArr.findIndex((item) => item.messageId === messageId);
   return (
@@ -41,7 +41,7 @@ const Message = ({
       onContextMenu={(e) => onContext(e, messageId)}
     >
       <div
-        className={`chat-bubble  ${
+        className={`chat-bubble break-words  ${
           from === "user" ? "chat-bubble-primary" : "chat-bubble"
         }  ${
           messageDis[0]?.type === "file" || typeof messageDis === "string"
@@ -76,6 +76,7 @@ const Message = ({
           date={formatTime(date)}
           read={read}
           send={send}
+          edited={edited}
         />
       </div>
 
