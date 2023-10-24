@@ -109,5 +109,7 @@
   .check-message--btn{
     @apply flex items-center gap-3 transition-all duration-300 px-4 py-2 rounded-xl w-auto
   }
-  
+  .form-box{
+    @apply bg-base-200 flex items-center justify-between py-1.5 rounded-xl w-full px-3
+  }
 }
