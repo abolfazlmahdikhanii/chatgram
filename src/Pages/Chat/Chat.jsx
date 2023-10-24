@@ -15,13 +15,14 @@ const Chat = ({ chat, setChat }) => {
   const [messageID, setMessageID] = useState(null);
   const [checkMessage, setCheckMessage] = useState([]);
   const [showCheckBox, setShowCheckBox] = useState(false);
+  const [editContent, setEditContent] = useState("");
 
   const match = useParams();
 
   useEffect(() => {
     filterChat(match.id);
     displayCheckBoxHandler(checkMessage);
-  }, [match, chat, message,checkMessage ]);
+  }, [match, chat, message, checkMessage,editContent]);
 
   const filterChat = (id) => {
     let findChat = chat.find((item) => item.id == id);
@@ -38,7 +39,8 @@ const Chat = ({ chat, setChat }) => {
       date: new Date(),
       read: false,
       send: true,
-      check:false
+      check: false,
+      edited:false
     };
     const newChat = [...chat];
 
@@ -47,6 +49,7 @@ const Chat = ({ chat, setChat }) => {
 
     setChat(newChat);
   };
+  // remove message type===file
   const removeMessageFile = (id) => {
     console.log(id);
     const newChat = [...chat];
@@ -82,50 +85,72 @@ const Chat = ({ chat, setChat }) => {
 
     setMessageID(id);
   };
+  // select message and unselect
   const checkMessageHandler = (id, check) => {
     const newMessage = [...message?.messages];
     const findCheck = newMessage.find((item) => item.messageId === id);
-    findCheck.check=check
+    findCheck.check = check;
 
     setCheckMessage((prev) => [...prev, findCheck]);
+
     if (!check) {
       const filterCheck = checkMessage.filter((item) => item.check);
 
       setCheckMessage(filterCheck);
     }
-    
   };
-  const selectHandler = ( id ) => {
-    const newCheckMessage = [...checkMessage];
-
-    const findCheckMessage = newCheckMessage.find((item) => item.messageId === id);
-
-    findCheckMessage.check = !findCheckMessage?.check;
-
-    setCheckMessage(newCheckMessage);
-
-    if (!findCheckMessage?.check) {
-      const filterCheck = newCheckMessage.filter((item) => item.check);
-
-      setCheckMessage(filterCheck);
-    }
-  };
+  // dispaly all checkbox when select one message
   const displayCheckBoxHandler = (arr) => {
     const isCheck = arr.some((item) => item.check);
     setShowCheckBox(isCheck);
   };
+
+  // edit message type===text
+  const selectEditTextMessageHandler = (id) => {
+    const newMessageDis = [...message?.messages];
+
+    const findMessage = newMessageDis.find(
+      (message) => message.messageId === id && typeof message.messageDis==="string"
+    );
+    
+    setEditContent(findMessage?.messageDis);
+  };
+  // edit handler
+  const editHandler=(txt,input)=>{
+
+    const newMessageDis = [...message?.messages];
+
+    const findMessage = newMessageDis.find(
+      (message) => message.messageId === messageID 
+    );
+    console.log(findMessage)
+
+    findMessage.messageDis=txt
+    findMessage.edited=true
+    findMessage.date=new Date()
+    setMessage(newMessageDis)
+    setEditContent("")
+
+  
+    // edit from everyWhere
+    const newChat = [...chat];
+
+    const findedChat = newChat.find((item) => item.id == match?.id);
+    findedChat.messages=newMessageDis;
+    setChat(newChat);
+  }
   return (
     <div
       className="bg-[url('../../../src/assets/images/bg-pattern.svg')] h-screen relative overflow-hidden"
       onContextMenu={(e) => e.preventDefault()}
     >
       <ChatHeader info={message} />
-      <main className="flex flex-col justify-between h-screen  overflow-hidden">
+      <main className="flex flex-col justify-between h-screen  overflow-hidden mb-5">
         <section
           className=".
-        h-[90%] overflow-y-auto  flex flex-col  mt-1 mb-1.5 transition-all duration-200"
+        h-[90%]  overflow-y-auto  flex flex-col  mt-1 mb-1.5 transition-all duration-200"
         >
-          {message?.messages?.messageDis !== null &&
+          {message?.messages?.messageDis !== ""&&
             message?.messages?.map((item, i) => (
               <Message
                 key={item.messageId}
@@ -135,7 +160,6 @@ const Chat = ({ chat, setChat }) => {
                 setCheckMessage={setCheckMessage}
                 onContext={contextmenuHandler}
                 onCheck={checkMessageHandler}
-                setCheck={selectHandler}
                 checkArr={checkMessage}
                 showCheck={showCheckBox}
               />
@@ -144,7 +168,12 @@ const Chat = ({ chat, setChat }) => {
 
         {/* FORM */}
         {!checkMessage.length ? (
-          <ChatForm set={sendMessageHandler} />
+          <ChatForm 
+          set={sendMessageHandler} 
+          edit={editContent} 
+          setEdit={setEditContent}
+          onEdit={editHandler}
+          />
         ) : (
           <CheckMessageBox
             checkMessage={checkMessage}
@@ -160,6 +189,7 @@ const Chat = ({ chat, setChat }) => {
           onRemove={removeMessageFile}
           messageID={messageID}
           onSelect={checkMessageHandler}
+          onEdit={selectEditTextMessageHandler}
         />
         <Uploader />
       </main>
