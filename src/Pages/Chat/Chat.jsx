@@ -154,12 +154,14 @@ if(findCheck.check) {
 
 
  
+     if(!findPin.pin){
       findPin.pin=true
       setPinMessage((prev) => [...prev, findPin]);
+     }
     
-if(findPin.pin) {
+else {
   findPin.pin=false
-      const filterPin = checkMessage.filter((item) => item.pin);
+      const filterPin = pinMessage.filter((item) => item.pin);
 
       setPinMessage(filterPin);
     }
