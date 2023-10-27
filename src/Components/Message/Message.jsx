@@ -85,7 +85,7 @@ const Message = ({
           type="checkbox"
           className={`checkbox checkbox-primary mr-16 `}
           checked={checkArr[arr]?.check}
-          onChange={(e) => checkHandler(messageId, e.target.checked)}
+          onChange={(e) => checkHandler(messageId, !checkArr[arr]?.check)}
         />
       )}
     </div>
