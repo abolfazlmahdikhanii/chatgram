@@ -86,7 +86,7 @@ const MessageMenu = ({ show, setClose, pageX, pageY,onRemove,messageID,onSelect,
       id: crypto.randomUUID(),
       icon: <BsPin size={17} className="self-start mr-1.5" />,
       title: "Pin",
-      event:()=>onPin(messageID,true)
+      event:()=>onPin(messageID)
     },
     {
       id: crypto.randomUUID(),
@@ -128,7 +128,7 @@ const MessageMenu = ({ show, setClose, pageX, pageY,onRemove,messageID,onSelect,
         />
       ),
       title: "Select",
-      event:()=>onSelect(messageID,true)
+      event:()=>onSelect(messageID)
     },
     {
       id: crypto.randomUUID(),
