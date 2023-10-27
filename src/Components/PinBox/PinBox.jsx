@@ -3,14 +3,14 @@ import PinMessage from './PinMessage'
 import {AiOutlineClose} from "react-icons/ai"
 const PinBox = ({pins}) => {
     return (
-        <div className='py-2 px-4 bg-base-200  flex items-center  justify-between sticky top-0 '>
-            <div className='flex items-center gap-2'>
+        <div className='py-2 px-4 bg-base-200  flex items-center  justify-between sticky top-0 max-h-max '>
+            <div className='flex items-center gap-2 h-full'>
            {/* dot */}
-           <div className='h-full'>
+           <div className='h-full flex flex-col gap-[3px] mr-2'>
            {
-                pins.map((pin)=>{
-                    <div key={pin.messageId} className='w-1 bg-blue-400 h-full'></div>
-                })
+                pins.map((pin)=>(
+                    <div key={pin.messageId} className='w-[2px] bg-indigo-600 h-full rounded-xl'></div>
+                ))
             }
            </div>
             {/* message */}
@@ -18,7 +18,7 @@ const PinBox = ({pins}) => {
             {
             pins.map((pin,i)=>(
                <li  key={pin.messageId}>
-                 <PinMessage {...pin} index={i}/>
+                 <PinMessage title={pin.messageDis} index={i}/>
                </li>
             ))
            }
