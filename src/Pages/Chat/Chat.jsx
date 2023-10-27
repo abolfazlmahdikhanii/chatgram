@@ -145,7 +145,9 @@ const Chat = ({ chat, setChat }) => {
       onContextMenu={(e) => e.preventDefault()}
     >
       <ChatHeader info={message} />
+      ggg
       <main className="flex flex-col justify-between h-screen  overflow-hidden mb-5">
+
         <section
           className=".
         h-[90%]  overflow-y-auto  flex flex-col  mt-1 mb-1.5 transition-all duration-200"
