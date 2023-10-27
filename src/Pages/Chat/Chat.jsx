@@ -94,13 +94,15 @@ const Chat = ({ chat, setChat }) => {
     const findCheck = newMessage.find((item) => item.messageId === id);
 
 
-    
+    if(!findCheck.check){
+
+      
+        findCheck.check=true
+        setCheckMessage((prev) => [...prev, findCheck]);
+    }
 
     
-      findCheck.check=true
-      setCheckMessage((prev) => [...prev, findCheck]);
-    
-if(findCheck.check) {
+else {
   findCheck.check=false
       const filterCheck = checkMessage.filter((item) => item.check);
 
