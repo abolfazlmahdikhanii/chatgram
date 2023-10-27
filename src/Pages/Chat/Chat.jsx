@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import Uploader from "../../Components/Uploader/Uploader";
 import MessageMenu from "../../Components/UI/MessageMenu/MessageMenu";
 import CheckMessageBox from "../../Components/CheckMessageBox/CheckMessageBox";
+import PinBox from "../../Components/PinBox/PinBox";
 
 const Chat = ({ chat, setChat }) => {
   const [message, setMessage] = useState();
@@ -145,9 +146,9 @@ const Chat = ({ chat, setChat }) => {
       onContextMenu={(e) => e.preventDefault()}
     >
       <ChatHeader info={message} />
-      ggg
-      <main className="flex flex-col justify-between h-screen  overflow-hidden mb-5">
-
+   
+      <main className="flex flex-col justify-between h-screen  overflow-hidden mb-5 relative">
+      <PinBox/>
         <section
           className=".
         h-[90%]  overflow-y-auto  flex flex-col  mt-1 mb-1.5 transition-all duration-200"
