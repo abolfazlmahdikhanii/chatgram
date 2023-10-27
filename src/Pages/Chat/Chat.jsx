@@ -92,11 +92,16 @@ const Chat = ({ chat, setChat }) => {
   const checkMessageHandler = (id, check) => {
     const newMessage = [...message?.messages];
     const findCheck = newMessage.find((item) => item.messageId === id);
-    findCheck.check = check;
 
-    setCheckMessage((prev) => [...prev, findCheck]);
 
-    if (!check) {
+    
+
+    
+      findCheck.check=true
+      setCheckMessage((prev) => [...prev, findCheck]);
+    
+if(findCheck.check) {
+  findCheck.check=false
       const filterCheck = checkMessage.filter((item) => item.check);
 
       setCheckMessage(filterCheck);
@@ -145,15 +150,18 @@ const Chat = ({ chat, setChat }) => {
   // pin message
   const pinMessageHandler=(id,isPin)=>{
     const newMessage = [...message?.messages];
-    const findCheck = newMessage.find((item) => item.messageId === id);
-    findCheck.pin = isPin;
+    const findPin = newMessage.find((item) => item.messageId === id);
 
-    setPinMessage((prev) => [...prev, findCheck]);
 
-    if (!isPin) {
-      const filterPinMessage = checkMessage.filter((item) => item.pin);
+ 
+      findPin.pin=true
+      setPinMessage((prev) => [...prev, findPin]);
+    
+if(findPin.pin) {
+  findPin.pin=false
+      const filterPin = checkMessage.filter((item) => item.pin);
 
-      setPinMessage(filterPinMessage);
+      setPinMessage(filterPin);
     }
   }
   return (
@@ -164,7 +172,9 @@ const Chat = ({ chat, setChat }) => {
       <ChatHeader info={message} />
    
       <main className="flex flex-col justify-between h-screen  overflow-hidden mb-5 relative">
-      <PinBox pins={pinMessage}/>
+   {
+    pinMessage.length?  ( <PinBox pins={pinMessage}/>):null
+   }
         <section
           className=".
         h-[90%]  overflow-y-auto  flex flex-col  mt-1 mb-1.5 transition-all duration-200"
