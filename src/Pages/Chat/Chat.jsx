@@ -17,6 +17,7 @@ const Chat = ({ chat, setChat }) => {
   const [checkMessage, setCheckMessage] = useState([]);
   const [showCheckBox, setShowCheckBox] = useState(false);
   const [editContent, setEditContent] = useState("");
+  const [pinMessage,setPinMessage]=useState([])
 
   const match = useParams();
 
@@ -41,7 +42,8 @@ const Chat = ({ chat, setChat }) => {
       read: false,
       send: true,
       check: false,
-      edited:false
+      edited:false,
+      pin:false
     };
     const newChat = [...chat];
 
@@ -140,6 +142,20 @@ const Chat = ({ chat, setChat }) => {
     findedChat.messages=newMessageDis;
     setChat(newChat);
   }
+  // pin message
+  const pinMessageHandler=(id,isPin)=>{
+    const newMessage = [...message?.messages];
+    const findCheck = newMessage.find((item) => item.messageId === id);
+    findCheck.pin = isPin;
+
+    setPinMessage((prev) => [...prev, findCheck]);
+
+    if (!isPin) {
+      const filterPinMessage = checkMessage.filter((item) => item.pin);
+
+      setPinMessage(filterPinMessage);
+    }
+  }
   return (
     <div
       className="bg-[url('../../../src/assets/images/bg-pattern.svg')] h-screen relative overflow-hidden"
@@ -148,7 +164,7 @@ const Chat = ({ chat, setChat }) => {
       <ChatHeader info={message} />
    
       <main className="flex flex-col justify-between h-screen  overflow-hidden mb-5 relative">
-      <PinBox/>
+      <PinBox pins={pinMessage}/>
         <section
           className=".
         h-[90%]  overflow-y-auto  flex flex-col  mt-1 mb-1.5 transition-all duration-200"
@@ -193,6 +209,7 @@ const Chat = ({ chat, setChat }) => {
           messageID={messageID}
           onSelect={checkMessageHandler}
           onEdit={selectEditTextMessageHandler}
+          onPin={pinMessageHandler}
         />
         <Uploader />
       </main>
