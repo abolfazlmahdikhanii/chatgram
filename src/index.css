@@ -112,5 +112,7 @@
   .form-box{
     @apply bg-base-200 flex items-center justify-between py-1.5 rounded-xl w-full px-3
   }
+
+ 
 }
 
