@@ -30,6 +30,7 @@ const ChatForm = ({ set, edit, setEdit, onEdit }) => {
 
     if (record) {
       setText("");
+      inputRef.current.innerHTML=""
       setEmoji([]);
     }
   }, [inputRef, text, emoji]);
