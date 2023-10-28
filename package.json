@@ -21,6 +21,7 @@
         "react-input-emoji": "^5.3.1",
         "react-loader-spinner": "^5.4.5",
         "react-router-dom": "^6.15.0",
+        "react-router-hash-link": "^2.4.3",
         "swiper": "^11.0.3",
         "wavesurfer.js": "^7.3.1"
     },
