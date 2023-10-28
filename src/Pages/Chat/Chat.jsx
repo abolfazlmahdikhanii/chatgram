@@ -156,12 +156,13 @@ else {
 
 
  
-     if(!findPin.pin){
+     if(!findPin.pin&&pinMessage.length<=4){
       findPin.pin=true
       setPinMessage((prev) => [...prev, findPin]);
      }
     
 else {
+
   findPin.pin=false
       const filterPin = pinMessage.filter((item) => item.pin);
 
@@ -177,7 +178,7 @@ else {
    
       <main className="flex flex-col justify-between h-screen  overflow-hidden mb-5 relative">
    {
-    pinMessage.length?  ( <PinBox pins={pinMessage}/>):null
+    pinMessage.length?  ( <PinBox pins={pinMessage} setPin={setPinMessage} />):null
    }
         <section
           className=".
