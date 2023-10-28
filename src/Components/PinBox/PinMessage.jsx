@@ -1,11 +1,14 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { HashLink } from 'react-router-hash-link';
 
 const PinMessage = ({title,index,show,arr,id}) => {
 
   return (
     <>
- <Link to={`#${id}`} className='flex gap-3'>
+ <HashLink to={`#${id}`}
+    scroll={(el) => el.scrollIntoView({ behavior: 'smooth', block: 'end' })}
+ 
+  >
    {
     typeof title!=="string"||title?.type==="img"&& 
     <div className='w-11 h-full mask mask-squircle'>
@@ -16,7 +19,7 @@ const PinMessage = ({title,index,show,arr,id}) => {
         <p className='font-semibold text-indigo-500 text-sm'>Pinned message #{index+1}</p>
         <p className='text-[14px] '>{title}</p>
     </div>
-</Link>
+</HashLink>
   </>
   )
 }
