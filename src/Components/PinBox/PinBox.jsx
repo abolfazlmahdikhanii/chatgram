@@ -1,27 +1,66 @@
-import React from 'react'
+import React,{useEffect, useState} from 'react'
 import PinMessage from './PinMessage'
+
+
 import {AiOutlineClose} from "react-icons/ai"
-const PinBox = ({pins}) => {
+
+
+const PinBox = ({pins,setPin}) => {
+ 
+  
+   
+    const [indexPin,setIndexPin]=useState(0)
+
+    const [currentPage, setCurrentPage] = useState(1);
+  
+
+    useEffect(()=>{
+    setIndexPin(pins.length-1)
+    },[pins])
+    
+   
+  
+    const goToPage = (pageNumber) => {
+      setCurrentPage(pageNumber);
+      setIndexPin(pageNumber)
+    };
     return (
-        <div className='py-2 px-4 bg-base-200  flex items-center  justify-between sticky top-0 max-h-max '>
-            <div className='flex items-center gap-2 h-full'>
+        <div className='py-2 px-4 bg-base-200  flex items-center  justify-between sticky top-0  '>
+      
+      <div className='flex items-center gap-2 h-full'>
            {/* dot */}
+      
            <div className='h-full flex flex-col gap-[3px] mr-2'>
            {
-                pins.map((pin)=>(
-                    <div key={pin.messageId} className='w-[2px] bg-indigo-600 h-full rounded-xl'></div>
+             
+             pins.map((pin,i) =>(
+                    <div key={pin.messageId} 
+                    className={`w-[2.1px] ${i===indexPin?'bg-indigo-600':'bg-indigo-400'} h-full rounded-xl transition-all duration-200 cursor-pointer`}
+                    onClick={()=>goToPage(i)}
+                    
+                    ></div>
                 ))
             }
            </div>
             {/* message */}
             <ul className='flex flex-col'>
-            {
-            pins.map((pin,i)=>(
-               <li  key={pin.messageId}>
-                 <PinMessage title={pin.messageDis} index={i}/>
+            
+               {/* <li >
+                 <PinMessage title={pins[indexPin]?.messageDis} index={indexPin}/>
+               </li> */}
+           {  
+           
+           pins.map((pin,i,arr)=>(
+              indexPin===i&& 
+       
+              <li key={pin.messageId}>
+                 <PinMessage title={typeof pin.messageDis!=="string"?pin.messageDis[0].type:pin.messageDis} show={indexPin} index={i} arr={arr} id={pin.messageId}/>
                </li>
-            ))
+            
+              
+           ))
            }
+            
             </ul>
 
             </div>
@@ -46,7 +85,7 @@ const PinBox = ({pins}) => {
                     </svg>
                 </button>
                 :
-                <button className='btn btn-sm btn-square   grid place-items-center' >
+                <button className='btn btn-sm btn-square   grid place-items-center' onClick={()=>setPin([])} >
                 <AiOutlineClose size={16}/>
             </button>
 }
