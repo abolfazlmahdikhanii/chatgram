@@ -17,7 +17,8 @@ const Message = ({
   setCheck,
   checkArr,
   showCheck,
-  edited
+  edited,
+  pin
 }) => {
   const formatTime = (date) => {
     return new Intl.DateTimeFormat("tr", {
@@ -33,6 +34,7 @@ const Message = ({
   let arr = checkArr.findIndex((item) => item.messageId === messageId);
   return (
     <div
+   
       className={`chat relative flex justify-between px-6 py-3 items-end ${
         from === "user" ? "chat-end" : "chat-start"
       } ${
@@ -41,6 +43,7 @@ const Message = ({
       onContextMenu={(e) => onContext(e, messageId)}
     >
       <div
+        id={messageId}
         className={`chat-bubble break-words  ${
           from === "user" ? "chat-bubble-primary" : "chat-bubble"
         }  ${
@@ -77,6 +80,7 @@ const Message = ({
           read={read}
           send={send}
           edited={edited}
+          pin={pin}
         />
       </div>
 
@@ -85,7 +89,7 @@ const Message = ({
           type="checkbox"
           className={`checkbox checkbox-primary mr-16 `}
           checked={checkArr[arr]?.check}
-          onChange={(e) => checkHandler(messageId, !checkArr[arr]?.check)}
+          onChange={(e) => checkHandler(messageId, e.target.checked?false:true)}
         />
       )}
     </div>
