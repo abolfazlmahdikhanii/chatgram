@@ -1,11 +1,11 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
-const PinMessage = ({title,index}) => {
+const PinMessage = ({title,index,show,arr,id}) => {
 
   return (
     <>
-  {
-    index===0&&  <div className='flex gap-3'>
+ <Link to={`#${id}`} className='flex gap-3'>
    {
     typeof title!=="string"||title?.type==="img"&& 
     <div className='w-11 h-full mask mask-squircle'>
@@ -16,8 +16,7 @@ const PinMessage = ({title,index}) => {
         <p className='font-semibold text-indigo-500 text-sm'>Pinned message #{index+1}</p>
         <p className='text-[14px] '>{title}</p>
     </div>
-</div>
-  }
+</Link>
   </>
   )
 }
