@@ -44,12 +44,7 @@ const PinBox = ({pins,setPin}) => {
            </div>
             {/* message */}
             <ul className='flex flex-col'>
-            
-               {/* <li >
-                 <PinMessage title={pins[indexPin]?.messageDis} index={indexPin}/>
-               </li> */}
-           {  
-           
+            {
            pins.map((pin,i,arr)=>(
               indexPin===i&& 
        
