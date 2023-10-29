@@ -113,7 +113,9 @@
   .form-box{
     @apply bg-base-200 flex items-center justify-between py-1.5 rounded-xl w-full px-3
   }
-
+.unpin-btn{
+  @apply capitalize font-semibold text-white py-4 px-8 rounded-xl bg-base-100 -mt-32 mb-16 w-fit mx-auto  z-[1] hover:bg-base-200 transition-all duration-200 active:scale-90 cursor-pointer
+}
  
 }
 
