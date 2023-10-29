@@ -2,9 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-  html {
-    scroll-behavior: smooth;
-}
+
 @layer base {
   ::-webkit-scrollbar {
     @apply w-[9px];
