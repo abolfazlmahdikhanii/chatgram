@@ -30,10 +30,11 @@ const ChatForm = ({ set, edit, setEdit, onEdit }) => {
 
     if (record) {
       setText("");
-      inputRef.current.innerHTML=""
+      
       setEmoji([]);
+
     }
-  }, [inputRef, text, emoji]);
+  }, [inputRef, text, emoji,set]);
   // useEffect(() => {
   //   if (inputRef.current.innerHTML === ""&&edit) inputRef.current.innerHTML = edit;
   // }, [edit, record, setEdit]);
