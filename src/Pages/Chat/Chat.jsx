@@ -7,6 +7,7 @@ import Uploader from '../../Components/Uploader/Uploader'
 import MessageMenu from '../../Components/UI/MessageMenu/MessageMenu'
 import CheckMessageBox from '../../Components/CheckMessageBox/CheckMessageBox'
 import PinBox from '../../Components/PinBox/PinBox'
+import UnpinBtn from '../../Components/UnpinBtn/UnpinBtn'
 
 const Chat = ({ chat, setChat }) => {
     const [message, setMessage] = useState()
@@ -159,6 +160,13 @@ const Chat = ({ chat, setChat }) => {
             setPinMessage(filterPin)
         }
     }
+    const unpinHandler=()=>{
+      const newPinMessage=[...pinMessage]
+      newPinMessage.forEach((item)=>item.pin=false)
+      
+      setPinMessage([])
+      setShowPin(false)
+    }
     return (
         <div
             className="bg-[url('../../../src/assets/images/bg-pattern.svg')] h-screen relative overflow-hidden"
@@ -167,9 +175,9 @@ const Chat = ({ chat, setChat }) => {
             <ChatHeader info={message} showPin={showPin} setShowPin={setShowPin} pinMessage={pinMessage} />
 
             <main className="flex flex-col justify-between h-screen  overflow-hidden mb-5 relative">
-                {pinMessage.length ? (
+                {!showPin&&pinMessage.length ? (
                     <PinBox pins={pinMessage} setPin={setPinMessage} setShowPin={setShowPin}/>
-                ) : null}
+                ) :null}
 
                 {/* simple message */}
                 <section
@@ -202,7 +210,7 @@ const Chat = ({ chat, setChat }) => {
                             : 'translate-x-full hidden'
                     }`}
                 >
-                    {pinMessage.length &&
+                    {pinMessage &&
                         pinMessage.map((item, i) => (
                             <Message
                                 key={item.messageId}
@@ -220,7 +228,7 @@ const Chat = ({ chat, setChat }) => {
 
                 {/* FORM */}
                 {
-                !showPin&&(
+                !showPin?(
                 !checkMessage.length ? (
                     <ChatForm
                         set={sendMessageHandler}
@@ -233,7 +241,11 @@ const Chat = ({ chat, setChat }) => {
                         checkMessage={checkMessage}
                         setCheckMessage={setCheckMessage}
                     />
-                ))}
+                ))
+                :
+                <UnpinBtn unpin={unpinHandler}/>
+              
+              }
                 {/* menu */}
                 <MessageMenu
                     pageX={pageX}
