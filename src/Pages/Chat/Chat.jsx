@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import ChatHeader from '../../Components/ChatHeader/ChatHeader'
 import Message from '../../Components/Message/Message'
 import ChatForm from '../../Components/ChatForm/ChatForm'
@@ -20,13 +20,18 @@ const Chat = ({ chat, setChat }) => {
     const [editContent, setEditContent] = useState('')
     const [pinMessage, setPinMessage] = useState([])
     const [showPin, setShowPin] = useState(false)
+    const [showReply, setShowReply] = useState(false)
+    const [replyMessage, setReplyMessage] = useState(null)
+const [style,setStyle]=useState("")
+const [hoverId,setHoverId]=useState("")
 
     const match = useParams()
+    const chatRef=useRef()
 
     useEffect(() => {
         filterChat(match.id)
         displayCheckBoxHandler(checkMessage)
-    }, [match, chat, message, checkMessage, editContent])
+    }, [match, chat, message, checkMessage, editContent,chatRef])
 
     const filterChat = (id) => {
         let findChat = chat.find((item) => item.id == id)
@@ -34,7 +39,7 @@ const Chat = ({ chat, setChat }) => {
         setMessage(findChat)
     }
 
-    const sendMessageHandler = (txt) => {
+    const sendMessageHandler = (txt, replyMessage = null) => {
         const message = {
             messageId: crypto.randomUUID(),
             messageDis: txt,
@@ -46,6 +51,7 @@ const Chat = ({ chat, setChat }) => {
             check: false,
             edited: false,
             pin: false,
+            replyData: replyMessage,
         }
         const newChat = [...chat]
 
@@ -160,32 +166,53 @@ const Chat = ({ chat, setChat }) => {
             setPinMessage(filterPin)
         }
     }
-    const unpinHandler=()=>{
-      const newPinMessage=[...pinMessage]
-      newPinMessage.forEach((item)=>item.pin=false)
-      
-      setPinMessage([])
-      setShowPin(false)
+    const unpinHandler = () => {
+        const newPinMessage = [...pinMessage]
+        newPinMessage.forEach((item) => (item.pin = false))
+
+        setPinMessage([])
+        setShowPin(false)
     }
+
+    const replyMessageHandler = (id) => {
+        const newMessage = [...message?.messages]
+
+        const findReplyMessage = newMessage.find((item) => item.messageId === id)
+        const user="Abolfazl"
+        setReplyMessage({...findReplyMessage,user})
+    
+        setShowReply(true)
+    }
+
     return (
         <div
             className="bg-[url('../../../src/assets/images/bg-pattern.svg')] h-screen relative overflow-hidden"
             onContextMenu={(e) => e.preventDefault()}
         >
-            <ChatHeader info={message} showPin={showPin} setShowPin={setShowPin} pinMessage={pinMessage} />
+            <ChatHeader
+                info={message}
+                showPin={showPin}
+                setShowPin={setShowPin}
+                pinMessage={pinMessage}
+            />
 
-            <main className="flex flex-col justify-between h-screen  overflow-hidden mb-5 relative">
-                {!showPin&&pinMessage.length ? (
-                    <PinBox pins={pinMessage} setPin={setPinMessage} setShowPin={setShowPin}/>
-                ) :null}
+            <main className="flex flex-col justify-between h-screen  overflow-hidden mb-5 relative " ref={chatRef}>
+                {!showPin && pinMessage.length ? (
+                    <PinBox
+                        pins={pinMessage}
+                        setPin={setPinMessage}
+                        setShowPin={setShowPin}
+                    />
+                ) : null}
 
                 {/* simple message */}
                 <section
-                    className={`h-[90%]  overflow-y-auto  flex flex-col  mt-1 mb-1.5 transition-all duration-200 ease-linear ${
+                    className={`h-[90%]  overflow-y-auto  flex flex-col  mt-1 mb-1.5 transition-all duration-200 ease-linear  ${
                         showPin
                             ? '-translate-x-full hidden'
                             : 'translate-x-0 flex'
                     }`}
+               
                 >
                     {message?.messages?.messageDis !== '' &&
                         message?.messages?.map((item, i) => (
@@ -199,6 +226,8 @@ const Chat = ({ chat, setChat }) => {
                                 onCheck={checkMessageHandler}
                                 checkArr={checkMessage}
                                 showCheck={showCheckBox}
+                            
+
                             />
                         ))}
                 </section>
@@ -209,6 +238,7 @@ const Chat = ({ chat, setChat }) => {
                             ? 'translate-x-0 flex'
                             : 'translate-x-full hidden'
                     }`}
+                   
                 >
                     {pinMessage &&
                         pinMessage.map((item, i) => (
@@ -222,30 +252,32 @@ const Chat = ({ chat, setChat }) => {
                                 onCheck={checkMessageHandler}
                                 checkArr={checkMessage}
                                 showCheck={showCheckBox}
+                              
                             />
                         ))}
                 </section>
 
                 {/* FORM */}
-                {
-                !showPin?(
-                !checkMessage.length ? (
-                    <ChatForm
-                        set={sendMessageHandler}
-                        edit={editContent}
-                        setEdit={setEditContent}
-                        onEdit={editHandler}
-                    />
+                {!showPin ? (
+                    !checkMessage.length ? (
+                        <ChatForm
+                            set={sendMessageHandler}
+                            edit={editContent}
+                            setEdit={setEditContent}
+                            onEdit={editHandler}
+                            reply={showReply}
+                            setShowReply={setShowReply}
+                            replyMessage={replyMessage}
+                        />
+                    ) : (
+                        <CheckMessageBox
+                            checkMessage={checkMessage}
+                            setCheckMessage={setCheckMessage}
+                        />
+                    )
                 ) : (
-                    <CheckMessageBox
-                        checkMessage={checkMessage}
-                        setCheckMessage={setCheckMessage}
-                    />
-                ))
-                :
-                <UnpinBtn unpin={unpinHandler}/>
-              
-              }
+                    <UnpinBtn unpin={unpinHandler} />
+                )}
                 {/* menu */}
                 <MessageMenu
                     pageX={pageX}
@@ -257,6 +289,7 @@ const Chat = ({ chat, setChat }) => {
                     onSelect={checkMessageHandler}
                     onEdit={selectEditTextMessageHandler}
                     onPin={pinMessageHandler}
+                    onReply={replyMessageHandler}
                 />
                 <Uploader />
             </main>
