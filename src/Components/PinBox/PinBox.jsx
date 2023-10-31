@@ -24,7 +24,7 @@ const PinBox = ({ pins, setPin,setShowPin }) => {
                 <div className="h-full flex flex-col gap-[3px] mr-2">
                     {pins.map((pin, i) => (
                         <div
-                            key={pin.messageId}
+                            key={pin?.messageId}
                             className={`w-[2.1px] ${
                                 i === indexPin
                                     ? 'bg-indigo-600'
@@ -42,14 +42,14 @@ const PinBox = ({ pins, setPin,setShowPin }) => {
                                 <li key={pin.messageId}>
                                     <PinMessage
                                         title={
-                                            typeof pin.messageDis !== 'string'
-                                                ? pin.messageDis[0].type
-                                                : pin.messageDis
+                                            typeof pin?.messageDis !== 'string'
+                                                ? pin?.messageDis[0]?.type
+                                                : pin?.messageDis
                                         }
                                         show={indexPin}
                                         index={i}
                                         arr={arr}
-                                        id={pin.messageId}
+                                        id={pin?.messageId}
                                     />
                                 </li>
                      )

@@ -22,16 +22,16 @@ const Chat = ({ chat, setChat }) => {
     const [showPin, setShowPin] = useState(false)
     const [showReply, setShowReply] = useState(false)
     const [replyMessage, setReplyMessage] = useState(null)
-const [style,setStyle]=useState("")
-const [hoverId,setHoverId]=useState("")
+    const [style, setStyle] = useState('')
+    const [hoverId, setHoverId] = useState('')
 
     const match = useParams()
-    const chatRef=useRef()
+    const chatRef = useRef()
 
     useEffect(() => {
         filterChat(match.id)
         displayCheckBoxHandler(checkMessage)
-    }, [match, chat, message, checkMessage, editContent,chatRef])
+    }, [match, chat, message, checkMessage, editContent, chatRef])
 
     const filterChat = (id) => {
         let findChat = chat.find((item) => item.id == id)
@@ -67,6 +67,11 @@ const [hoverId,setHoverId]=useState("")
 
         const findedChat = newChat.find((item) => item.id == match?.id)
         const newMessge = findedChat?.messages
+        newMessge[0].pin = false
+
+        const filterPin = pinMessage.filter((item) => item.pin)
+
+        setPinMessage(filterPin)
         const findMessage = newMessge?.map((item) => item?.messageDis)
 
         let index = null
@@ -177,10 +182,12 @@ const [hoverId,setHoverId]=useState("")
     const replyMessageHandler = (id) => {
         const newMessage = [...message?.messages]
 
-        const findReplyMessage = newMessage.find((item) => item.messageId === id)
-        const user="Abolfazl"
-        setReplyMessage({...findReplyMessage,user})
-    
+        const findReplyMessage = newMessage.find(
+            (item) => item.messageId === id
+        )
+        const user = 'Abolfazl'
+        setReplyMessage({ ...findReplyMessage, user })
+
         setShowReply(true)
     }
 
@@ -196,7 +203,10 @@ const [hoverId,setHoverId]=useState("")
                 pinMessage={pinMessage}
             />
 
-            <main className="flex flex-col justify-between h-screen  overflow-hidden mb-5 relative " ref={chatRef}>
+            <main
+                className="flex flex-col justify-between h-screen  overflow-hidden mb-5 relative "
+                ref={chatRef}
+            >
                 {!showPin && pinMessage.length ? (
                     <PinBox
                         pins={pinMessage}
@@ -212,7 +222,6 @@ const [hoverId,setHoverId]=useState("")
                             ? '-translate-x-full hidden'
                             : 'translate-x-0 flex'
                     }`}
-               
                 >
                     {message?.messages?.messageDis !== '' &&
                         message?.messages?.map((item, i) => (
@@ -226,8 +235,6 @@ const [hoverId,setHoverId]=useState("")
                                 onCheck={checkMessageHandler}
                                 checkArr={checkMessage}
                                 showCheck={showCheckBox}
-                            
-
                             />
                         ))}
                 </section>
@@ -238,7 +245,6 @@ const [hoverId,setHoverId]=useState("")
                             ? 'translate-x-0 flex'
                             : 'translate-x-full hidden'
                     }`}
-                   
                 >
                     {pinMessage &&
                         pinMessage.map((item, i) => (
@@ -252,7 +258,6 @@ const [hoverId,setHoverId]=useState("")
                                 onCheck={checkMessageHandler}
                                 checkArr={checkMessage}
                                 showCheck={showCheckBox}
-                              
                             />
                         ))}
                 </section>
