@@ -19,6 +19,7 @@ const ChatForm = ({
     reply,
     replyMessage,
     setShowReply,
+    setReply
 }) => {
     const [text, setText] = useState('')
     const [emoji, setEmoji] = useState([])
@@ -52,6 +53,7 @@ const ChatForm = ({
               if(replyMessage){
                 set(text.innerHTML,replyMessage)
                 setShowReply(false)
+                setReply(null)
               }
               else{
                 set(text.innerHTML)
@@ -105,6 +107,7 @@ const ChatForm = ({
                             reply={reply}
                             setShowReply={setShowReply}
                             replyMessage={replyMessage}
+                         
                             input={inputRef}
                         />
                         <div className="form-box ">

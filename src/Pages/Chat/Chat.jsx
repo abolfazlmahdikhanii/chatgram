@@ -268,6 +268,7 @@ const [hoverId,setHoverId]=useState("")
                             reply={showReply}
                             setShowReply={setShowReply}
                             replyMessage={replyMessage}
+                            setReply={setReplyMessage}
                         />
                     ) : (
                         <CheckMessageBox
