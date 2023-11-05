@@ -8,6 +8,7 @@ import MessageMenu from '../../Components/UI/MessageMenu/MessageMenu'
 import CheckMessageBox from '../../Components/CheckMessageBox/CheckMessageBox'
 import PinBox from '../../Components/PinBox/PinBox'
 import UnpinBtn from '../../Components/UnpinBtn/UnpinBtn'
+import Modal from '../../Components/UI/Modal/Modal'
 
 const Chat = ({ chat, setChat }) => {
     const [message, setMessage] = useState()
@@ -22,8 +23,8 @@ const Chat = ({ chat, setChat }) => {
     const [showPin, setShowPin] = useState(false)
     const [showReply, setShowReply] = useState(false)
     const [replyMessage, setReplyMessage] = useState(null)
-    const [style, setStyle] = useState('')
-    const [hoverId, setHoverId] = useState('')
+    const [showFrowardModal,setShowForwardModal]=useState(false)
+    
 
     const match = useParams()
     const chatRef = useRef()
@@ -31,7 +32,7 @@ const Chat = ({ chat, setChat }) => {
     useEffect(() => {
         filterChat(match.id)
         displayCheckBoxHandler(checkMessage)
-    }, [match, chat, message, checkMessage, editContent, chatRef])
+    }, [match, chat, message, checkMessage, editContent, chatRef,pinMessage])
 
     const filterChat = (id) => {
         let findChat = chat.find((item) => item.id == id)
@@ -191,6 +192,10 @@ const Chat = ({ chat, setChat }) => {
         setShowReply(true)
     }
 
+    const ForwardHandler=()=>{
+        setShowContextMenu(false)
+        setShowForwardModal(true)
+    }
     return (
         <div
             className="bg-[url('../../../src/assets/images/bg-pattern.svg')] h-screen relative overflow-hidden"
@@ -296,8 +301,11 @@ const Chat = ({ chat, setChat }) => {
                     onEdit={selectEditTextMessageHandler}
                     onPin={pinMessageHandler}
                     onReply={replyMessageHandler}
+                    onForward={ForwardHandler}
                 />
                 <Uploader />
+
+                <Modal show={showFrowardModal} chat={chat}/>
             </main>
         </div>
     )
