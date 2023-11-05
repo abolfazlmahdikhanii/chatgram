@@ -11,7 +11,20 @@ const Layout = () => {
   const [chats, setChats] = useState([
     {
       id: 1,
+      userName: "Save",
+      
+      relation:"me",
+      profileImg:
+        "",
+      messages: [
+
+      ],
+    },
+    {
+      id: 2,
       userName: "Abolfazl",
+      activeStatus:'last seen recently',
+      relation:"friend",
       profileImg:
         "https://imgv3.fotor.com/images/gallery/Realistic-Male-Profile-Picture.jpg",
       messages: [
@@ -19,8 +32,10 @@ const Layout = () => {
       ],
     },
     {
-      id: 2,
-      userName: "lorem23",
+      id: 3,
+      userName: "Elizabeth",
+      activeStatus:'last seen recently',
+      relation:"friend",
       profileImg: "https://images.nightcafe.studio/jobs/X0DIQhUI5yfPMmykyDSi/X0DIQhUI5yfPMmykyDSi--4--a0vw0.jpg?tr=w-1600,c-at_max",
       messages: [
       
