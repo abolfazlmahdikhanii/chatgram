@@ -10,6 +10,8 @@ import BtnUploader from '../BtnUploader/BtnUploader'
 import ContentWrapper from '../ContentWrapper/ContentWrapper'
 import SelectBox from '../UI/SelectBox/SelectBox'
 import AudioRecorders from '../AudioRecorder/AudioRecorder'
+import TypeMessage from '../TypeMessage/TypeMessage'
+import messageType from '../../Utility/MessageType'
 
 const ChatForm = ({
     set,
@@ -19,7 +21,7 @@ const ChatForm = ({
     reply,
     replyMessage,
     setShowReply,
-    setReply
+    setReply,
 }) => {
     const [text, setText] = useState('')
     const [emoji, setEmoji] = useState([])
@@ -49,17 +51,14 @@ const ChatForm = ({
         e.preventDefault()
         if (inputRef.current) {
             if (inputRef.current.innerHTML !== '') {
+                if (replyMessage) {
+                    set(text.innerHTML, replyMessage)
+                    setShowReply(false)
+                    setReply(null)
+                } else {
+                    set(text.innerHTML)
+                }
 
-              if(replyMessage){
-                set(text.innerHTML,replyMessage)
-                setShowReply(false)
-                setReply(null)
-              }
-              else{
-                set(text.innerHTML)
-
-              }
-                
                 inputRef.current.innerHTML = ''
             }
         }
@@ -107,7 +106,6 @@ const ChatForm = ({
                             reply={reply}
                             setShowReply={setShowReply}
                             replyMessage={replyMessage}
-                         
                             input={inputRef}
                         />
                         <div className="form-box ">
@@ -258,10 +256,9 @@ const EditBox = ({ edit, setEdit, input }) => {
                     <p className="text-[15px] text-indigo-400 font-medium">
                         Editing
                     </p>
-                    <p
-                        className="text-[14px] truncate w-[80%]"
-                        dangerouslySetInnerHTML={{ __html: edit }}
-                    ></p>
+                    <p className="text-[14px] truncate w-[80%]">
+                        <TypeMessage dis={edit} />
+                    </p>
                 </div>
             </div>
             <button
@@ -277,8 +274,8 @@ const EditBox = ({ edit, setEdit, input }) => {
         </div>
     )
 }
+
 const ReplyBox = ({ reply, setShowReply, replyMessage, input }) => {
-  
     return (
         <div
             className={`form-box rounded-b-none  transition-all duration-300 absolute top-0 ${
@@ -292,16 +289,30 @@ const ReplyBox = ({ reply, setShowReply, replyMessage, input }) => {
                 <p className="px-1">
                     <MdOutlineEdit size={26} color="rgb(129 140 248)" />
                 </p>
-                <div className="flex flex-col gap-0.5 border-l-2 border-l-indigo-700 px-4 ml-5 w-[470px]">
-                    <p className="text-[15px] text-indigo-400 font-medium">
-                        {replyMessage?.user}
-                    </p>
-                    <p
-                        className="text-[14px] truncate w-[80%]"
-                        dangerouslySetInnerHTML={{
-                            __html: replyMessage?.messageDis,
-                        }}
-                    ></p>
+                <div className="flex gap-0.5 ml-5 ">
+                    <p className="w-[2px] bg-indigo-700 mr-1"></p>
+        
+                        {replyMessage?.messageDis &&
+                          replyMessage?.messageDis[0]?.type === 'img' ||replyMessage?.messageDis[0]?.type ==='video'?
+                                <TypeMessage
+                                    dis={replyMessage?.messageDis}
+                                    w={'w-9 ml-2 aspect-square'}
+                                />:null
+                            }
+                    
+
+                    <div className="flex flex-col  gap-0.5  px-4 w-[95%]">
+                        <p className="text-[15px] text-indigo-400 font-medium">
+                            {replyMessage?.user}
+                        </p>
+                        <p className="text-[14px] truncate ">
+                            {replyMessage?.messageDis && replyMessage?.messageDis[0]?.type !== 'img' &&replyMessage?.messageDis[0]?.type !=='video' ? (
+                                <TypeMessage dis={replyMessage?.messageDis} />
+                            ) : (
+                                messageType(replyMessage?.messageDis[0]?.type,replyMessage?.messageDis[0]?.name)
+                            )}
+                        </p>
+                    </div>
                 </div>
             </div>
             <button
@@ -317,3 +328,4 @@ const ReplyBox = ({ reply, setShowReply, replyMessage, input }) => {
         </div>
     )
 }
+
