@@ -6,7 +6,7 @@ import { MdDeleteOutline } from "react-icons/md";
 import { TbSquareRoundedCheck } from "react-icons/tb";
 import ReactionEmoji from "../ReactionEmoji/ReactionEmoji";
 
-const MessageMenu = ({ show, setClose, pageX, pageY,onRemove,messageID,onSelect,onEdit,onPin,onReply }) => {
+const MessageMenu = ({ show, setClose, pageX, pageY,onRemove,messageID,onSelect,onEdit,onPin,onReply,onForward }) => {
   const [emoji, setEmoji] = useState([
     {
       id: crypto.randomUUID(),
@@ -116,7 +116,8 @@ const MessageMenu = ({ show, setClose, pageX, pageY,onRemove,messageID,onSelect,
     </svg>
       ,
       title: "Forward",
-      styleTitle:'ml-1'
+      styleTitle:'ml-1',
+      event:()=>onForward()
     },
 
     {
