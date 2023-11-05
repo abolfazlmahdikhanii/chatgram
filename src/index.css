@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Roboto-1';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Mu72xKOzY.woff2) format('woff2');
+ 
+}
+
 
 @layer base {
   ::-webkit-scrollbar {
@@ -23,12 +33,12 @@
     @apply bg-gray-950 scroll-smooth;
   }
 
-  .message-item {
+  .message-item,.user-profile {
     @apply flex  p-2.5 w-full gap-5 transition-all duration-300 hover:bg-indigo-200/20 rounded-lg cursor-pointer;
   }
 
   .chat__input {
-    @apply appearance-none px-3 py-2 placeholder:text-xs w-full text-gray-50 bg-transparent focus-visible:outline-none break-all transition-all duration-300 ;
+    @apply appearance-none px-3 py-2 placeholder:text-xs w-full text-gray-50 bg-transparent focus-visible:outline-0 break-all transition-all duration-300 ;
   }
 
   .message {
