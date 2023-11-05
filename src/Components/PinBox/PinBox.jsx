@@ -3,7 +3,7 @@ import PinMessage from './PinMessage'
 
 import { AiOutlineClose } from 'react-icons/ai'
 
-const PinBox = ({ pins, setPin,setShowPin }) => {
+const PinBox = ({ pins, setPin, setShowPin }) => {
     const [indexPin, setIndexPin] = useState(0)
 
     const [currentPage, setCurrentPage] = useState(1)
@@ -17,7 +17,7 @@ const PinBox = ({ pins, setPin,setShowPin }) => {
         setIndexPin(pageNumber)
     }
     return (
-        <div className="py-2 px-4 bg-base-200  flex items-center  justify-between sticky top-0  ">
+        <div className="py-2 px-4 bg-base-200  flex items-center  justify-between sticky top-0 ">
             <div className="flex items-center gap-2 h-full">
                 {/* dot */}
 
@@ -41,24 +41,23 @@ const PinBox = ({ pins, setPin,setShowPin }) => {
                             indexPin === i && (
                                 <li key={pin.messageId}>
                                     <PinMessage
-                                        title={
-                                            typeof pin?.messageDis !== 'string'
-                                                ? pin?.messageDis[0]?.type
-                                                : pin?.messageDis
-                                        }
+                                        title={pin?.messageDis}
                                         show={indexPin}
                                         index={i}
                                         arr={arr}
                                         id={pin?.messageId}
                                     />
                                 </li>
-                     )
+                            )
                     )}
                 </ul>
             </div>
             <div>
                 {pins.length > 1 ? (
-                    <button className="grid place-items-center " onClick={()=>setShowPin(true)}>
+                    <button
+                        className="grid place-items-center "
+                        onClick={() => setShowPin(true)}
+                    >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             width={27}
