@@ -14,7 +14,7 @@ console.log(id)
     file = (
       <li className="w-full h-full overflow-hidden  rounded-xl flex-auto relative">
             <Progress size={progress} onRemove={()=>onRemove(id)}/>
-        <video className="w-full h-full object-cover" autoPlay loop disablePictureInPicture playsInline>
+        <video className="w-full h-full object-cover" autoPlay loop disablePictureInPicture playsInline muted>
           <source src={src} />
         </video>
       </li>
