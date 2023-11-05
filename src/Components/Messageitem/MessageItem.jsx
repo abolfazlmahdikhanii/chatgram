@@ -28,7 +28,7 @@ const MessageItem = ({ id, userName, profileImg, messages }) => {
 
   return (
     <Link to={`/chat/${id}`} className="message-item ">
-      <Profile size="m" path={profileImg} />
+      <Profile size="m" path={profileImg} userName={userName} />
 
       <div className="w-full flex-col gap-2 flex">
         {/* top */}

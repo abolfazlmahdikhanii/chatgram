@@ -4,7 +4,8 @@ import FileType from '../FileType/FileType'
 import FooterMessage from '../FooterMessage/FooterMessage'
 import { useLocation } from 'react-router-dom'
 import { HashLink } from 'react-router-hash-link'
-
+import TypeMessage from '../TypeMessage/TypeMessage'
+import messageType from '../../Utility/MessageType'
 const Message = ({
     from,
     messageDis,
@@ -49,7 +50,6 @@ const Message = ({
     const checkHandler = (id, check) => {
         onCheck(id, check)
     }
- 
 
     let arr = checkArr.findIndex((item) => item.messageId === messageId)
     return (
@@ -78,20 +78,35 @@ const Message = ({
 
                 {replyData && (
                     <HashLink
-                    to={`#${replyData.messageId}`}
-                    scroll={(el) => el.scrollIntoView({ behavior: 'smooth', block: 'end' }) }
-                    className="  mx-0 py-1 px-2 mb-2 w-32 rounded-lg flex gap-2.5 cursor-pointer transition-all duration-200  hover:bg-gray-600/30"
-                      
+                        to={`#${replyData.messageId}`}
+                        scroll={(el) =>
+                            el.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'end',
+                            })
+                        }
+                        className="  mx-0 py-1 px-2 mb-2 w-32 rounded-lg flex gap-2.5 cursor-pointer transition-all duration-200  hover:bg-gray-600/30"
                     >
                         <p className="w-[2px] bg-gray-300 rounded-full "></p>
-                        <div className="flex flex-col gap-0.5">
-                            <p className="text-[14px] truncate text-white font-medium">
-                                {replyData.user}
-                            </p>
-                            <p className="text-[14px] truncate text-gray-100 font-normal">
-                                {replyData.messageDis}
-                            </p>
-                        </div>
+                     
+                    { replyData.messageDis[0]?.type === 'img' || replyData.messageDis[0]?.type === 'video' ? (
+                            <TypeMessage dis={replyData.messageDis} w={'w-9 aspect-square'} />
+                        ):null}
+              
+                <div className="flex flex-col gap-0.5 ">
+                    <p className="font-semibold text-indigo-500 text-sm">
+                       Abolfazl
+                    </p>
+                    <p className="text-[14px] truncate ">
+                        {replyData.messageDis &&
+                        replyData.messageDis[0]?.type !== 'img' &&
+                        replyData.messageDis[0]?.type !== 'video' ? (
+                            <TypeMessage dis={replyData.messageDis} />
+                        ) : (
+                            messageType(replyData.messageDis[0]?.type, replyData.messageDis[0]?.name)
+                        )}
+                    </p>
+                </div>
                     </HashLink>
                 )}
 
