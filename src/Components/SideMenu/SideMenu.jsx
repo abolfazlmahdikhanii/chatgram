@@ -38,7 +38,7 @@ const SideMenu = () => {
         {/* footer */}
         <div className="flex flex-col gap-y-4 items-center mt-3 mb-9">
           <ThemSwitch/>
-          <ProfileImage/>
+          <ProfileImage />
         </div>
       </section>
     </Box>
