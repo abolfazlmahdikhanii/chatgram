@@ -7,7 +7,8 @@ import NotifyNumber from "../UI/NotifyNumber/NotifyNumber";
 import { Link } from "react-router-dom";
 import MessageItemContent from "../MessageItemContent/MessageItemContent";
 
-const MessageItem = ({ id, userName, profileImg, messages }) => {
+const MessageItem = ({ id, userName, profileImg, messages ,bgProfile,relation}) => {
+
   const formatTime = (date) => {
     return new Intl.DateTimeFormat("tr", {
       hour: "2-digit",
@@ -28,7 +29,7 @@ const MessageItem = ({ id, userName, profileImg, messages }) => {
 
   return (
     <Link to={`/chat/${id}`} className="message-item ">
-      <Profile size="m" path={profileImg} userName={userName} />
+      <Profile size="m" path={profileImg} userName={userName} bgProfile={bgProfile} relation={relation}/>
 
       <div className="w-full flex-col gap-2 flex">
         {/* top */}
