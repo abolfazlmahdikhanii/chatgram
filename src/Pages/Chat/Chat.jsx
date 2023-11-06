@@ -23,8 +23,7 @@ const Chat = ({ chat, setChat }) => {
     const [showPin, setShowPin] = useState(false)
     const [showReply, setShowReply] = useState(false)
     const [replyMessage, setReplyMessage] = useState(null)
-    const [showFrowardModal,setShowForwardModal]=useState(false)
-    
+    const [showFrowardModal, setShowForwardModal] = useState(false)
 
     const match = useParams()
     const chatRef = useRef()
@@ -32,7 +31,7 @@ const Chat = ({ chat, setChat }) => {
     useEffect(() => {
         filterChat(match.id)
         displayCheckBoxHandler(checkMessage)
-    }, [match, chat, message, checkMessage, editContent, chatRef,pinMessage])
+    }, [match, chat, message, checkMessage, editContent, chatRef, pinMessage])
 
     const filterChat = (id) => {
         let findChat = chat.find((item) => item.id == id)
@@ -192,7 +191,7 @@ const Chat = ({ chat, setChat }) => {
         setShowReply(true)
     }
 
-    const ForwardHandler=()=>{
+    const ForwardHandler = () => {
         setShowContextMenu(false)
         setShowForwardModal(true)
     }
@@ -305,7 +304,14 @@ const Chat = ({ chat, setChat }) => {
                 />
                 <Uploader />
 
-                <Modal show={showFrowardModal} chat={chat}/>
+                <Modal
+                    show={showFrowardModal}
+                    chat={chat}
+                    messageID={messageID}
+                    setChat={setChat}
+                    userID={match?.id}
+                    setShow={setShowForwardModal}
+                />
             </main>
         </div>
     )
