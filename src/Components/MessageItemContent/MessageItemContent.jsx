@@ -11,8 +11,12 @@ const MessageItemContent = ({ message }) => {
     messageContent = <ImgContent img={newMessage} />;
   } else if (newMessage?.type === "video") {
     messageContent = <VideoContent video={newMessage} />;
-  } else {
-    messageContent = <FileContent file={newMessage} />;
+  } else if(newMessage?.type === "file") {
+    messageContent = <FileContent file={newMessage}  />;
+  }
+  else if(newMessage?.type === "mp3") {
+      if(newMessage?.name!=="")messageContent = <FileContent file={newMessage}  />;
+      else messageContent = <FileContent file={newMessage} title={"Audio"} />;
   }
 
   return (
@@ -54,13 +58,13 @@ const VideoContent = ({ video }) => {
     </>
   );
 };
-const FileContent = ({ file }) => {
+const FileContent = ({ file,title }) => {
   return (
     <>
       <p>
         <FcDocument />
       </p>
-      <p className="text-xs w-[100px] truncate">{file?.name}</p>
+      <p className="text-xs w-[100px] truncate">{file?.name?file?.name:title}</p>
     </>
   );
 };
