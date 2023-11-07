@@ -46,14 +46,14 @@ const AudioRecorders = ({ record = false, setRecord, setMessage }) => {
 
         setMediaRecorder(recorder);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => setRecord(false));
 
     return () => {
       if (audioStream) {
         audioStream.getTracks().forEach((track) => track.stop());
       }
     };
-  }, []);
+  }, [record]);
   useEffect(() => {
     startRecordingHandler();
   }, [record, mediaRecorder]);
