@@ -3,7 +3,7 @@ import { AiOutlineClose } from 'react-icons/ai'
 import Backdrop from '../Backdrop/Backdrop'
 
 import ForwardList from '../../ForwardList/ForwardList'
-const Modal = ({ show, chat, messageID, setChat, userID,setShow }) => {
+const Modal = ({ show, chat, messageID, setChat, userID,setShow,onForward }) => {
 
     return (
         <>
@@ -35,6 +35,7 @@ const Modal = ({ show, chat, messageID, setChat, userID,setShow }) => {
                             setChat={setChat}
                             userID={userID}
                             setShow={setShow}
+                            onForward={onForward}
                         />
                     </ul>
                 </div>
