@@ -286,30 +286,47 @@ const ReplyBox = ({ reply, setShowReply, replyMessage, input }) => {
         >
             {/* info */}
             <div className="flex items-center py-1">
-                <p className="px-1">
-                    <MdOutlineEdit size={26} color="rgb(129 140 248)" />
+                <p className="px-1 text-[rgb(129,140,248)]">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={19}
+                        height={19}
+                        fill="none"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            stroke="currentColor"
+                            d="M3.34 8.898L9.874 3.09a.38.38 0 01.625.284v3.312H11.5c5.088 0 9.5 2.917 9.5 7.186a8.551 8.551 0 01-4.703 7.084.367.367 0 01-.173.044h-.009a.388.388 0 01-.379-.379.373.373 0 01.158-.306 5.508 5.508 0 001.357-3.07c0-2.817-3.241-4.5-6.376-4.5-.09 0-.178 0-.265-.006h-.11v2.633a.38.38 0 01-.625.284l-6.751-6a.379.379 0 01-.092-.434c.022-.048.269-.288.308-.324z"
+                            strokeWidth={1.5}
+                        />
+                    </svg>
                 </p>
                 <div className="flex gap-0.5 ml-5 ">
                     <p className="w-[2px] bg-indigo-700 mr-1"></p>
-        
-                        {replyMessage?.messageDis &&
-                          replyMessage?.messageDis[0]?.type === 'img' ||replyMessage?.messageDis[0]?.type ==='video'?
-                                <TypeMessage
-                                    dis={replyMessage?.messageDis}
-                                    w={'w-9 ml-2 aspect-square'}
-                                />:null
-                            }
-                    
+
+                    {(replyMessage?.messageDis &&
+                        replyMessage?.messageDis[0]?.type === 'img') ||
+                    replyMessage?.messageDis[0]?.type === 'video' ? (
+                        <TypeMessage
+                            dis={replyMessage?.messageDis}
+                            w={'w-9 ml-2 aspect-square'}
+                        />
+                    ) : null}
 
                     <div className="flex flex-col  gap-0.5  px-4 w-[95%]">
                         <p className="text-[15px] text-indigo-400 font-medium">
                             {replyMessage?.user}
                         </p>
                         <p className="text-[14px] truncate ">
-                            {replyMessage?.messageDis && replyMessage?.messageDis[0]?.type !== 'img' &&replyMessage?.messageDis[0]?.type !=='video' ? (
+                            {replyMessage?.messageDis &&
+                            replyMessage?.messageDis[0]?.type !== 'img' &&
+                            replyMessage?.messageDis[0]?.type !== 'video' ? (
                                 <TypeMessage dis={replyMessage?.messageDis} />
                             ) : (
-                                messageType(replyMessage?.messageDis[0]?.type,replyMessage?.messageDis[0]?.name)
+                                messageType(
+                                    replyMessage?.messageDis[0]?.type,
+                                    replyMessage?.messageDis[0]?.name
+                                )
                             )}
                         </p>
                     </div>
@@ -328,4 +345,3 @@ const ReplyBox = ({ reply, setShowReply, replyMessage, input }) => {
         </div>
     )
 }
-
