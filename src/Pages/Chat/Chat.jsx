@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useId, useRef, useState } from 'react'
 import ChatHeader from '../../Components/ChatHeader/ChatHeader'
 import Message from '../../Components/Message/Message'
 import ChatForm from '../../Components/ChatForm/ChatForm'
@@ -9,6 +9,7 @@ import CheckMessageBox from '../../Components/CheckMessageBox/CheckMessageBox'
 import PinBox from '../../Components/PinBox/PinBox'
 import UnpinBtn from '../../Components/UnpinBtn/UnpinBtn'
 import Modal from '../../Components/UI/Modal/Modal'
+import ForwardMessage from '../../Components/ForwardMessage/ForwardMessage'
 
 const Chat = ({ chat, setChat }) => {
     const [message, setMessage] = useState()
@@ -24,14 +25,24 @@ const Chat = ({ chat, setChat }) => {
     const [showReply, setShowReply] = useState(false)
     const [replyMessage, setReplyMessage] = useState(null)
     const [showFrowardModal, setShowForwardModal] = useState(false)
-
+    const [userMessage,setUserMessage]=useState()
+    const [userForwardMessage,setUserForwardMessage]=useState(null)
     const match = useParams()
     const chatRef = useRef()
+    const forwards=[]
 
     useEffect(() => {
         filterChat(match.id)
         displayCheckBoxHandler(checkMessage)
+      
     }, [match, chat, message, checkMessage, editContent, chatRef, pinMessage])
+
+    useEffect(()=>{
+ const findUserMessage = chat?.find((user) => user.id == match.id)
+        setUserMessage(findUserMessage)
+    console.log(userMessage)
+   
+    },[match,chat,message,showFrowardModal,userMessage])
 
     const filterChat = (id) => {
         let findChat = chat.find((item) => item.id == id)
@@ -44,6 +55,7 @@ const Chat = ({ chat, setChat }) => {
             messageId: crypto.randomUUID(),
             messageDis: txt,
             from: 'client',
+
             to: 'ab',
             date: new Date(),
             read: false,
@@ -59,6 +71,7 @@ const Chat = ({ chat, setChat }) => {
         findedChat.messages.push(message)
 
         setChat(newChat)
+    
     }
     // remove message type===file
     const removeMessageFile = (id) => {
@@ -195,6 +208,28 @@ const Chat = ({ chat, setChat }) => {
         setShowContextMenu(false)
         setShowForwardModal(true)
     }
+    const forwardClickHandler = (userId) => {
+        const newChat = [...chat]
+     
+        // find user for forward message
+        const findUserForward = newChat?.find((user) => user.id ===userId)
+
+        const findChat = userMessage?.messages.find(
+            (item) => item?.messageId === messageID
+        )
+
+
+        // forwards.push(userMessage)
+        // setUserForwardMessage(forwards)
+        // findUserForward.forward=userForwardMessage
+        const {activeStatus,date,id,bgProfile,profileImg,relation,userName}=userMessage
+        findUserForward.messages.push({...findChat,forward:{activeStatus,date,id,bgProfile,profileImg,relation,userName}})
+        
+
+        setChat(newChat)
+        setShowForwardModal(false)
+        
+    }
     return (
         <div
             className="bg-[url('../../../src/assets/images/bg-pattern.svg')] h-screen relative overflow-hidden"
@@ -221,17 +256,18 @@ const Chat = ({ chat, setChat }) => {
 
                 {/* simple message */}
                 <section
-                    className={`h-[90%]  overflow-y-auto  flex flex-col  mt-1 mb-1.5 transition-all duration-200 ease-linear  ${
+                    className={`h-[90%]  overflow-y-auto  flex flex-col  mt-1 mb-1.5 transition-all duration-200 ease-linear w-full ${
                         showPin
                             ? '-translate-x-full hidden'
                             : 'translate-x-0 flex'
                     }`}
                 >
-                    {message?.messages?.messageDis !== '' &&
+                    {message?.messages?.messageDis !== '' && 
                         message?.messages?.map((item, i) => (
                             <Message
                                 key={item.messageId}
                                 from={item.from}
+                                forward={item?.forward}
                                 {...item}
                                 remove={removeMessageFile}
                                 setCheckMessage={setCheckMessage}
@@ -241,10 +277,24 @@ const Chat = ({ chat, setChat }) => {
                                 showCheck={showCheckBox}
                             />
                         ))}
+                    {/* {message?.forward &&
+                        message?.forward.map((message) => (
+                            <ForwardMessage
+                                id={message.id}
+                                key={message.id}
+                                {...message}
+                                removeMessageFile={removeMessageFile}
+                                setCheckMessage={setCheckMessage}
+                                contextmenuHandler={contextmenuHandler}
+                                checkMessageHandler={checkMessageHandler}
+                                checkMessage={checkMessage}
+                                showCheckBox={showCheckBox}
+                            />
+                        ))} */}
                 </section>
                 {/* pin message */}
                 <section
-                    className={`h-[90%]  overflow-y-auto  flex flex-col  mt-1 mb-1.5 transition-all duration-200 ease-linear ${
+                    className={`h-[90%]  overflow-y-auto  flex flex-col  mt-1 mb-1.5 transition-all duration-200 ease-linear w-full${
                         showPin
                             ? 'translate-x-0 flex'
                             : 'translate-x-full hidden'
@@ -307,6 +357,7 @@ const Chat = ({ chat, setChat }) => {
                 <Modal
                     show={showFrowardModal}
                     chat={chat}
+                    onForward={forwardClickHandler}
                     messageID={messageID}
                     setChat={setChat}
                     userID={match?.id}
