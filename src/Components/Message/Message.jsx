@@ -4,9 +4,11 @@ import FileType from '../FileType/FileType'
 import FooterMessage from '../FooterMessage/FooterMessage'
 import { useLocation } from 'react-router-dom'
 import { HashLink } from 'react-router-hash-link'
+import {BsArrowRightShort} from "react-icons/bs"
 import TypeMessage from '../TypeMessage/TypeMessage'
 import messageType from '../../Utility/MessageType'
 const Message = ({
+    id,
     from,
     messageDis,
     date,
@@ -25,6 +27,7 @@ const Message = ({
     replyData,
     hoverMessage,
     hoverId,
+    forward,
 }) => {
     const location = useLocation()
     const hashId = location.hash.substring(1)
@@ -38,7 +41,7 @@ const Message = ({
                 setStyle('')
             }, 800)
         }
-    }, [location])
+    }, [location, forward])
 
     const formatTime = (date) => {
         return new Intl.DateTimeFormat('tr', {
@@ -54,8 +57,8 @@ const Message = ({
     let arr = checkArr.findIndex((item) => item.messageId === messageId)
     return (
         <div
-            className={`chat relative flex justify-between px-6 py-3 items-end ${
-                from === 'user' ? 'chat-end' : 'chat-start'
+            className={`flex w-full relative  justify-between px-6 py-3 ${
+                from === 'client'&&!forward ? 'chat-end ' : 'chat-start'
             } 
       ${
           checkArr[arr]?.check ? 'bg-indigo-300/10' : ''
@@ -65,8 +68,10 @@ const Message = ({
             {/* messageBody */}
             <div
                 data-id={messageId}
-                className={`chat-bubble break-words px-2.5 ${
-                    from === 'user' ? 'chat-bubble-primary' : 'chat-bubble'
+                className={`chat-bubble relative justify-self-end break-words px-2.5 group ${
+                    from === 'client'&&!forward
+                        ? 'chat-bubble-primary order-1 justify-self-end'
+                        : 'chat-bubble order-0'
                 }  ${
                     messageDis[0]?.type === 'file' ||
                     typeof messageDis === 'string'
@@ -74,6 +79,15 @@ const Message = ({
                         : 'max-w-[420px] px-1.5 py-1.5'
                 } `}
             >
+                {forward && (
+                    <HashLink to={`/chat/${forward.id}/#${messageId}`}>
+                        <span className={`text-sm text-indigo-400 `}>{from}</span>
+
+                        <button className="absolute bottom-2 -right-11 btn btn-circle btn-sm text-white bg-opacity-70 -translate-x-5 opacity-0 group-hover:opacity-100 group-hover:translate-x-0">
+                        <BsArrowRightShort size={24}/>
+                        </button>
+                    </HashLink>
+                )}
                 {/* box for reply Message */}
 
                 {replyData && (
@@ -82,31 +96,38 @@ const Message = ({
                         scroll={(el) =>
                             el.scrollIntoView({
                                 behavior: 'smooth',
-                                block: 'end',
+                                // block: 'end',
                             })
                         }
                         className="  mx-0 py-1 px-2 mb-2 w-32 rounded-lg flex gap-2.5 cursor-pointer transition-all duration-200  hover:bg-gray-600/30"
                     >
                         <p className="w-[2px] bg-gray-300 rounded-full "></p>
-                     
-                    { replyData.messageDis[0]?.type === 'img' || replyData.messageDis[0]?.type === 'video' ? (
-                            <TypeMessage dis={replyData.messageDis} w={'w-9 aspect-square'} />
-                        ):null}
-              
-                <div className="flex flex-col gap-0.5 ">
-                    <p className="font-semibold text-indigo-500 text-sm">
-                       Abolfazl
-                    </p>
-                    <p className="text-[14px] truncate ">
-                        {replyData.messageDis &&
-                        replyData.messageDis[0]?.type !== 'img' &&
-                        replyData.messageDis[0]?.type !== 'video' ? (
-                            <TypeMessage dis={replyData.messageDis} />
-                        ) : (
-                            messageType(replyData.messageDis[0]?.type, replyData.messageDis[0]?.name)
-                        )}
-                    </p>
-                </div>
+
+                        {replyData.messageDis[0]?.type === 'img' ||
+                        replyData.messageDis[0]?.type === 'video' ? (
+                            <TypeMessage
+                                dis={replyData.messageDis}
+                                w={'w-9 aspect-square'}
+                            />
+                        ) : null}
+
+                        <div className="flex flex-col gap-0.5 ">
+                            <p className="font-semibold text-indigo-500 text-sm">
+                                Abolfazl
+                            </p>
+                            <p className="text-[14px] truncate ">
+                                {replyData.messageDis &&
+                                replyData.messageDis[0]?.type !== 'img' &&
+                                replyData.messageDis[0]?.type !== 'video' ? (
+                                    <TypeMessage dis={replyData.messageDis} />
+                                ) : (
+                                    messageType(
+                                        replyData.messageDis[0]?.type,
+                                        replyData.messageDis[0]?.name
+                                    )
+                                )}
+                            </p>
+                        </div>
                     </HashLink>
                 )}
 
@@ -143,16 +164,16 @@ const Message = ({
                 />
             </div>
 
-            {showCheck && (
-                <input
-                    type="checkbox"
-                    className={`checkbox checkbox-primary mr-16 `}
-                    checked={checkArr[arr]?.check}
-                    onChange={(e) =>
-                        checkHandler(messageId, e.target.checked ? false : true)
-                    }
-                />
-            )}
+            <input
+                type="checkbox"
+                className={`checkbox checkbox-primary ${
+                    showCheck ? 'opacity-100' : 'opacity-0'
+                } ${from === 'client'&&!forward ? 'order-0 mr-16' : 'order-1 ml-16'}`}
+                checked={checkArr[arr]?.check}
+                onChange={(e) =>
+                    checkHandler(messageId, e.target.checked ? false : true)
+                }
+            />
         </div>
     )
 }
