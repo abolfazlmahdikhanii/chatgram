@@ -143,7 +143,7 @@ const ChatForm = ({
                                 </button>
 
                                 <div
-                                    className="chat__input overflow-hidden  z-10"
+                                    className="chat__input overflow-hidden  z-10" dir='auto'
                                     ref={inputRef}
                                     onInput={(e) =>
                                         setContent(inputRef.current.innerHTML)
@@ -256,7 +256,7 @@ const EditBox = ({ edit, setEdit, input }) => {
                     <p className="text-[15px] text-indigo-400 font-medium">
                         Editing
                     </p>
-                    <p className="text-[14px] truncate w-[80%]">
+                    <p className="text-[14px] truncate w-[80%]" dir='auto'>
                         <TypeMessage dis={edit} />
                     </p>
                 </div>
@@ -314,10 +314,10 @@ const ReplyBox = ({ reply, setShowReply, replyMessage, input }) => {
                     ) : null}
 
                     <div className="flex flex-col  gap-0.5  px-4 w-[95%]">
-                        <p className="text-[15px] text-indigo-400 font-medium">
+                        <p className="text-[15px] text-indigo-400 font-medium" dir='auto'>
                             {replyMessage?.user}
                         </p>
-                        <p className="text-[14px] truncate ">
+                        <p className="text-[14px] truncate " dir='auto'>
                             {replyMessage?.messageDis &&
                             replyMessage?.messageDis[0]?.type !== 'img' &&
                             replyMessage?.messageDis[0]?.type !== 'video' ? (
