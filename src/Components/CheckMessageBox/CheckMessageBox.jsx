@@ -3,7 +3,7 @@ import {AiOutlineClose} from "react-icons/ai"
 import {TiArrowForwardOutline} from "react-icons/ti"
 import {MdOutlineDeleteOutline} from "react-icons/md"
 
-const CheckMessageBox = ({checkMessage,setCheckMessage,setCheck}) => {
+const CheckMessageBox = ({checkMessage,setCheckMessage,setCheck,onRemove,onForward}) => {
   
   const cancelSelectHandler=()=>{
     setCheckMessage([])
@@ -23,12 +23,12 @@ const CheckMessageBox = ({checkMessage,setCheckMessage,setCheck}) => {
   <div className=' flex items-center gap-2 pr-2'>
 
 {/* forward */}
-<button className='  hover:bg-[rgba(170,170,170,0.08)]  check-message--btn'>
+<button className='  hover:bg-[rgba(170,170,170,0.08)]  check-message--btn' onClick={()=>onForward(true)}>
     <TiArrowForwardOutline size={26}/>
     <p className='text-white font-semibold capitalize text-base'>Forward</p>
 </button>
 {/* remove */}
-<button className='  hover:bg-red-500/10  check-message--btn'>
+<button className='  hover:bg-red-500/10  check-message--btn' onClick={onRemove}>
     <MdOutlineDeleteOutline size={26} color='rgb(239,68,68)'/>
     <p className='text-red-500 font-semibold capitalize text-base'>Delete</p>
 </button>
