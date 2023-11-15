@@ -1,8 +1,8 @@
 import React from 'react'
 
-const ReactionEmoji = ({emojiName,alt}) => {
+const ReactionEmoji = ({emojiName,alt,onReaction}) => {
   return (
-    <picture  className="cursor-pointer">
+    <picture  className="cursor-pointer" onClick={onReaction}>
     <source
       srcSet={`https://fonts.gstatic.com/s/e/notoemoji/latest/${emojiName}/512.webp`}
       type="image/webp"
