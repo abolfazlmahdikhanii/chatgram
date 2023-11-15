@@ -34,7 +34,7 @@ const MessageItem = ({ id, userName, profileImg, messages ,bgProfile,relation}) 
       <div className="w-full flex-col gap-2 flex">
         {/* top */}
         <div className="flex items-center justify-between w-full">
-          <p className="font-semibold  text-white capitalize text-[17px]">
+          <p className="font-semibold  text-white capitalize text-[17px]" >
             {userName}
           </p>
           <p className="text-[11px] text-gray-400">
@@ -42,7 +42,7 @@ const MessageItem = ({ id, userName, profileImg, messages ,bgProfile,relation}) 
           </p>
         </div>
         {/* bottom */}
-        <div className="flex items-center justify-between w-full">
+        <div className="flex items-center justify-between w-full" >
           <MessageItemContent message={messages[messages.length - 1]}/>
           <p>{icon}</p>
           {/* <NotifyNumber /> */}
