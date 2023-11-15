@@ -3,17 +3,17 @@ import FileItem from "../FIleItem/FileItem";
 import Progress from "../UI/Progress/Progress";
 import AudioFile from "../AudioFIle/AudioFile";
 
-const FileType = ({ type, src, name, size,progress,onRemove,id,from }) => {
+const FileType = ({ type, src, name, size,progress,onRemove,id,from,contextMenu,idType,messageId,isColor }) => {
 
  
 
-console.log(id)
+ 
   let file = null;
 
   if (type == "video") {
     file = (
-      <li className="w-full h-full overflow-hidden  rounded-xl flex-auto relative">
-            <Progress size={progress} onRemove={()=>onRemove(id)}/>
+      <li className="w-full h-full overflow-hidden  rounded-xl flex-auto relative" onContextMenu={(e)=>contextMenu(e,messageId,idType)}>
+            <Progress size={progress} onRemove={()=>onRemove(messageId,idType)}/>
         <video className="w-full h-full object-cover" autoPlay loop disablePictureInPicture playsInline muted>
           <source src={src} />
         </video>
@@ -22,13 +22,13 @@ console.log(id)
   } 
   else if (type == "mp3") {
     file = (
-      <AudioFile path={src} size={size} name={name} onRemove={()=>onRemove(id)} />
+      <AudioFile path={src} size={size} name={name} onRemove={()=>onRemove(messageId,idType)} isColor={isColor}/>
     );
   } 
   else if (type == "img") {
     file = (
-      <li className=" h-[210px] overflow-hidden inline-block rounded-xl basis-[40%]  bg-gray-200/20 flex-grow flex-1 relative">
-        <Progress size={progress} onRemove={()=>onRemove(id)}/>
+      <li className=" h-[210px] overflow-hidden inline-block rounded-xl basis-[40%]  bg-gray-200/20 flex-grow flex-1 relative" onContextMenu={(e)=>contextMenu(e,messageId,idType)}>
+        <Progress size={progress} onRemove={()=>onRemove(messageId,idType)}/>
         <img
           src={src}
           alt=""
@@ -49,7 +49,9 @@ console.log(id)
         size={size}
         message={true}
         from={from}
-        onRemove={()=>onRemove(id)}
+        onRemove={()=>onRemove(messageId,idType)}
+        onContext={(e)=>contextMenu(e,messageId,idType)}
+        isColor={isColor}
       />
     );
   }
