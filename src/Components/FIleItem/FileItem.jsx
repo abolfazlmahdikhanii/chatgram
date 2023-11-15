@@ -11,6 +11,7 @@ const FileItem = ({
   onRemove,
   message = false,
   from,
+  onContext
 }) => {
   const formatSize = (bytes) => {
     if (bytes == 0) return "0 Bytes";
@@ -32,6 +33,7 @@ const FileItem = ({
          name={name}
          onRemove={onRemove}
          formatSize={formatSize}
+         onContext={onContext}
         />
       ):
       (
@@ -44,16 +46,19 @@ const FileItem = ({
          name={name}
          formatSize={formatSize}
          onRemove={onRemove}
+         onContext={onContext}
+
         />
       )
      }
     </>
   );
 };
-const DefaultFile=({type,src,message,from,size,name,onRemove,formatSize})=>{
+const DefaultFile=({type,src,message,from,size,name,onRemove,formatSize,onContext})=>{
   return(
     <li
     className={`file-item relative  w-full px-3`}
+    onContextMenu={onContext}
   >
     <div>
       <FileIcon
@@ -82,10 +87,11 @@ const DefaultFile=({type,src,message,from,size,name,onRemove,formatSize})=>{
   </li>
   )
 }
-const MessageFile=({type,src,message,from,size,name,formatSize,onRemove})=>{
+const MessageFile=({type,src,message,from,size,name,formatSize,onRemove,onContext})=>{
   return(
   <li
   className={`file-item relative  w-full hover:bg-transparent`}
+  onContextMenu={onContext}
 >
   <div>
     <FileIcon
