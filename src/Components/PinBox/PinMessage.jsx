@@ -22,7 +22,7 @@ const PinMessage = ({ title, index, show, arr, id }) => {
                     <p className="font-semibold text-indigo-500 text-sm">
                         Pinned message #{index + 1}
                     </p>
-                    <p className="text-[14px] truncate ">
+                    <p className="text-[14px] truncate " dir='auto'>
                         {title &&
                         title[0]?.type !== 'img' &&
                         title[0]?.type !== 'video' ? (
