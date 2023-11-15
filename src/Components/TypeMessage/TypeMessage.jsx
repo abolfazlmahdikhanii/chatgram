@@ -7,6 +7,7 @@ const TypeMessage = ({ dis, w }) => {
         if (typeof dis === 'string') {
             element = (
                 <p
+                dir='auto'
                     dangerouslySetInnerHTML={{
                         __html: dis,
                     }}
