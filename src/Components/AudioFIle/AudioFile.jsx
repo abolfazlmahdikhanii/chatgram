@@ -4,10 +4,10 @@ import { FaPlay, FaPause } from "react-icons/fa";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import ProgressFile from "../UI/ProgressFile/ProgressFile";
 
-const formWaveSurferOptions = (ref) => ({
+const formWaveSurferOptions = (ref,isColor) => ({
   container: ref,
-  waveColor: "#4A426E",
-  progressColor: "#8774e1",
+  waveColor:!isColor ?"#4A426E":"#A683E9",
+  progressColor:!isColor? "#8774e1":"#e5e7eb",
   barGap: 4,
   barMinHeight: 1,
   barWidth: 3,
@@ -23,7 +23,7 @@ const formWaveSurferOptions = (ref) => ({
   partialRender: true,
 });
 
-const AudioFile = ({ path, size, name,onRemove }) => {
+const AudioFile = ({ path, size, name,onRemove,isColor }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [wave, setWave] = useState(null);
   const [currentTime, setCurrentTime] = useState(0);
@@ -34,7 +34,7 @@ const AudioFile = ({ path, size, name,onRemove }) => {
 
   useEffect(() => {
     if (waveFormRef.current) {
-      const option = formWaveSurferOptions(waveFormRef.current);
+      const option = formWaveSurferOptions(waveFormRef.current,isColor);
       wavesurfRef.current = WaveSurfer.create(option);
 
       wavesurfRef.current.load(audioRef.current.src);
@@ -76,7 +76,7 @@ const AudioFile = ({ path, size, name,onRemove }) => {
       className={`file-item relative  w-full hover:bg-transparent h-fit min-w-[300px] px-2 py-3 gap-2`}
     >
       <div className="">
-        <button className="btn btn-square" onClick={controlAudioHandler}>
+        <button className={`btn btn-square ${isColor?"bg-gray-200 text-primary border-none hover:bg-gray-200":""}`} onClick={controlAudioHandler}>
           {!isPlaying ? <FaPlay /> : <FaPause />}
         </button>
       </div>
@@ -89,7 +89,7 @@ const AudioFile = ({ path, size, name,onRemove }) => {
             className="w-full h-[40px] overflow-hidden"
             ref={waveFormRef}
           ></div>
-          <p className="text-xs text-gray-400 whitespace-nowrap ml-2">
+          <p className={`text-xs  whitespace-nowrap ml-2 ${isColor?"text-gray-200":"text-gray-400"}`}>
             {currentTime && `${formatTime(currentTime)}  / `}{" "}
             {formatTime(duration)}
           </p>
