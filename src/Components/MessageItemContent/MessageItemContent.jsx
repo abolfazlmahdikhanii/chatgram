@@ -24,7 +24,7 @@ const MessageItemContent = ({ message }) => {
       {typeof message?.messageDis === "string" || !message?.messageDis ? (
         <TextContent txt={message?.messageDis} />
       ) : (
-        <div className="flex items-center gap-2">{messageContent}</div>
+        <div className="flex items-center gap-2" dir="auto">{messageContent}</div>
       )}
     </>
   );
@@ -32,7 +32,7 @@ const MessageItemContent = ({ message }) => {
 const TextContent = ({ txt }) => {
   return (
     <p
-      className="text-gray-400 text-[13px] truncate max-w-[140px]"
+      className="text-gray-400 text-[13px] truncate max-w-[190px] w-full" dir="auto"
       dangerouslySetInnerHTML={{
         __html: txt,
       }}
