@@ -14,7 +14,7 @@ const MessageList = ({chats}) => {
       <div className="w-full overflow-hidden space-y-2 h-screen overflow-y-auto ">
     
         {
-          chats.map((chat)=>(
+          chats?.map((chat)=>(
             <MessageItem key={chat.id} {...chat} />
           ))
         }
