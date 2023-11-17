@@ -23,7 +23,7 @@ const formWaveSurferOptions = (ref,isColor) => ({
   partialRender: true,
 });
 
-const AudioFile = ({ path, size, name,onRemove,isColor }) => {
+const AudioFile = ({ path, size, name,onRemove,isColor,caption }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [wave, setWave] = useState(null);
   const [currentTime, setCurrentTime] = useState(0);
@@ -72,6 +72,7 @@ const AudioFile = ({ path, size, name,onRemove,isColor }) => {
   };
 
   return (
+   
     <li
       className={`file-item relative  w-full hover:bg-transparent h-fit min-w-[300px] px-2 py-3 gap-2`}
     >
@@ -108,6 +109,7 @@ const AudioFile = ({ path, size, name,onRemove,isColor }) => {
         </div>
       </div>
     </li>
+  
   );
 };
 
