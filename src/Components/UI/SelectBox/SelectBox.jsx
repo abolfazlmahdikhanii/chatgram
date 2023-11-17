@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Uploader from "../../Uploader/Uploader";
 
 const SelectBox = ({
@@ -10,9 +10,12 @@ const SelectBox = ({
   images,
   onUploadImage,
   onUploadFile,
+
 }) => {
   const [showUploader, setShowUploader] = useState(false);
   const [showImageUploader, setShowImageUploader] = useState(false);
+
+
 
   const checkIsimageOrIsVideo = (type) => {
     if (type === "video/mp4" || type === "video/webm") {
@@ -36,6 +39,7 @@ const SelectBox = ({
         size: e.target.files[i].size,
         type: checkIsimageOrIsVideo(e.target.files[i]?.type),
         progress: e.target.duration,
+     
       });
     }
     setImages(images);
@@ -43,6 +47,7 @@ const SelectBox = ({
     if (e.target.files?.length > 0) {
       setShowImageUploader(true);
     }
+
   };
   // upload file
   const uploadFileHandler = (e) => {
@@ -55,6 +60,7 @@ const SelectBox = ({
         size: e.target.files[i].size,
         name: e.target.files[i].name,
         type: e.target.files[i]?.type.startsWith("audio/") ? "mp3" : "file",
+
       });
     }
     setFilesUpload(files);
@@ -62,6 +68,8 @@ const SelectBox = ({
     if (e.target.files?.length > 0) {
       setShowUploader(true);
     }
+
+
   };
 
   // remove file
@@ -163,6 +171,7 @@ const SelectBox = ({
         remove={removeFileHandler}
         onUploadFile={onUploadFile}
         onUploadImage={onUploadImage}
+  
       />
     </>
   );
