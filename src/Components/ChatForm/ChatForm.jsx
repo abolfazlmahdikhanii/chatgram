@@ -71,11 +71,25 @@ const ChatForm = ({
             setText('')
         }
     }
-    const uploadFileHandler = () => {
-        if (filesUpload) set(filesUpload)
+    const uploadFileHandler = (txt) => {
+        
+        if (filesUpload) {
+            const newFileUpload=filesUpload.map((item)=>{
+                return {...item,caption:txt}
+            })
+            set(newFileUpload)
+          
+        }
     }
-    const uploadImageHandler = () => {
-        if (imagesUpload) set(imagesUpload)
+    const uploadImageHandler = (txt) => {
+        
+        if (imagesUpload) {
+            const newImageUpload=imagesUpload.map((item)=>{
+                return {...item,caption:txt}
+            })
+            set(newImageUpload)
+            
+        }
     }
     const closeEmojiPicker = () => {
         setTimeout(() => {
@@ -231,6 +245,7 @@ const ChatForm = ({
                 setFilesUpload={setFilesUpload}
                 onUploadImage={uploadImageHandler}
                 onUploadFile={uploadFileHandler}
+           
             />
         </form>
     )
