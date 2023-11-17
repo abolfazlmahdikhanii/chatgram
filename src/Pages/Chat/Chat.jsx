@@ -26,7 +26,7 @@ const Chat = ({ chat, setChat }) => {
     const [replyMessage, setReplyMessage] = useState(null)
     const [showFrowardModal, setShowForwardModal] = useState(false)
     const [userMessage, setUserMessage] = useState()
-   const [reactEmoji,setReactEmoji]=useState()
+    const [reactEmoji, setReactEmoji] = useState()
     const [userForwardMessage, setUserForwardMessage] = useState(null)
     const [checkForward, setCheckForward] = useState(false)
     const match = useParams()
@@ -36,7 +36,16 @@ const Chat = ({ chat, setChat }) => {
     useEffect(() => {
         filterChat(match.id)
         displayCheckBoxHandler(checkMessage)
-    }, [match, chat, message, checkMessage, editContent, chatRef, pinMessage])
+    }, [
+        match,
+        chat,
+        message,
+        checkMessage,
+        editContent,
+        chatRef,
+        pinMessage,
+        messageIDFile,
+    ])
 
     useEffect(() => {
         const findUserMessage = chat?.find((user) => user.id == match.id)
@@ -54,7 +63,7 @@ const Chat = ({ chat, setChat }) => {
             messageId: crypto.randomUUID(),
             messageDis: txt,
             from: 'client',
-            reaction:null,
+            reaction: null,
             to: 'ab',
             date: new Date(),
             read: false,
@@ -71,9 +80,9 @@ const Chat = ({ chat, setChat }) => {
 
         setChat(newChat)
     }
-    const removeMessages = (id) => {
+    const removeMessages = (id, idFile) => {
         setMessageID(null)
-        setMessageIDFile(null)
+
         const newChat = [...chat]
 
         const findedChat = newChat.find((item) => item.id == match?.id)
@@ -88,12 +97,11 @@ const Chat = ({ chat, setChat }) => {
             (item) => item?.messageId === messageID
         )
 
-        console.log(findMessage)
         if (typeof findMessage?.messageDis === 'string') {
             removeMessageText(id, newChat, findedChat, newMessge)
-        }
-        if (findMessage?.messageDis.length > 0) {
-            removeMessageFile(messageID, messageIDFile)
+        } else {
+            console.log('a')
+            removeMessageFile(id, idFile)
         }
     }
     // remove message type===file
@@ -103,17 +111,17 @@ const Chat = ({ chat, setChat }) => {
         const findedChat = newChat.find((item) => item.id == match?.id)
         const newMessge = findedChat?.messages
 
-        const findMessage = newMessge?.find((item) => item.messageId === id)
-
-        const filterMessage = findMessage.messageDis.findIndex(
-            (item) => item.id === idType
+        const findMessage = newMessge?.find((item) => item?.messageId === id)
+        console.log(messageID)
+        const filterMessage = findMessage?.messageDis?.findIndex(
+            (item) => item?.id === idType
         )
         console.log(filterMessage)
 
-        findMessage.messageDis.splice(filterMessage, 1)
+        findMessage?.messageDis?.splice(filterMessage, 1)
 
         findedChat.messages = newMessge.filter(
-            (item) => item.messageDis.length !== 0
+            (item) => item?.messageDis.length !== 0
         )
 
         setChat(newChat)
@@ -136,7 +144,7 @@ const Chat = ({ chat, setChat }) => {
     const contextmenuHandler = (e, id, idFile = null) => {
         e.preventDefault()
         e.stopPropagation()
-        console.log(id)
+
         setShowContextMenu((prev) => !prev)
         setPageX(e.pageX)
         setPageY(e.pageY)
@@ -259,7 +267,7 @@ const Chat = ({ chat, setChat }) => {
             findChat = userMessage?.messages.find(
                 (item) => item?.messageId === messageID
             )
-            findChat.check=false
+            findChat.check = false
             const { replyData, check = false, ...chatData } = findChat
 
             findUserForward.messages.push({
@@ -277,7 +285,7 @@ const Chat = ({ chat, setChat }) => {
             })
         } else {
             findChat = userMessage?.messages.filter((item) => item?.check)
-            findChat.forEach((item)=>item.check=false)
+            findChat.forEach((item) => (item.check = false))
             const copiedItems = findChat.map((item) => ({
                 ...item,
                 forward: {
@@ -312,8 +320,7 @@ const Chat = ({ chat, setChat }) => {
         setChat(newChat)
     }
 
-    const reactionEmojiHandler=(emojiId)=>{
-
+    const reactionEmojiHandler = (emojiId) => {
         const newChat = [...chat]
         const newMessage = [...message?.messages]
         const findedChat = newChat.find((item) => item.id == match?.id)
@@ -321,22 +328,18 @@ const Chat = ({ chat, setChat }) => {
         const findMessage = newMessage.find(
             (message) => message.messageId === messageID
         )
-        
-         if( findMessage.reaction === emojiId){
-            findMessage.reaction = ""
-       
-         }
-         else{
-             findMessage.reaction=emojiId
-        
-         }
+
+        if (findMessage.reaction === emojiId) {
+            findMessage.reaction = ''
+        } else {
+            findMessage.reaction = emojiId
+        }
 
         setMessage(newMessage)
-        findedChat.messages=newMessage
+        findedChat.messages = newMessage
         setChat(newChat)
     }
-    const removeReactionEmojiHandler=(messageid)=>{
-
+    const removeReactionEmojiHandler = (messageid) => {
         const newChat = [...chat]
         const newMessage = [...message?.messages]
         const findedChat = newChat.find((item) => item.id == match?.id)
@@ -344,11 +347,10 @@ const Chat = ({ chat, setChat }) => {
         const findMessage = newMessage.find(
             (message) => message.messageId === messageid
         )
-        
-        
-            findMessage.reaction = ""
+
+        findMessage.reaction = ''
         setMessage(newMessage)
-        findedChat.messages=newMessage
+        findedChat.messages = newMessage
         setChat(newChat)
     }
     return (
@@ -397,6 +399,7 @@ const Chat = ({ chat, setChat }) => {
                                 checkArr={checkMessage}
                                 showCheck={showCheckBox}
                                 setReaction={removeReactionEmojiHandler}
+                                setFileId={setMessageIDFile}
                             />
                         ))}
                     {/* {message?.forward &&
