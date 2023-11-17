@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import ProfileImage from '../ProfileImage/ProfileImage'
 import FileType from '../FileType/FileType'
 import FooterMessage from '../FooterMessage/FooterMessage'
-import { useLocation ,useNavigate} from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { HashLink } from 'react-router-hash-link'
 import { BsArrowRightShort } from 'react-icons/bs'
 import TypeMessage from '../TypeMessage/TypeMessage'
@@ -30,22 +30,23 @@ const Message = ({
     hoverId,
     forward,
     reaction,
-    setReaction
+    setReaction,
+    setFileId,
+    caption,
 }) => {
     const location = useLocation()
-    const navigate=useNavigate()
+    const navigate = useNavigate()
     const hashId = location.hash.substring(1)
     const [style, setStyle] = useState('')
-
+    console.log(messageDis)
     useEffect(() => {
         if (hashId === messageId) {
             setStyle('bg-indigo-300/10')
 
             setTimeout(() => {
                 setStyle('')
-                location.hash.substring(0,-1)
+                location.hash.substring(0, -1)
                 navigate(location.pathname)
-             
             }, 800)
         }
     }, [location, forward])
@@ -75,7 +76,9 @@ const Message = ({
             {/* messageBody */}
             <div
                 data-id={messageId}
-                className={`chat-bubble relative justify-self-end break-words px-2.5 group ${reaction?'min-w-[140px]':''} ${
+                className={`chat-bubble relative justify-self-end break-words px-2.5 group ${
+                    reaction ? 'min-w-[140px]' : ''
+                } ${
                     from === 'client' && !forward
                         ? 'chat-bubble-primary order-1 justify-self-end'
                         : 'chat-bubble order-0'
@@ -90,7 +93,8 @@ const Message = ({
                     <HashLink to={`/chat/${forward.id}/#${messageId}`}>
                         <span
                             data-text-color={forward.bgProfile}
-                            className={`text-sm  `} dir='auto'
+                            className={`text-sm  `}
+                            dir="auto"
                         >
                             {from}
                         </span>
@@ -134,7 +138,7 @@ const Message = ({
                                         ? 'text-white'
                                         : 'text-indigo-500'
                                 }`}
-                                dir='auto'
+                                dir="auto"
                             >
                                 Abolfazl
                             </p>
@@ -158,7 +162,7 @@ const Message = ({
                 {typeof messageDis === 'string' ? (
                     <div
                         className="text-white"
-                        dir='auto'
+                        dir="auto"
                         dangerouslySetInnerHTML={{ __html: messageDis }}
                     ></div>
                 ) : (
@@ -167,23 +171,38 @@ const Message = ({
                             messageDis[0]?.type === 'file' ? 'grid-2' : 'grid-1'
                         }  `}
                     >
-                        {messageDis?.map((content) => (
-                            <FileType
-                                key={content.id}
-                                {...content}
-                                onRemove={remove}
-                                from={from}
-                                idType={content.id}
-                                messageId={messageId}
-                                contextMenu={onContext}
-                                isColor={ from === 'client' && !forward ?true:false}
-                            />
+                        {messageDis?.map((content, i, arr) => (
+                            <>
+                                <FileType
+                                    key={content.id}
+                                    {...content}
+                                    onRemove={remove}
+                                    from={from}
+                                    idType={content.id}
+                                    messageId={messageId}
+                                    contextMenu={onContext}
+                    
+                                    isColor={
+                                        from === 'client' && !forward
+                                            ? true
+                                            : false
+                                    }
+                                />
+                            </>
                         ))}
                     </ul>
                 )}
-               {
-                reaction&&<ReactionBox reaction={reaction} setReaction={()=>setReaction(messageId)}/>
-               }
+                {messageDis[messageDis.length - 1].caption && (
+                    <p className="text-sm px-2 my-1" dir="auto">
+                        {messageDis[messageDis.length - 1].caption}
+                    </p>
+                )}
+                {reaction && (
+                    <ReactionBox
+                        reaction={reaction}
+                        setReaction={() => setReaction(messageId)}
+                    />
+                )}
                 <FooterMessage
                     message={messageDis[0]}
                     date={formatTime(date)}
@@ -191,6 +210,7 @@ const Message = ({
                     send={send}
                     edited={edited}
                     pin={pin}
+                    reaction={reaction}
                 />
             </div>
 
