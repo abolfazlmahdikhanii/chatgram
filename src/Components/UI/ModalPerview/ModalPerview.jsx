@@ -2,7 +2,16 @@ import React, { useRef, useState } from "react";
 import HeaderModal from "../HeaderModal/HeaderModal";
 import ActionModal from "../ActionModal/ActionModal";
 
-const ModalPerview = ({ show, close, images, onUpload }) => {
+const ModalPerview = ({ show, close, images, onUpload,dis,setDis }) => {
+  
+  const submitFormHandler = (caption) => {
+
+    onUpload(caption)
+    console.log(caption)
+
+    close()
+ 
+}
   return (
     <dialog
       id="my_modal_1"
@@ -19,9 +28,8 @@ const ModalPerview = ({ show, close, images, onUpload }) => {
         clickClose={close}
       />
 
-      <div className="modal-body max-h-[76vh] min-h-[250px]">
         {/* body */}
-
+  <div className="modal-body max-h-[76vh] min-h-[250px]">
         <ul className="max-h-[72vh] grid grid-cols-[repeat(auto-fit,minmax(40%,1fr))] w-full gap-4 [grid-auto-rows:minmax(220px,1fr)]  ">
           {images?.map((img) => (
             <li
@@ -42,14 +50,14 @@ const ModalPerview = ({ show, close, images, onUpload }) => {
             </li>
           ))}
         </ul>
-      </div>
+        </div>
 
       <ActionModal
-        click={()=>{
-          onUpload()
-          close()
-        }}
+       
+        click={submitFormHandler}
       />
+          
+          
     </dialog>
   );
 };
