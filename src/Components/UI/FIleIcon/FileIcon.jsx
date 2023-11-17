@@ -1,6 +1,6 @@
 import React, { useState,useRef } from "react";
 
-const FileIcon = ({ type,path=null,message=false,from }) => {
+const FileIcon = ({ type,path=null,message=false,from,isColor }) => {
 
 
   let color = null;
@@ -31,7 +31,7 @@ const FileIcon = ({ type,path=null,message=false,from }) => {
       color = "bg-indigo-500";
       break;
   }
-  if(message&&from==="user"){
+  if(message&&from==="user"||isColor){
   fileColor="file-icon--2"
   }
   else if(message&&from==="client"){
