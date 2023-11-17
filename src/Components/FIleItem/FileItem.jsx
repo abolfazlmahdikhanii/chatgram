@@ -11,7 +11,8 @@ const FileItem = ({
   onRemove,
   message = false,
   from,
-  onContext
+  onContext,
+  isColor
 }) => {
   const formatSize = (bytes) => {
     if (bytes == 0) return "0 Bytes";
@@ -34,6 +35,8 @@ const FileItem = ({
          onRemove={onRemove}
          formatSize={formatSize}
          onContext={onContext}
+      
+         isColor={isColor}
         />
       ):
       (
@@ -47,16 +50,18 @@ const FileItem = ({
          formatSize={formatSize}
          onRemove={onRemove}
          onContext={onContext}
-
+isColor={isColor}
+   
         />
       )
      }
     </>
   );
 };
-const DefaultFile=({type,src,message,from,size,name,onRemove,formatSize,onContext})=>{
+const DefaultFile=({type,src,message,from,size,name,onRemove,formatSize,onContext,isColor})=>{
   return(
-    <li
+ 
+      <li
     className={`file-item relative  w-full px-3`}
     onContextMenu={onContext}
   >
@@ -66,6 +71,7 @@ const DefaultFile=({type,src,message,from,size,name,onRemove,formatSize,onContex
         path={src ? src : ""}
         message={message}
         from={from}
+        isColor={isColor}
       />
     </div>
     <div className="flex flex-col gap-2 max-w-[200px]">
@@ -85,11 +91,14 @@ const DefaultFile=({type,src,message,from,size,name,onRemove,formatSize,onContex
       </div>
     
   </li>
+
+
   )
 }
-const MessageFile=({type,src,message,from,size,name,formatSize,onRemove,onContext})=>{
+const MessageFile=({type,src,message,from,size,name,formatSize,onRemove,onContext,isColor})=>{
   return(
-  <li
+
+    <li
   className={`file-item relative  w-full hover:bg-transparent`}
   onContextMenu={onContext}
 >
@@ -99,6 +108,7 @@ const MessageFile=({type,src,message,from,size,name,formatSize,onRemove,onContex
       path={src ? src : ""}
       message={message}
       from={from}
+      isColor={isColor}
     />
   </div>
   <div className="flex flex-col gap-2 max-w-[200px]">
@@ -112,6 +122,7 @@ const MessageFile=({type,src,message,from,size,name,formatSize,onRemove,onContex
   </div>
  
 </li>
+
   )
 }
 export default FileItem;
