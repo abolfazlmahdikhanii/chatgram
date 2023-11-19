@@ -15,7 +15,7 @@ const MessageList = ({chats}) => {
     
         {
           chats?.map((chat)=>(
-            <MessageItem key={chat.id} {...chat} />
+            <MessageItem key={chat.id} {...chat} isSave={chat.relation==="me"?true:false}/>
           ))
         }
     
