@@ -67,7 +67,7 @@ const getRandomValue = () => {
                     : 'grid-cols-[95px_340px_1fr]'
             } h-screen grid  overflow-hidden`}
         >
-            <SideMenu />
+            <SideMenu chat={chats}/>
             <MessageList chats={chats} />
             <Routes>
                 <Route
