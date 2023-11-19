@@ -23,7 +23,7 @@ const HeaderMessage = ({info}) => {
     return (
       <section className="px-5 flex items-center justify-between">
             <div className="flex gap-4">
-                <Profile path={info?.profileImg}  userName={info?.userName} bgProfile={info?.bgProfile} relation={info?.relation}/>
+                <Profile path={info?.profileImg}  userName={info?.userName} bgProfile={info?.bgProfile} relation={info?.relation} isSave={true}/>
                 <div className="w-full flex-col   flex">
                     <p className="font-semibold  text-white capitalize text-[17px]">
                         {info?.userName}
