@@ -9,6 +9,7 @@ import CheckMessageBox from '../../Components/CheckMessageBox/CheckMessageBox'
 import PinBox from '../../Components/PinBox/PinBox'
 import UnpinBtn from '../../Components/UnpinBtn/UnpinBtn'
 import Modal from '../../Components/UI/Modal/Modal'
+import Dialog from '../../Components/UI/Dialog/Dialog'
 
 const Chat = ({ chat, setChat }) => {
     const [message, setMessage] = useState()
@@ -27,6 +28,9 @@ const Chat = ({ chat, setChat }) => {
     const [showFrowardModal, setShowForwardModal] = useState(false)
     const [userMessage, setUserMessage] = useState()
     const [reactEmoji, setReactEmoji] = useState()
+    const [showAlert, setShowAlert] = useState(false)
+    const [isRemove, setIsRemove] = useState(false)
+    const [isPin, setIsPin] = useState(false)
     const [userForwardMessage, setUserForwardMessage] = useState(null)
     const [checkForward, setCheckForward] = useState(false)
     const match = useParams()
@@ -36,6 +40,7 @@ const Chat = ({ chat, setChat }) => {
     useEffect(() => {
         filterChat(match.id)
         displayCheckBoxHandler(checkMessage)
+    
     }, [
         match,
         chat,
@@ -44,13 +49,14 @@ const Chat = ({ chat, setChat }) => {
         editContent,
         chatRef,
         pinMessage,
-        messageIDFile,
+     setShowContextMenu
     ])
 
     useEffect(() => {
         const findUserMessage = chat?.find((user) => user.id == match.id)
         setUserMessage(findUserMessage)
-    }, [match, chat, message, showFrowardModal, userMessage])
+       
+    }, [match, chat, message, showFrowardModal,setShowAlert, userMessage])
 
     const filterChat = (id) => {
         let findChat = chat.find((item) => item.id == id)
@@ -81,6 +87,7 @@ const Chat = ({ chat, setChat }) => {
         setChat(newChat)
     }
     const removeMessages = (id, idFile) => {
+        
         setMessageID(null)
 
         const newChat = [...chat]
@@ -103,6 +110,7 @@ const Chat = ({ chat, setChat }) => {
             console.log('a')
             removeMessageFile(id, idFile)
         }
+       
     }
     // remove message type===file
     const removeMessageFile = (id, idType) => {
@@ -112,11 +120,11 @@ const Chat = ({ chat, setChat }) => {
         const newMessge = findedChat?.messages
 
         const findMessage = newMessge?.find((item) => item?.messageId === id)
-        console.log(messageID)
+
         const filterMessage = findMessage?.messageDis?.findIndex(
             (item) => item?.id === idType
         )
-        console.log(filterMessage)
+  
 
         findMessage?.messageDis?.splice(filterMessage, 1)
 
@@ -127,11 +135,11 @@ const Chat = ({ chat, setChat }) => {
         setChat(newChat)
     }
     const removeMessageText = (id, chat, findChat, newMessage) => {
-        console.log(id)
+   
 
         const findMessage = newMessage?.find((item) => item?.messageDis)
         findMessage.messageDis = ''
-        console.log(findMessage)
+        
 
         findChat.messages = newMessage.filter(
             (item) => item.messageDis !== '' || item.messageDis.length < 0
@@ -185,6 +193,11 @@ const Chat = ({ chat, setChat }) => {
 
         setEditContent(findMessage?.messageDis)
     }
+    const clickRemoveHandler=()=>{
+        setShowAlert(true)
+        setIsRemove(true)
+        setShowContextMenu(false)
+    }
     // edit handler
     const editHandler = (txt, input) => {
         const newMessageDis = [...message?.messages]
@@ -213,9 +226,11 @@ const Chat = ({ chat, setChat }) => {
         const findPin = newMessage.find((item) => item.messageId === id)
 
         if (!findPin.pin && pinMessage.length <= 4) {
+            setIsPin(true)
             findPin.pin = true
             setPinMessage((prev) => [...prev, findPin])
         } else {
+            setIsPin(false)
             findPin.pin = false
             const filterPin = pinMessage.filter((item) => item.pin)
 
@@ -393,6 +408,7 @@ const Chat = ({ chat, setChat }) => {
                         pins={pinMessage}
                         setPin={setPinMessage}
                         setShowPin={setShowPin}
+                    
                     />
                 ) : null}
 
@@ -490,14 +506,15 @@ const Chat = ({ chat, setChat }) => {
                     pageY={pageY}
                     show={showContextMenu}
                     setClose={setShowContextMenu}
-                    onRemove={removeMessages}
                     messageID={messageID}
                     onSelect={checkMessageHandler}
                     onEdit={selectEditTextMessageHandler}
-                    onPin={pinMessageHandler}
                     onReply={replyMessageHandler}
                     onForward={ForwardHandler}
                     onReaction={reactionEmojiHandler}
+                    setAlert={setShowAlert}
+                    remove={clickRemoveHandler}
+                    isPin={isPin}
                 />
                 <Uploader />
 
@@ -511,6 +528,20 @@ const Chat = ({ chat, setChat }) => {
                     setShow={setShowForwardModal}
                 />
             </main>
+            {
+                showAlert&&(
+                    <Dialog
+                    show={showAlert}
+                    setShow={setShowAlert}
+                    isRemove={isRemove}
+                    onRemove={removeMessages}
+                    onPin={pinMessageHandler}
+                    messageID={messageID}
+                    userInfo={message}
+                    isPin={isPin}
+                />
+                )
+            }
         </div>
     )
 }
