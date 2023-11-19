@@ -38,7 +38,7 @@ const Message = ({
     const navigate = useNavigate()
     const hashId = location.hash.substring(1)
     const [style, setStyle] = useState('')
-    console.log(messageDis)
+    
     useEffect(() => {
         if (hashId === messageId) {
             setStyle('bg-indigo-300/10')
