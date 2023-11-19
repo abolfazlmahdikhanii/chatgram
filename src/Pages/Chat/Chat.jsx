@@ -247,6 +247,7 @@ const Chat = ({ chat, setChat }) => {
         setShowForwardModal(true)
         isCheck ? setCheckForward(true) : setCheckForward(false)
     }
+    // forward
     const forwardClickHandler = (userId) => {
         let findChat = null
         const newChat = [...chat]
@@ -254,6 +255,7 @@ const Chat = ({ chat, setChat }) => {
         setCheckMessage([])
         // find user for forward message
         const findUserForward = newChat?.find((user) => user.id === userId)
+        const newMessages = [...userMessage.messages]
         const {
             activeStatus,
             date,
@@ -263,16 +265,18 @@ const Chat = ({ chat, setChat }) => {
             relation,
             userName,
         } = userMessage
+        console.log(newMessages)
         if (!checkForward) {
-            findChat = userMessage?.messages.find(
-                (item) => item?.messageId === messageID
-            )
+            findChat = newMessages.find((item) => item?.messageId === messageID)
+            console.log(findChat)
+
             findChat.check = false
             const { replyData, check = false, ...chatData } = findChat
 
             findUserForward.messages.push({
                 ...chatData,
                 check,
+
                 forward: {
                     activeStatus,
                     date,
@@ -284,10 +288,14 @@ const Chat = ({ chat, setChat }) => {
                 },
             })
         } else {
-            findChat = userMessage?.messages.filter((item) => item?.check)
-            findChat.forEach((item) => (item.check = false))
+            findChat = newMessages.filter((item) => item?.check)
+
+            findChat.forEach((item) => {
+                item.check = false
+            })
             const copiedItems = findChat.map((item) => ({
                 ...item,
+
                 forward: {
                     activeStatus,
                     date,
@@ -324,15 +332,26 @@ const Chat = ({ chat, setChat }) => {
         const newChat = [...chat]
         const newMessage = [...message?.messages]
         const findedChat = newChat.find((item) => item.id == match?.id)
+        const ractionUser = newChat.find((item) => item.relation === 'me')
 
+        const { id, bgProfile, profileImg, relation, userName } = ractionUser
         const findMessage = newMessage.find(
             (message) => message.messageId === messageID
         )
 
         if (findMessage.reaction === emojiId) {
-            findMessage.reaction = ''
+            findMessage.reaction = {}
         } else {
-            findMessage.reaction = emojiId
+            findMessage.reaction = {
+                reaction: emojiId,
+                profile: {
+                    id,
+                    bgProfile,
+                    profileImg,
+                    relation,
+                    userName,
+                },
+            }
         }
 
         setMessage(newMessage)
