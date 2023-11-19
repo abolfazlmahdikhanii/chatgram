@@ -192,9 +192,9 @@ const Message = ({
                         ))}
                     </ul>
                 )}
-                {messageDis[messageDis.length - 1].caption && (
+                {messageDis[messageDis.length - 1]?.caption && (
                     <p className="text-sm px-2 my-1" dir="auto">
-                        {messageDis[messageDis.length - 1].caption}
+                        {messageDis[messageDis.length - 1]?.caption}
                     </p>
                 )}
                 {reaction && (
