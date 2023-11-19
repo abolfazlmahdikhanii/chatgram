@@ -6,7 +6,7 @@ import { MdDeleteOutline } from "react-icons/md";
 import { TbSquareRoundedCheck } from "react-icons/tb";
 import ReactionEmoji from "../ReactionEmoji/ReactionEmoji";
 
-const MessageMenu = ({ show, setClose, pageX, pageY,onRemove,messageID,onSelect,onEdit,onPin,onReply,onForward,onReaction }) => {
+const MessageMenu = ({ show, setClose, pageX, pageY,onRemove,messageID,onSelect,onEdit,onPin,onReply,onForward,onReaction,setAlert,remove,isPin }) => {
   const [emoji, setEmoji] = useState([
     {
       id: crypto.randomUUID(),
@@ -86,8 +86,11 @@ const MessageMenu = ({ show, setClose, pageX, pageY,onRemove,messageID,onSelect,
     {
       id: crypto.randomUUID(),
       icon: <BsPin size={17} className="self-start mr-1.5" />,
-      title: "Pin",
-      event:()=>onPin(messageID)
+      title: !isPin?"Pin":"Unpin",
+      event:()=>{
+        setAlert(true)
+        setClose(false)
+      }
     },
     {
       id: crypto.randomUUID(),
@@ -152,7 +155,7 @@ const MessageMenu = ({ show, setClose, pageX, pageY,onRemove,messageID,onSelect,
       ,
       title: "Delete",
       styleTitle:'ml-1',
-      event:()=>onRemove(messageID)
+      event:()=>remove()
     },
   ];
   return (
