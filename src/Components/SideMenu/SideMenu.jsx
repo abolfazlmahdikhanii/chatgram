@@ -1,10 +1,18 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Box from "../UI/Box/Box";
 import SideMenuItem from "./SideMenuItem";
 import ThemSwitch from "../UI/ThemSwitch/ThemSwitch";
 import ProfileImage from "../ProfileImage/ProfileImage";
 
-const SideMenu = () => {
+const SideMenu = ({chat}) => {
+  const [profileMe,setProfileMe]=useState()
+  useEffect(()=>{
+   findProfileMe()
+  },[profileMe])
+  const findProfileMe=()=>{
+    const findChat=chat?.find((item)=>item.relation==="me")
+    setProfileMe(findChat)
+  }
   return (
     <Box>
       <section className="side-menu ">
@@ -38,7 +46,7 @@ const SideMenu = () => {
         {/* footer */}
         <div className="flex flex-col gap-y-4 items-center mt-3 mb-9">
           <ThemSwitch/>
-          <ProfileImage />
+          <ProfileImage {...profileMe} />
         </div>
       </section>
     </Box>
