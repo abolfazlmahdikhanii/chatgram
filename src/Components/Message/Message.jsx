@@ -183,7 +183,7 @@ const Message = ({
                                     messageId={messageId}
                                     contextMenu={onContext}
                     
-                                    setAudio={setAudio}
+                                    setAudio={content.type==="mp3"?setAudio:null}
                                     isColor={
                                         from === 'client' && !forward
                                             ? true
