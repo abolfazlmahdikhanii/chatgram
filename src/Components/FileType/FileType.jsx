@@ -17,10 +17,10 @@ const FileType = ({
     idType,
     messageId,
     isColor,
-    caption
+    caption,
+    setAudio
 }) => {
-    console.log(id)
-    console.log(idType)
+    
 
     let file = null
 
@@ -44,6 +44,7 @@ const FileType = ({
                 name={name}
                 onRemove={() => onRemove(messageId, idType)}
                 isColor={isColor}
+                setAudio={setAudio}
                
             />
         )
