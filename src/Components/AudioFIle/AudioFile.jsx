@@ -23,7 +23,7 @@ const formWaveSurferOptions = (ref,isColor) => ({
   partialRender: true,
 });
 
-const AudioFile = ({ path, size, name,onRemove,isColor,caption }) => {
+const AudioFile = ({ path, size, name,onRemove,isColor,caption,setAudio }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [wave, setWave] = useState(null);
   const [currentTime, setCurrentTime] = useState(0);
@@ -33,16 +33,21 @@ const AudioFile = ({ path, size, name,onRemove,isColor,caption }) => {
   const waveFormRef = useRef();
 
   useEffect(() => {
+   
     if (waveFormRef.current) {
+   
       const option = formWaveSurferOptions(waveFormRef.current,isColor);
       wavesurfRef.current = WaveSurfer.create(option);
 
       wavesurfRef.current.load(audioRef.current.src);
       wavesurfRef.current.on("ready", function () {
         setDuration(wavesurfRef.current.getDuration());
+   
       });
       wavesurfRef.current.on("audioprocess", function () {
         setCurrentTime(wavesurfRef.current.getCurrentTime());
+        
+       
       });
     }
 
@@ -50,11 +55,21 @@ const AudioFile = ({ path, size, name,onRemove,isColor,caption }) => {
   }, [path]);
 
   const handleLoadedMetadata = () => {
-    setDuration(audioRef.current.duration);
+   
+    setAudio(audioRef)
   };
   const controlAudioHandler = () => {
+   
     setIsPlaying((prev) => !prev);
+   
     wavesurfRef.current.playPause();
+if(isPlaying){
+  console.log({path,isPlay:true})
+}
+else{
+  console.log({path,isPlay:false})
+}
+    
   };
 
   const formatSize = (bytes) => {
@@ -98,8 +113,8 @@ const AudioFile = ({ path, size, name,onRemove,isColor,caption }) => {
         <audio
           src={path}
           ref={audioRef}
-          id="track"
-          // onLoadedMetadata={handleLoadedMetadata}
+          className="track"
+      
         ></audio>
 
         <div className="flex items-center self-end gap-2">
