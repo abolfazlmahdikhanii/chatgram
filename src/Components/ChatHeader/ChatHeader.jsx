@@ -28,7 +28,7 @@ const HeaderMessage = ({info}) => {
                     <p className="font-semibold  text-white capitalize text-[17px]">
                         {info?.userName}
                     </p>
-                    <p className="text-gray-400 text-[11px] capitalize">
+                    <p className="text-indigo-300 text-[11px] capitalize">
                         Online
                     </p>
                 </div>
