@@ -6,7 +6,7 @@ import { FaPause } from 'react-icons/fa'
 import { IoClose } from 'react-icons/io5'
 
 const PinAudio = ({path}) => {
-  console.log(path)
+
   const audioRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -32,6 +32,10 @@ const PinAudio = ({path}) => {
     setCurrentTime(newPosition);
       }
 
+      const handlePlayBackRate=(e)=>{
+
+        e.target.checked?audioRef.current.playbackRate =2:audioRef.current.playbackRate =1
+      }
 
     return (
         <div className="py-2 px-4 bg-base-200  flex items-center  justify-between sticky top-0 relative">
@@ -41,19 +45,22 @@ const PinAudio = ({path}) => {
                         <FaBackward size={19} />
                     </button>
                     <button className="btn text-indigo-600 " onClick={togglePlay}>
-                        <FaPlay size={18} />
+                        {!isPlaying?<FaPlay size={18} />:<FaPause size={18} />}
                     </button>
                     <button className="btn text-indigo-600 ">
                         <FaForward size={19} />
                     </button>
                 </div>
                 <div className="flex items-center gap-0.5">
-                    <label htmlFor="chk" className=" btn text-lg relative ">
+                    <label htmlFor="chk" className=" btn text-lg relative " >
                         <input
                             type="checkbox"
                             className="absolute top-0 opacity-0"
                             id="chk"
-                            onChange={() => setCheck((prev) => !prev)}
+                            onChange={(e) => {
+                                setCheck((prev) => !prev)
+                                handlePlayBackRate(e)
+                            }}
                         />
                         <span className={`font-sans ${check ? 'text-indigo-500' : ''}`}>
                             2X
@@ -70,7 +77,7 @@ const PinAudio = ({path}) => {
                 <progress
                         onClick={handleProgressBarClick}
 
-                    className="h-1 border-[2px] progress progress-primary  w-full"
+                    className="h-1 border-[1px] bg-indigo-500 progress  w-full hover:border-[3px] transition-all duration-300" 
                     value={`${(currentTime / audioRef?.current?.duration) * 100}`}
                     max="100"
  
