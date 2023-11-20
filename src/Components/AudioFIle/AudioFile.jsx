@@ -35,7 +35,7 @@ const AudioFile = ({ path, size, name,onRemove,isColor,caption,setAudio }) => {
   useEffect(() => {
    
     if (waveFormRef.current) {
-   
+    setAudio(path)
       const option = formWaveSurferOptions(waveFormRef.current,isColor);
       wavesurfRef.current = WaveSurfer.create(option);
 
@@ -63,12 +63,7 @@ const AudioFile = ({ path, size, name,onRemove,isColor,caption,setAudio }) => {
     setIsPlaying((prev) => !prev);
    
     wavesurfRef.current.playPause();
-if(isPlaying){
-  console.log({path,isPlay:true})
-}
-else{
-  console.log({path,isPlay:false})
-}
+
     
   };
 
