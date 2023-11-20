@@ -33,6 +33,7 @@ const Message = ({
     setReaction,
     setFileId,
     caption,
+    setAudio
 }) => {
     const location = useLocation()
     const navigate = useNavigate()
@@ -182,6 +183,7 @@ const Message = ({
                                     messageId={messageId}
                                     contextMenu={onContext}
                     
+                                    setAudio={setAudio}
                                     isColor={
                                         from === 'client' && !forward
                                             ? true
