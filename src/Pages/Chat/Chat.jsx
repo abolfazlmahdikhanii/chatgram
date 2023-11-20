@@ -10,6 +10,7 @@ import PinBox from '../../Components/PinBox/PinBox'
 import UnpinBtn from '../../Components/UnpinBtn/UnpinBtn'
 import Modal from '../../Components/UI/Modal/Modal'
 import Dialog from '../../Components/UI/Dialog/Dialog'
+import PinAudio from '../../Components/PinAudio/PinAudio'
 
 const Chat = ({ chat, setChat }) => {
     const [message, setMessage] = useState()
@@ -33,6 +34,7 @@ const Chat = ({ chat, setChat }) => {
     const [isPin, setIsPin] = useState(false)
     const [userForwardMessage, setUserForwardMessage] = useState(null)
     const [checkForward, setCheckForward] = useState(false)
+    const [audio,setAudio]=useState([])
     const match = useParams()
     const chatRef = useRef()
     const forwards = []
@@ -403,6 +405,7 @@ const Chat = ({ chat, setChat }) => {
                 className="flex flex-col justify-between h-screen  overflow-hidden mb-5 relative "
                 ref={chatRef}
             >
+                <PinAudio path={audio}/>
                 {!showPin && pinMessage.length ? (
                     <PinBox
                         pins={pinMessage}
@@ -435,6 +438,7 @@ const Chat = ({ chat, setChat }) => {
                                 showCheck={showCheckBox}
                                 setReaction={removeReactionEmojiHandler}
                                 setFileId={setMessageIDFile}
+                                setAudio={setAudio}
                             />
                         ))}
                     {/* {message?.forward &&
