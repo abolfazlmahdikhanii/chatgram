@@ -34,7 +34,7 @@ const Chat = ({ chat, setChat }) => {
     const [isPin, setIsPin] = useState(false)
     const [userForwardMessage, setUserForwardMessage] = useState(null)
     const [checkForward, setCheckForward] = useState(false)
-    const [audio,setAudio]=useState([])
+    const [audio,setAudio]=useState()
     const match = useParams()
     const chatRef = useRef()
     const forwards = []
@@ -405,7 +405,9 @@ const Chat = ({ chat, setChat }) => {
                 className="flex flex-col justify-between h-screen  overflow-hidden mb-5 relative "
                 ref={chatRef}
             >
-                <PinAudio path={audio}/>
+                {
+                    audio&&<PinAudio path={audio}/>
+                }
                 {!showPin && pinMessage.length ? (
                     <PinBox
                         pins={pinMessage}
