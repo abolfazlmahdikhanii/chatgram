@@ -40,6 +40,7 @@ const Chat = ({ chat, setChat }) => {
     const forwards = []
 
     useEffect(() => {
+        setAudio(null)
         filterChat(match.id)
         displayCheckBoxHandler(checkMessage)
     
