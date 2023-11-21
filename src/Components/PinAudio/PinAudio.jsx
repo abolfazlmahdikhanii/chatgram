@@ -1,41 +1,27 @@
-import React, { useState,useRef } from 'react'
+import React, { useState, useRef, useEffect, useContext } from 'react'
 import { FaBackward } from 'react-icons/fa6'
 import { FaPlay } from 'react-icons/fa6'
 import { FaForward } from 'react-icons/fa6'
 import { FaPause } from 'react-icons/fa'
 import { IoClose } from 'react-icons/io5'
+import { MusicControlContext } from '../../Context/MusicContext'
 
-const PinAudio = ({path}) => {
+const PinAudio = ({ path }) => {
+    const [check,setCheck]=useState(false)
+    const { isPlay, currentSong, currentTimeMusic, playMusic, pauseMusic, seekMusic,durationMusic,containerBox,playbackRateMusic } = useContext(MusicControlContext);
 
-  const audioRef = useRef(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-    const [check, setCheck] = useState(false)
-    const togglePlay = () => {
-        if (isPlaying) {
-          audioRef.current.pause();
-        } else {
-          audioRef.current.play();
-        }
-        setIsPlaying(!isPlaying);
-      };
-    
-      const handleTimeUpdate = () => {
-        setCurrentTime(audioRef.current.currentTime);
-      };
-      const handleProgressBarClick = (e) => {
-        const clickPosition=e.pageX-e.target.offsetLeft;
-        const progressBarWidth = e.target.offsetWidth;
-        const duration = audioRef.current.duration;
-        const newPosition=(clickPosition/progressBarWidth)*duration;
-        audioRef.current.currentTime = newPosition;
-    setCurrentTime(newPosition);
-      }
 
-      const handlePlayBackRate=(e)=>{
+    const togglePlay = () => {   
+            playMusic(currentSong,containerBox,durationMusic)
+    }
 
-        e.target.checked?audioRef.current.playbackRate =2:audioRef.current.playbackRate =1
-      }
+   
+
+    const handlePlayBackRate = (e) => {
+        e.target.checked
+            ? (playbackRateMusic(2,true))
+            : (playbackRateMusic(1,false))
+    }
 
     return (
         <div className="py-2 px-4 bg-base-200  flex items-center  justify-between sticky top-0 relative">
@@ -44,15 +30,22 @@ const PinAudio = ({path}) => {
                     <button className="btn text-indigo-600 ">
                         <FaBackward size={19} />
                     </button>
-                    <button className="btn text-indigo-600 " onClick={togglePlay}>
-                        {!isPlaying?<FaPlay size={18} />:<FaPause size={18} />}
+                    <button
+                        className="btn text-indigo-600 "
+                        onClick={togglePlay}
+                    >
+                        {!isPlay ? (
+                            <FaPlay size={18} />
+                        ) : (
+                            <FaPause size={18} />
+                        )}
                     </button>
                     <button className="btn text-indigo-600 ">
                         <FaForward size={19} />
                     </button>
                 </div>
                 <div className="flex items-center gap-0.5">
-                    <label htmlFor="chk" className=" btn text-lg relative " >
+                    <label htmlFor="chk" className=" btn text-lg relative ">
                         <input
                             type="checkbox"
                             className="absolute top-0 opacity-0"
@@ -62,7 +55,11 @@ const PinAudio = ({path}) => {
                                 handlePlayBackRate(e)
                             }}
                         />
-                        <span className={`font-sans ${check ? 'text-indigo-500' : ''}`}>
+                        <span
+                            className={`font-sans ${
+                                check ? 'text-indigo-500' : ''
+                            }`}
+                        >
                             2X
                         </span>
                     </label>
@@ -71,24 +68,25 @@ const PinAudio = ({path}) => {
                     </button>
                 </div>
             </div>
-            <div className='absolute -bottom-2 left-0 '
-            style={{width:`${(currentTime / audioRef?.current?.duration) * 100}%`}}
+            <div
+                className="absolute -bottom-2 left-0 "
+                style={{
+                    width: `${
+                        (currentTimeMusic / durationMusic) * 100
+                    }%`,
+                }}
             >
                 <progress
-                        onClick={handleProgressBarClick}
-
-                    className="h-1 border-[1px] bg-indigo-500 progress  w-full hover:border-[3px] transition-all duration-300" 
-                    value={`${(currentTime / audioRef?.current?.duration) * 100}`}
+                    // onClick={handleProgressBarClick}
+                    className="h-1 border-[1px] progress-primary  progress  w-full hover:border-[3px] transition-all duration-300"
+                    value={`${
+                        (currentTimeMusic /durationMusic) * 100
+                    }`}
                     max="100"
- 
                 ></progress>
             </div>
 
-            <audio 
-            ref={audioRef}
-            src={path}
-            onTimeUpdate={handleTimeUpdate}
-            ></audio>
+           
         </div>
     )
 }
