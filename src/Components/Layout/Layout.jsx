@@ -4,6 +4,7 @@ import MessageList from '../MessageList/MessageList'
 import Chat from '../../Pages/Chat/Chat'
 import ChatInfo from '../ChatInfo/ChatInfo'
 import { Route, Routes, useParams } from 'react-router-dom'
+import {MusicControlProvider} from '../../Context/MusicContext'
 
 const Layout = () => {
 
@@ -60,6 +61,7 @@ const getRandomValue = () => {
    
     const match = useParams()
     return (
+        <MusicControlProvider>
         <div
             className={`${
                 match.id
@@ -78,6 +80,7 @@ const getRandomValue = () => {
 
             <ChatInfo />
         </div>
+        </MusicControlProvider>
     )
 }
 
