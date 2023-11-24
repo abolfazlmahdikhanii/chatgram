@@ -167,7 +167,7 @@ const ChatForm = ({
                                     placeholder="message"
                                     suppressContentEditableWarning={true}
                                     onKeyDown={(e) => {
-                                        e.key === 'Enter'
+                                        e.key === 'Enter'&&!edit
                                             ? submitFormHandler(e)
                                             : null
                                         // e.key === "Backspace"&&edit ? setEdit(e.target.innerText) : edit;
