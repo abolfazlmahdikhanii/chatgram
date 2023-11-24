@@ -4,22 +4,22 @@ import Box from '../UI/Box/Box'
 import Profile from '../Profile/Profile'
 import {AiOutlineArrowLeft} from "react-icons/ai"
 
-const ChatHeader = ({ info, showPin,pinMessage,setShowPin }) => {
+const ChatHeader = ({ info, showPin,pinMessage,setShowPin,setShowChatInfo }) => {
     return (
         <Box>
            
               {
                 !showPin?
-                (<HeaderMessage info={info}/>)
+                (<HeaderMessage info={info} setShowChatInfo={setShowChatInfo}/>)
                 :
-                (<HeaderPinMessage pinMessage={pinMessage} setShowPin={setShowPin}/>)
+                (<HeaderPinMessage pinMessage={pinMessage} setShowPin={setShowPin} />)
 
               }
   
         </Box>
     )
 }
-const HeaderMessage = ({info}) => {
+const HeaderMessage = ({info,setShowChatInfo}) => {
     return (
       <section className="px-5 flex items-center justify-between">
             <div className="flex gap-4">
@@ -36,11 +36,11 @@ const HeaderMessage = ({info}) => {
 
             {/* right-side */}
 
-            <div className="flex items-center gap-x-5">
-                <p>
+            <div className="flex items-center">
+            <p className='btn btn-ghost mask mask-squircle'>
                     <BiDotsHorizontalRounded size={20} color="#9ca3af" />
                 </p>
-                <p>
+                <p className='btn btn-ghost mask mask-squircle' onClick={()=>setShowChatInfo(prev=>!prev)}>
                     <svg
                         width={20}
                         height={20}
@@ -57,6 +57,7 @@ const HeaderMessage = ({info}) => {
                         />
                     </svg>
                 </p>
+               
             </div>
         </section>
     )
