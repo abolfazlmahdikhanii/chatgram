@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useId, useRef, useState } from 'react'
 import ChatHeader from '../../Components/ChatHeader/ChatHeader'
 import Message from '../../Components/Message/Message'
 import ChatForm from '../../Components/ChatForm/ChatForm'
-import { useParams,useNavigate } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import Uploader from '../../Components/Uploader/Uploader'
 import MessageMenu from '../../Components/UI/MessageMenu/MessageMenu'
 import CheckMessageBox from '../../Components/CheckMessageBox/CheckMessageBox'
@@ -12,7 +12,7 @@ import Modal from '../../Components/UI/Modal/Modal'
 import Dialog from '../../Components/UI/Dialog/Dialog'
 import PinAudio from '../../Components/PinAudio/PinAudio'
 import { MusicControlContext } from '../../Context/MusicContext'
-
+import ChatInfo from '../../Components/ChatInfo/ChatInfo'
 
 const Chat = ({ chat, setChat }) => {
     const [message, setMessage] = useState()
@@ -36,22 +36,15 @@ const Chat = ({ chat, setChat }) => {
     const [isPin, setIsPin] = useState(false)
     const [userForwardMessage, setUserForwardMessage] = useState(null)
     const [checkForward, setCheckForward] = useState(false)
-    const [audio,setAudio]=useState()
+    const [showChatInfo,setShowChatInfo] = useState(false)
+    const [audio, setAudio] = useState()
     const match = useParams()
     const chatRef = useRef()
     const forwards = []
-  
-
-
-    
 
     useEffect(() => {
-   
         filterChat(match.id)
         displayCheckBoxHandler(checkMessage)
-        
-
-      
     }, [
         match,
         chat,
@@ -60,14 +53,13 @@ const Chat = ({ chat, setChat }) => {
         editContent,
         chatRef,
         pinMessage,
-     setShowContextMenu
+        setShowContextMenu,
     ])
 
     useEffect(() => {
         const findUserMessage = chat?.find((user) => user.id == match.id)
         setUserMessage(findUserMessage)
-       
-    }, [match, chat, message, showFrowardModal,setShowAlert, userMessage])
+    }, [match, chat, message, showFrowardModal, setShowAlert, userMessage])
 
     const filterChat = (id) => {
         let findChat = chat.find((item) => item.id == id)
@@ -98,7 +90,6 @@ const Chat = ({ chat, setChat }) => {
         setChat(newChat)
     }
     const removeMessages = (id, idFile) => {
-        
         setMessageID(null)
 
         const newChat = [...chat]
@@ -121,7 +112,6 @@ const Chat = ({ chat, setChat }) => {
             console.log('a')
             removeMessageFile(id, idFile)
         }
-       
     }
     // remove message type===file
     const removeMessageFile = (id, idType) => {
@@ -138,9 +128,7 @@ const Chat = ({ chat, setChat }) => {
         const filterAudioMessage = findMessage?.messageDis?.find(
             (item) => item?.src === audio
         )
-        if(filterAudioMessage)setAudio(null)
-       
-  
+        if (filterAudioMessage) setAudio(null)
 
         findMessage?.messageDis?.splice(filterMessage, 1)
 
@@ -151,11 +139,8 @@ const Chat = ({ chat, setChat }) => {
         setChat(newChat)
     }
     const removeMessageText = (id, chat, findChat, newMessage) => {
-   
-
         const findMessage = newMessage?.find((item) => item?.messageDis)
         findMessage.messageDis = ''
-        
 
         findChat.messages = newMessage.filter(
             (item) => item.messageDis !== '' || item.messageDis.length < 0
@@ -209,7 +194,7 @@ const Chat = ({ chat, setChat }) => {
 
         setEditContent(findMessage?.messageDis)
     }
-    const clickRemoveHandler=()=>{
+    const clickRemoveHandler = () => {
         setShowAlert(true)
         setIsRemove(true)
         setShowContextMenu(false)
@@ -404,60 +389,59 @@ const Chat = ({ chat, setChat }) => {
         setChat(newChat)
     }
     return (
-        <div
-            className="bg-[url('../../../src/assets/images/bg-pattern.svg')] h-screen relative overflow-hidden"
-            onContextMenu={(e) => e.preventDefault()}
-        >
-            <ChatHeader
-                info={message}
-                showPin={showPin}
-                setShowPin={setShowPin}
-                pinMessage={pinMessage}
-            />
-
-            <main
-                className="flex flex-col justify-between h-screen  overflow-hidden mb-5 relative "
-                ref={chatRef}
+        <div className={`grid transition-all duration-200 ${showChatInfo?'grid-cols-[1fr_28%]':"grid-cols-1"}`}>
+            <div
+                className="bg-[url('../../../src/assets/images/bg-pattern.svg')] h-screen relative overflow-hidden "
+                onContextMenu={(e) => e.preventDefault()}
             >
-                {
-                    audio&&<PinAudio path={audio}/>
-                }
-                {!showPin && pinMessage.length ? (
-                    <PinBox
-                        pins={pinMessage}
-                        setPin={setPinMessage}
-                        setShowPin={setShowPin}
-                    
-                    />
-                ) : null}
+                <ChatHeader
+                    info={message}
+                    showPin={showPin}
+                    setShowPin={setShowPin}
+                    pinMessage={pinMessage}
+                    setShowChatInfo={setShowChatInfo}
+                />
 
-                {/* simple message */}
-                <section
-                    className={`h-[90%]  overflow-y-auto  flex flex-col  mt-1 mb-1.5 transition-all duration-200 ease-linear w-full ${
-                        showPin
-                            ? '-translate-x-full hidden'
-                            : 'translate-x-0 flex'
-                    }`}
+                <main
+                    className="flex flex-col justify-between h-screen  overflow-hidden mb-5 relative "
+                    ref={chatRef}
                 >
-                    {message?.messages?.messageDis !== '' &&
-                        message?.messages?.map((item, i, arr) => (
-                            <Message
-                                key={crypto.randomUUID()}
-                                from={item.from}
-                                forward={item?.forward}
-                                {...item}
-                                remove={removeMessages}
-                                setCheckMessage={setCheckMessage}
-                                onContext={contextmenuHandler}
-                                onCheck={checkMessageHandler}
-                                checkArr={checkMessage}
-                                showCheck={showCheckBox}
-                                setReaction={removeReactionEmojiHandler}
-                                setFileId={setMessageIDFile}
-                                setAudio={setAudio}
-                            />
-                        ))}
-                    {/* {message?.forward &&
+                    {audio && <PinAudio path={audio} />}
+                    {!showPin && pinMessage.length ? (
+                        <PinBox
+                            pins={pinMessage}
+                            setPin={setPinMessage}
+                            setShowPin={setShowPin}
+                        />
+                    ) : null}
+
+                    {/* simple message */}
+                    <section
+                        className={`h-[90%]  overflow-y-auto  flex flex-col  mt-1 mb-1.5 transition-all duration-200 ease-linear w-full ${
+                            showPin
+                                ? '-translate-x-full hidden'
+                                : 'translate-x-0 flex'
+                        }`}
+                    >
+                        {message?.messages?.messageDis !== '' &&
+                            message?.messages?.map((item, i, arr) => (
+                                <Message
+                                    key={crypto.randomUUID()}
+                                    from={item.from}
+                                    forward={item?.forward}
+                                    {...item}
+                                    remove={removeMessages}
+                                    setCheckMessage={setCheckMessage}
+                                    onContext={contextmenuHandler}
+                                    onCheck={checkMessageHandler}
+                                    checkArr={checkMessage}
+                                    showCheck={showCheckBox}
+                                    setReaction={removeReactionEmojiHandler}
+                                    setFileId={setMessageIDFile}
+                                    setAudio={setAudio}
+                                />
+                            ))}
+                        {/* {message?.forward &&
                         message?.forward.map((message) => (
                             <ForwardMessage
                                 id={message.id}
@@ -471,97 +455,101 @@ const Chat = ({ chat, setChat }) => {
                                 showCheckBox={showCheckBox}
                             />
                         ))} */}
-                </section>
-                {/* pin message */}
-                <section
-                    className={`h-[90%]  overflow-y-auto  flex flex-col  mt-1 mb-1.5 transition-all duration-200 ease-linear w-full${
-                        showPin
-                            ? 'translate-x-0 flex'
-                            : 'translate-x-full hidden'
-                    }`}
-                >
-                    {pinMessage &&
-                        pinMessage.map((item, i) => (
-                            <Message
-                                key={item.messageId}
-                                from={item.from}
-                                {...item}
-                                remove={removeMessages}
-                                setCheckMessage={setCheckMessage}
-                                onContext={contextmenuHandler}
-                                onCheck={checkMessageHandler}
-                                checkArr={checkMessage}
-                                showCheck={showCheckBox}
+                    </section>
+                    {/* pin message */}
+                    <section
+                        className={`h-[90%]  overflow-y-auto  flex flex-col  mt-1 mb-1.5 transition-all duration-200 ease-linear w-full${
+                            showPin
+                                ? 'translate-x-0 flex'
+                                : 'translate-x-full hidden'
+                        }`}
+                    >
+                        {pinMessage &&
+                            pinMessage.map((item, i) => (
+                                <Message
+                                    key={item.messageId}
+                                    from={item.from}
+                                    {...item}
+                                    remove={removeMessages}
+                                    setCheckMessage={setCheckMessage}
+                                    onContext={contextmenuHandler}
+                                    onCheck={checkMessageHandler}
+                                    checkArr={checkMessage}
+                                    showCheck={showCheckBox}
+                                />
+                            ))}
+                    </section>
+
+                    {/* FORM */}
+                    {!showPin ? (
+                        !checkMessage.length ? (
+                            <ChatForm
+                                set={sendMessageHandler}
+                                edit={editContent}
+                                setEdit={setEditContent}
+                                onEdit={editHandler}
+                                reply={showReply}
+                                setShowReply={setShowReply}
+                                replyMessage={replyMessage}
+                                setReply={setReplyMessage}
                             />
-                        ))}
-                </section>
-
-                {/* FORM */}
-                {!showPin ? (
-                    !checkMessage.length ? (
-                        <ChatForm
-                            set={sendMessageHandler}
-                            edit={editContent}
-                            setEdit={setEditContent}
-                            onEdit={editHandler}
-                            reply={showReply}
-                            setShowReply={setShowReply}
-                            replyMessage={replyMessage}
-                            setReply={setReplyMessage}
-                        />
+                        ) : (
+                            <CheckMessageBox
+                                checkMessage={checkMessage}
+                                setCheckMessage={setCheckMessage}
+                                onRemove={removeCheckMessage}
+                                onForward={ForwardHandler}
+                            />
+                        )
                     ) : (
-                        <CheckMessageBox
-                            checkMessage={checkMessage}
-                            setCheckMessage={setCheckMessage}
-                            onRemove={removeCheckMessage}
-                            onForward={ForwardHandler}
-                        />
-                    )
-                ) : (
-                    <UnpinBtn unpin={unpinHandler} />
-                )}
-                {/* menu */}
-                <MessageMenu
-                    pageX={pageX}
-                    pageY={pageY}
-                    show={showContextMenu}
-                    setClose={setShowContextMenu}
-                    messageID={messageID}
-                    onSelect={checkMessageHandler}
-                    onEdit={selectEditTextMessageHandler}
-                    onReply={replyMessageHandler}
-                    onForward={ForwardHandler}
-                    onReaction={reactionEmojiHandler}
-                    setAlert={setShowAlert}
-                    remove={clickRemoveHandler}
-                    isPin={isPin}
-                />
-                <Uploader />
+                        <UnpinBtn unpin={unpinHandler} />
+                    )}
+                    {/* menu */}
+                    <MessageMenu
+                        pageX={pageX}
+                        pageY={pageY}
+                        show={showContextMenu}
+                        setClose={setShowContextMenu}
+                        messageID={messageID}
+                        onSelect={checkMessageHandler}
+                        onEdit={selectEditTextMessageHandler}
+                        onReply={replyMessageHandler}
+                        onForward={ForwardHandler}
+                        onReaction={reactionEmojiHandler}
+                        setAlert={setShowAlert}
+                        remove={clickRemoveHandler}
+                        isPin={isPin}
+                    />
+                    <Uploader />
 
-                <Modal
-                    show={showFrowardModal}
-                    chat={chat}
-                    onForward={forwardClickHandler}
-                    messageID={messageID}
-                    setChat={setChat}
-                    userID={match?.id}
-                    setShow={setShowForwardModal}
-                />
-            </main>
-            {
-                showAlert&&(
+                    <Modal
+                        show={showFrowardModal}
+                        chat={chat}
+                        onForward={forwardClickHandler}
+                        messageID={messageID}
+                        setChat={setChat}
+                        userID={match?.id}
+                        setShow={setShowForwardModal}
+                    />
+                </main>
+                {showAlert && (
                     <Dialog
-                    show={showAlert}
-                    setShow={setShowAlert}
-                    isRemove={isRemove}
-                    onRemove={removeMessages}
-                    onPin={pinMessageHandler}
-                    messageID={messageID}
-                    userInfo={message}
-                    isPin={isPin}
-                />
-                )
-            }
+                        show={showAlert}
+                        setShow={setShowAlert}
+                        isRemove={isRemove}
+                        onRemove={removeMessages}
+                        onPin={pinMessageHandler}
+                        messageID={messageID}
+                        userInfo={message}
+                        isPin={isPin}
+                    />
+                )}
+            </div>
+          
+                {
+                    ChatInfo&&<ChatInfo />
+                }
+          
         </div>
     )
 }
