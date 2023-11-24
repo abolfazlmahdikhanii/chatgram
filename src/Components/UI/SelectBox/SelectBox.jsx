@@ -52,6 +52,7 @@ const SelectBox = ({
   // upload file
   const uploadFileHandler = (e) => {
     let files = [];
+    console.log(e)
 
     for (let i = 0; i < e.target.files.length; i++) {
       files.push({
