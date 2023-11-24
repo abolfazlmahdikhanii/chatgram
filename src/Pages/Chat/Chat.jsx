@@ -1,8 +1,8 @@
-import React, { useEffect, useId, useRef, useState } from 'react'
+import React, { useContext, useEffect, useId, useRef, useState } from 'react'
 import ChatHeader from '../../Components/ChatHeader/ChatHeader'
 import Message from '../../Components/Message/Message'
 import ChatForm from '../../Components/ChatForm/ChatForm'
-import { useParams } from 'react-router-dom'
+import { useParams,useNavigate } from 'react-router-dom'
 import Uploader from '../../Components/Uploader/Uploader'
 import MessageMenu from '../../Components/UI/MessageMenu/MessageMenu'
 import CheckMessageBox from '../../Components/CheckMessageBox/CheckMessageBox'
@@ -11,6 +11,8 @@ import UnpinBtn from '../../Components/UnpinBtn/UnpinBtn'
 import Modal from '../../Components/UI/Modal/Modal'
 import Dialog from '../../Components/UI/Dialog/Dialog'
 import PinAudio from '../../Components/PinAudio/PinAudio'
+import { MusicControlContext } from '../../Context/MusicContext'
+
 
 const Chat = ({ chat, setChat }) => {
     const [message, setMessage] = useState()
@@ -38,12 +40,18 @@ const Chat = ({ chat, setChat }) => {
     const match = useParams()
     const chatRef = useRef()
     const forwards = []
+  
+
+
+    
 
     useEffect(() => {
-        setAudio(null)
+   
         filterChat(match.id)
         displayCheckBoxHandler(checkMessage)
-    
+        
+
+      
     }, [
         match,
         chat,
@@ -127,6 +135,11 @@ const Chat = ({ chat, setChat }) => {
         const filterMessage = findMessage?.messageDis?.findIndex(
             (item) => item?.id === idType
         )
+        const filterAudioMessage = findMessage?.messageDis?.find(
+            (item) => item?.src === audio
+        )
+        if(filterAudioMessage)setAudio(null)
+       
   
 
         findMessage?.messageDis?.splice(filterMessage, 1)
