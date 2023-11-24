@@ -1,15 +1,15 @@
-import { createContext,useState } from "react";
+import { createContext,useMemo,useState,useRef, useEffect } from "react";
 
 export const MusicControlContext=createContext({
     isPlay:false,
     currentSong:null,
     currentTimeMusic:0,
     durationMusic:0,
+
     playBackRate:{speed:1,isSpeed:true},
     containerBox:null,
     playMusic: () => {},
     playbackRateMusic: () => {},
-
     seekMusic: () => {},
 })
 
@@ -20,13 +20,25 @@ export const MusicControlProvider = ({ children }) => {
     const [currentTimeMusic, setCurrentTimeMusic] = useState(0);
     const [durationMusic,setDurationMusic]=useState(0)
     const [playBackRate,setPlayBackRate]=useState(1)
+
+
   
-    const playMusic = (song,container=containerBox,duration) => {
+    const playMusic = (song,container=containerBox) => {
+      
+      if(currentSong!==song){
+        setCurrentTimeMusic(0)
+      }
       setCurrentSong(song);
-      setDurationMusic(duration)
+      
       setContainerBox(container)
       container.playPause()
+      container.setTime(currentTimeMusic)
       setIsPlay(prev=>!prev);
+   
+      
+   
+
+     
     };
   
    const playbackRateMusic=(speed,isSpeed)=>{
@@ -36,8 +48,10 @@ export const MusicControlProvider = ({ children }) => {
     containerBox.play()
    }
   
-    const seekMusic = (time) => {
+    const seekMusic = (time,duration) => {
       setCurrentTimeMusic(time);
+      setDurationMusic(duration)
+     
     };
   
     return (
@@ -50,12 +64,14 @@ export const MusicControlProvider = ({ children }) => {
           seekMusic,
           durationMusic,
           playBackRate,
-          playbackRateMusic
+          playbackRateMusic,
+       
         }}
       >
         {children}
+    
       </MusicControlContext.Provider>
     );
-  };
+  }
   
  
