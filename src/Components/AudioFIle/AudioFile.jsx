@@ -33,58 +33,74 @@ const AudioFile = ({
     caption,
     setAudio,
 }) => {
-    const [isPlaying, setIsPlaying] = useState(false)
+    const [isPlaying, setIsPlaying] = useState(true)
     const [wave, setWave] = useState(null)
     const [currentTime, setCurrentTime] = useState(0)
     const [duration, setDuration] = useState(0)
-    const audioRef = useRef()
+    const [showName, setShowName] = useState(true)
+    // const audioRef = useRef()
     const wavesurfRef = useRef(null)
     const waveFormRef = useRef()
 
-    const {
-      isPlay,
-        playMusic,
-        seekMusic
-
-    } = useContext(MusicControlContext)
+    const { isPlay, playMusic, seekMusic, currentSong, currentTimeMusic } =
+        useContext(MusicControlContext)
+    const audioRef = useRef(null)
 
     useEffect(() => {
         if (waveFormRef.current) {
-         
             const option = formWaveSurferOptions(waveFormRef.current, isColor)
             wavesurfRef.current = WaveSurfer.create(option)
+            
+                wavesurfRef.current.load(audioRef.current.src)
+           
+            
 
-            wavesurfRef.current.load(audioRef.current.src)
-    
             wavesurfRef.current.on('ready', function () {
                 setDuration(wavesurfRef.current.getDuration())
-             
+                if(!name){
+                    setShowName(false)
+                }
+                if (currentSong === path) {
+                    wavesurfRef.current.setTime(currentTimeMusic)
+                    setShowName(false)
+                }
+               
             })
             wavesurfRef.current.on('audioprocess', function () {
                 setCurrentTime(wavesurfRef.current.getCurrentTime())
-                seekMusic(wavesurfRef.current.getCurrentTime());
-               
+                seekMusic(
+                    wavesurfRef.current.getCurrentTime(),
+                    wavesurfRef.current.getDuration()
+                )
+              
             })
             wavesurfRef.current.on('finish', () => {
-              wavesurfRef.current.destroy()
-              setCurrentTime(0)
-              setAudio(null)
+                wavesurfRef.current.setTime(0)
+                
+                setCurrentTime(0)
+                setAudio(null)
+                seekMusic(
+                    0,
+                    wavesurfRef.current.getDuration()
+                )
+                setShowName(true)
             })
-          
         }
 
         return () => wavesurfRef.current.destroy()
-    }, [path])
-  
-    const handleLoadedMetadata = () => {
-        setAudio(audioRef)
+    }, [])
+
+    const handleLoadedMetadata = (e) => {
+        console.log(audioRef.current?.metadata?.artist)
     }
     const controlAudioHandler = () => {
-      setAudio(path)
-        playMusic(path,wavesurfRef.current,duration)
+        
+        setAudio(path)
+        playMusic(path, wavesurfRef.current)
+        setCurrentTime(wavesurfRef.current.getCurrentTime())
         setIsPlaying((prev) => !prev)
-       
-    //  wavesurfRef.current.playPause()
+    //    if(currentSong===path) setShowName(false)
+        //  wavesurfRef.current.playPause()
     }
 
     const formatSize = (bytes) => {
@@ -113,7 +129,7 @@ const AudioFile = ({
                     }`}
                     onClick={controlAudioHandler}
                 >
-                    {!isPlay ? <FaPlay /> : <FaPause />}
+                    {path === currentSong && isPlay ? <FaPlay /> : <FaPause />}
                 </button>
             </div>
             <div className="flex flex-col gap-2 max-w-[90%] w-full">
@@ -121,10 +137,19 @@ const AudioFile = ({
           {name}
         </p> */}
                 <div className="flex flex-col w-full gap-3">
+                    {name && showName && (
+                        <p className={`max-w-[240px] truncate ml-2  `}>
+                            {name}
+                        </p>
+                    )}
+
                     <div
-                        className="w-full h-[40px] overflow-hidden"
+                        className={`w-full h-[40px] overflow-hidden ${
+                    !showName ? 'block' : 'hidden'
+                        }`}
                         ref={waveFormRef}
                     ></div>
+
                     <p
                         className={`text-xs  whitespace-nowrap ml-2 ${
                             isColor ? 'text-gray-200' : 'text-gray-400'
@@ -134,7 +159,12 @@ const AudioFile = ({
                         {formatTime(duration)}
                     </p>
                 </div>
-                <audio src={path} ref={audioRef} className="track"></audio>
+                <audio
+                    src={path}
+                    ref={audioRef}
+                    onLoadedMetadata={handleLoadedMetadata}
+                    className="track"
+                ></audio>
 
                 <div className="flex items-center self-end gap-2">
                     <p className="text-[11px]">{formatSize(size)}</p>
