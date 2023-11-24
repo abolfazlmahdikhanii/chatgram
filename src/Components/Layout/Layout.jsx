@@ -82,7 +82,7 @@ const getRandomValue = () => {
                 />
             </Routes>
 
-            <ChatInfo />
+         
         </div>
         </MusicControlProvider>
     )
