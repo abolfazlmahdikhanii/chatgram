@@ -29,7 +29,7 @@
         @apply bg-gray-600/50;
     }
     body {
-        @apply bg-gray-950 scroll-smooth;
+        @apply bg-gray-950 scroll-smooth select-none;
     }
 
     .message-item,
@@ -173,5 +173,8 @@
     }
     [data-color='rose'] {
       @apply  bg-gradient-to-br from-rose-400 via-rose-400 to-rose-600 text-rose-400
+    }
+    .info-box{
+        @apply px-[14px] transition-all duration-200 bg-base-200 hover:bg-gray-700/30 py-3.5 rounded-xl cursor-pointer 
     }
 }
