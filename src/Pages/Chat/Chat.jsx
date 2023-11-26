@@ -36,7 +36,7 @@ const Chat = ({ chat, setChat }) => {
     const [isPin, setIsPin] = useState(false)
     const [userForwardMessage, setUserForwardMessage] = useState(null)
     const [checkForward, setCheckForward] = useState(false)
-    const [showChatInfo,setShowChatInfo] = useState(false)
+    const [showChatInfo, setShowChatInfo] = useState(false)
     const [audio, setAudio] = useState()
     const match = useParams()
     const chatRef = useRef()
@@ -389,9 +389,13 @@ const Chat = ({ chat, setChat }) => {
         setChat(newChat)
     }
     return (
-        <div className={`grid transition-all duration-200 ${showChatInfo?'grid-cols-[1fr_28%]':"grid-cols-1"}`}>
+        <div
+            className={`grid transition-all duration-200 ${
+                showChatInfo ? 'grid-cols-[1fr_30%]' : 'grid-cols-1'
+            }`}
+        >
             <div
-                className="bg-[url('../../../src/assets/images/bg-pattern.svg')] h-screen relative overflow-hidden "
+                className={`bg-[url('../../../src/assets/images/bg-pattern.svg')] ${showChatInfo?'bg-[size:35%] ':''}  h-screen relative overflow-hidden  transition-all duration-200 ease-in-out`}
                 onContextMenu={(e) => e.preventDefault()}
             >
                 <ChatHeader
@@ -545,11 +549,8 @@ const Chat = ({ chat, setChat }) => {
                     />
                 )}
             </div>
-          
-                {
-                    ChatInfo&&<ChatInfo />
-                }
-          
+
+            {ChatInfo && <ChatInfo info={message} />}
         </div>
     )
 }
