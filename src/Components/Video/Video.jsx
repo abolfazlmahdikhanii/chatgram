@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Progress from '../UI/Progress/Progress'
 
-const Video = ({ messageId, idType, onRemove, contextMenu, progress, src ,caption}) => {
+const Video = ({ messageId, idType, onRemove, contextMenu, progress, src ,caption,autoPlay}) => {
     const [currentTime, setCurrentTime] = useState(0)
     const [second,setSecond]=useState(0)
     const [isLongVideo,setIsLongVideo]=useState(false)
@@ -38,7 +38,7 @@ const Video = ({ messageId, idType, onRemove, contextMenu, progress, src ,captio
             <video
                 ref={videoRef}
                 className="w-full h-full object-cover"
-                autoPlay={currentTime>=59?false:true}
+                autoPlay={!autoPlay||currentTime>=59?false:true}
                 loop
                 disablePictureInPicture
                 playsInline
