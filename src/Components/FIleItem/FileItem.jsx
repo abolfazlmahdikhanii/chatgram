@@ -12,7 +12,8 @@ const FileItem = ({
   message = false,
   from,
   onContext,
-  isColor
+  isColor,
+  isFile
 }) => {
   const formatSize = (bytes) => {
     if (bytes == 0) return "0 Bytes";
