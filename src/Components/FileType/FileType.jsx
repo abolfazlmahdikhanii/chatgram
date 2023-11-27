@@ -3,6 +3,7 @@ import FileItem from '../FIleItem/FileItem'
 import Progress from '../UI/Progress/Progress'
 import AudioFile from '../AudioFIle/AudioFile'
 import Video from '../Video/Video'
+import FileIcon from '../UI/FIleIcon/FileIcon'
 
 const FileType = ({
     type,
@@ -18,7 +19,10 @@ const FileType = ({
     messageId,
     isColor,
     caption,
-    setAudio
+    setAudio,
+    autoPlay=true,
+    imgSize,
+    isFile=true
 }) => {
     
 
@@ -33,7 +37,7 @@ const FileType = ({
                 idType={idType}
                 src={src}
                 onRemove={onRemove}
-              
+                autoPlay={autoPlay}
             />
         )
     } else if (type == 'mp3') {
@@ -52,7 +56,7 @@ const FileType = ({
         file = (
   
             <li
-                className=" h-[210px] overflow-hidden inline-block rounded-xl basis-[40%]  bg-gray-200/20 flex-grow flex-1 relative"
+                className={` ${imgSize?'h-[100px]':'h-[210px]'} overflow-hidden inline-block rounded-xl basis-[40%]  bg-gray-200/20 flex-grow flex-1 relative`}
                 onContextMenu={(e) => contextMenu(e, messageId, idType)}
             >
                 <Progress
@@ -67,6 +71,19 @@ const FileType = ({
             </li>
         
         )
+    } else if(type=="file"&&!isFile) {
+        file = (
+            <div>
+            <FileIcon
+              type={name?.split('.').pop()}
+              path={src ? src : ""}
+              message={true}
+              from={from}
+              isColor={isColor}
+            />
+          </div>
+        )
+    
     } else {
         file = (
             <FileItem
