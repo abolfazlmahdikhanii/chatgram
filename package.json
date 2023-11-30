@@ -10,8 +10,10 @@
         "preview": "vite preview"
     },
     "dependencies": {
+        "@dhaiwat10/react-link-preview": "^1.15.0",
         "@emoji-mart/data": "^1.1.2",
         "@emoji-mart/react": "^1.1.1",
+        "axios": "^1.6.2",
         "emoji-mart": "^5.5.2",
         "react": "^18.2.0",
         "react-audio-visualize": "^1.1.3",
