@@ -8,6 +8,9 @@ import { BsArrowRightShort } from 'react-icons/bs'
 import TypeMessage from '../TypeMessage/TypeMessage'
 import messageType from '../../Utility/MessageType'
 import ReactionBox from '../UI/ReactionBox/ReactionBox'
+
+import LinkPreview from '../LinkPerview/LinkPreview'
+
 const Message = ({
     id,
     from,
@@ -33,13 +36,14 @@ const Message = ({
     setReaction,
     setFileId,
     caption,
-    setAudio
+    setAudio,
 }) => {
     const location = useLocation()
     const navigate = useNavigate()
     const hashId = location.hash.substring(1)
     const [style, setStyle] = useState('')
-    
+    const [url, setUrl] = useState('')
+    let messageContent = null
     useEffect(() => {
         if (hashId === messageId) {
             setStyle('bg-indigo-300/10')
@@ -52,6 +56,18 @@ const Message = ({
         }
     }, [location, forward])
 
+    const customFetcher = async (url) => {
+        try {
+            const response = await fetch(
+                `https://v1.nocodeapi.com/abmk/link_preview/HDWVGWyAEXpcaCAF?url=${url}`
+            )
+            const json = await response.json()
+            console.log(json)
+            return { title }
+        } catch (err) {
+            console.log(err)
+        }
+    }
     const formatTime = (date) => {
         return new Intl.DateTimeFormat('tr', {
             hour: '2-digit',
@@ -61,6 +77,22 @@ const Message = ({
 
     const checkHandler = (id, check) => {
         onCheck(id, check)
+    }
+    if (
+        messageDis.includes('http://') ||
+        messageDis.includes('https://') ||
+        messageDis.includes('www.')
+    ) {
+        console.log(messageDis)
+        messageContent = <LinkPreview text={messageDis} />
+    } else {
+        messageContent = (
+            <div
+                className="text-white"
+                dir="auto"
+                dangerouslySetInnerHTML={{ __html: messageDis }}
+            ></div>
+        )
     }
 
     let arr = checkArr.findIndex((item) => item.messageId === messageId)
@@ -161,11 +193,7 @@ const Message = ({
 
                 {/* message for Text */}
                 {typeof messageDis === 'string' ? (
-                    <div
-                        className="text-white"
-                        dir="auto"
-                        dangerouslySetInnerHTML={{ __html: messageDis }}
-                    ></div>
+                    messageContent
                 ) : (
                     <ul
                         className={`${
@@ -182,8 +210,9 @@ const Message = ({
                                     idType={content.id}
                                     messageId={messageId}
                                     contextMenu={onContext}
-                    
-                                    setAudio={content.type==="mp3"?setAudio:null}
+                                    setAudio={
+                                        content.type === 'mp3' ? setAudio : null
+                                    }
                                     isColor={
                                         from === 'client' && !forward
                                             ? true
