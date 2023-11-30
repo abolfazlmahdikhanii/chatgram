@@ -550,7 +550,7 @@ const Chat = ({ chat, setChat }) => {
                 )}
             </div>
 
-            {ChatInfo && <ChatInfo info={message} chat={chat} setChatInfo={setShowChatInfo}/>}
+            {showChatInfo && <ChatInfo info={message} chat={chat} setChatInfo={setShowChatInfo}/>}
         </div>
     )
 }
