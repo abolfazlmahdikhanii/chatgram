@@ -6,7 +6,7 @@ import { MdDeleteOutline } from "react-icons/md";
 import { TbSquareRoundedCheck } from "react-icons/tb";
 import ReactionEmoji from "../ReactionEmoji/ReactionEmoji";
 
-const MessageMenu = ({ show, setClose, pageX, pageY,onRemove,messageID,onSelect,onEdit,onPin,onReply,onForward,onReaction,setAlert,remove,isPin }) => {
+const MessageMenu = ({ show, setClose, pageX, pageY,onRemove,messageID,onSelect,onEdit,onPin,onReply,onForward,onReaction,setAlert,remove,isPin,isChatInfo }) => {
   const [emoji, setEmoji] = useState([
     {
       id: crypto.randomUUID(),
@@ -58,7 +58,8 @@ const MessageMenu = ({ show, setClose, pageX, pageY,onRemove,messageID,onSelect,
     </svg>
       ,
       title: "Reply",
-      event:()=>onReply(messageID)
+      event:()=>onReply(messageID),
+      style:isChatInfo?"hidden":"flex",
     },
     {
       id: crypto.randomUUID(),
@@ -81,7 +82,8 @@ const MessageMenu = ({ show, setClose, pageX, pageY,onRemove,messageID,onSelect,
     </svg>
       ,
       title: "Edit",
-      event:()=>onEdit(messageID)
+      event:()=>onEdit(messageID),
+      style:isChatInfo?"hidden":"flex",
     },
     {
       id: crypto.randomUUID(),
@@ -90,7 +92,8 @@ const MessageMenu = ({ show, setClose, pageX, pageY,onRemove,messageID,onSelect,
       event:()=>{
         setAlert(true)
         setClose(false)
-      }
+      },
+      style:isChatInfo?"hidden":"flex",
     },
     {
       id: crypto.randomUUID(),
@@ -122,6 +125,44 @@ const MessageMenu = ({ show, setClose, pageX, pageY,onRemove,messageID,onSelect,
       styleTitle:'ml-1',
       event:()=>onForward()
     },
+    {
+      id: crypto.randomUUID(),
+      icon: 
+      <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="19"
+      height="19"
+      fill="none"
+      viewBox="0 0 24 24"
+    >
+      <path
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeMiterlimit="10"
+        strokeWidth="1.5"
+        d="M13.2 21.37c-.66.88-1.74.88-2.4 0l-1.5-2c-.17-.22-.53-.4-.8-.4H8c-4 0-6-1-6-6v-5c0-4 2-6 6-6h8c4 0 6 2 6 6v5"
+      ></path>
+      <path
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.5"
+        d="M18.2 21.4a3.2 3.2 0 100-6.4 3.2 3.2 0 000 6.4zM22 22l-1-1"
+      ></path>
+      <path
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+        d="M15.996 11h.01M11.995 11h.01M7.995 11h.008"
+      ></path>
+    </svg>
+      ,
+      title: "Show in chat",
+      styleTitle:'ml-1',
+      event:()=>onForward()
+    },
 
     {
       id: crypto.randomUUID(),
@@ -133,7 +174,9 @@ const MessageMenu = ({ show, setClose, pageX, pageY,onRemove,messageID,onSelect,
         />
       ),
       title: "Select",
-      event:()=>onSelect(messageID)
+      event:()=>onSelect(messageID),
+      style:isChatInfo?"hidden":"flex",
+      styleTitle:isChatInfo?"hidden":"flex",
     },
     {
       id: crypto.randomUUID(),
@@ -173,25 +216,30 @@ const MessageMenu = ({ show, setClose, pageX, pageY,onRemove,messageID,onSelect,
       >
       {
         selectItems.map((item)=>(
-          <label key={item.id} className={`select-box--item ${item.style?item.style:''}`} onClick={item?.event}>
-          {/* icon */}
-          {item.icon}
-          <p className={`font-[700] text-[14px] ${item.styleTitle?item.styleTitle:''}` }>{item.title}</p>
-        </label>
+      
+           <label key={item.id} className={`select-box--item ${item.style?item.style:''}`} onClick={item?.event}>
+           {/* icon */}
+           {item.icon}
+           <p className={`font-[700] text-[14px] ${item.styleTitle?item.styleTitle:''}` }>{item.title}</p>
+         </label>
+        
         ))
+        
       }
       
       </div>
 
       {/* emoji */}
-      <div
-        className=" bg-[rgba(33,33,33,.75)]  backdrop-blur-[40px]   rounded-xl 
-      gap-2.5  w-[190px]   flex items-center mt-1 p-3"
-      >
-        {emoji.map((item) => (
-         <ReactionEmoji key={item.id} {...item} onReaction={()=>onReaction(item.emojiName)}/>
-        ))}
-      </div>
+      {!isChatInfo&&
+         <div
+         className=" bg-[rgba(33,33,33,.75)]  backdrop-blur-[40px]   rounded-xl 
+       gap-2.5  w-[190px]   flex items-center mt-1 p-3"
+       >
+         {emoji.map((item) => (
+          <ReactionEmoji key={item.id} {...item} onReaction={()=>onReaction(item.emojiName)}/>
+         ))}
+       </div>
+      }
     </div>
   );
 };
