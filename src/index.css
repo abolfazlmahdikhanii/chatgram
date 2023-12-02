@@ -177,4 +177,7 @@
     .info-box{
         @apply px-[14px] transition-all duration-200 bg-base-200 hover:bg-gray-700/30 py-3.5 rounded-xl cursor-pointer 
     }
+    .Toastify__close-button{
+        dispaly:none!important;
+    }
 }
