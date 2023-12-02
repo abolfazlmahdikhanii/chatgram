@@ -1,4 +1,6 @@
 import React, { useContext, useEffect, useId, useRef, useState } from 'react'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 import ChatHeader from '../../Components/ChatHeader/ChatHeader'
 import Message from '../../Components/Message/Message'
 import ChatForm from '../../Components/ChatForm/ChatForm'
@@ -37,6 +39,7 @@ const Chat = ({ chat, setChat }) => {
     const [userForwardMessage, setUserForwardMessage] = useState(null)
     const [checkForward, setCheckForward] = useState(false)
     const [showChatInfo, setShowChatInfo] = useState(false)
+    const [isChatInfo, setISChatInfo] = useState(false)
     const [audio, setAudio] = useState()
     const match = useParams()
     const chatRef = useRef()
@@ -154,7 +157,20 @@ const Chat = ({ chat, setChat }) => {
         e.preventDefault()
         e.stopPropagation()
 
+        
         setShowContextMenu((prev) => !prev)
+        setPageX(e.pageX)
+        setPageY(e.pageY)
+
+        setMessageID(id)
+        setMessageIDFile(idFile)
+    }
+    const contextmenuInfoHandler = (e, id, isChatInfo = false,idFile = null) => {
+        e.preventDefault()
+        e.stopPropagation()
+
+        setISChatInfo(isChatInfo)
+       
         setPageX(e.pageX)
         setPageY(e.pageY)
 
@@ -395,7 +411,9 @@ const Chat = ({ chat, setChat }) => {
             }`}
         >
             <div
-                className={`bg-[url('../../../src/assets/images/bg-pattern.svg')] ${showChatInfo?'bg-[size:35%] ':''}  h-screen relative overflow-hidden  transition-all duration-200 ease-in-out`}
+                className={`bg-[url('../../../src/assets/images/bg-pattern.svg')] ${
+                    showChatInfo ? 'bg-[size:35%] ' : ''
+                }  h-screen relative overflow-hidden  transition-all duration-200 ease-in-out`}
                 onContextMenu={(e) => e.preventDefault()}
             >
                 <ChatHeader
@@ -509,21 +527,25 @@ const Chat = ({ chat, setChat }) => {
                         <UnpinBtn unpin={unpinHandler} />
                     )}
                     {/* menu */}
-                    <MessageMenu
-                        pageX={pageX}
-                        pageY={pageY}
-                        show={showContextMenu}
-                        setClose={setShowContextMenu}
-                        messageID={messageID}
-                        onSelect={checkMessageHandler}
-                        onEdit={selectEditTextMessageHandler}
-                        onReply={replyMessageHandler}
-                        onForward={ForwardHandler}
-                        onReaction={reactionEmojiHandler}
-                        setAlert={setShowAlert}
-                        remove={clickRemoveHandler}
-                        isPin={isPin}
-                    />
+
+                    
+                        <MessageMenu
+                            pageX={pageX}
+                            pageY={pageY}
+                          
+                            show={showContextMenu}
+                            setClose={setShowContextMenu}
+                            messageID={messageID}
+                            onSelect={checkMessageHandler}
+                            onEdit={selectEditTextMessageHandler}
+                            onReply={replyMessageHandler}
+                            onForward={ForwardHandler}
+                            onReaction={reactionEmojiHandler}
+                            setAlert={setShowAlert}
+                            remove={clickRemoveHandler}
+                            isPin={isPin}
+                        />
+               
                     <Uploader />
 
                     <Modal
@@ -535,6 +557,7 @@ const Chat = ({ chat, setChat }) => {
                         userID={match?.id}
                         setShow={setShowForwardModal}
                     />
+                    <ToastContainer />
                 </main>
                 {showAlert && (
                     <Dialog
@@ -550,7 +573,24 @@ const Chat = ({ chat, setChat }) => {
                 )}
             </div>
 
-            {showChatInfo && <ChatInfo info={message} chat={chat} setChatInfo={setShowChatInfo}/>}
+            {showChatInfo && (
+                <ChatInfo
+                    info={message}
+                    chat={chat}
+                    setChatInfo={setShowChatInfo}
+                    setAudio={setAudio}
+                    pageX={pageX}
+                    pageY={pageY}
+                    show={isChatInfo}
+                    setClose={setISChatInfo}
+                    messageID={messageID}
+                    onForward={ForwardHandler}
+                    setAlert={setShowAlert}
+                    remove={clickRemoveHandler}
+                    onContext={contextmenuInfoHandler}
+                    setChat={setMessage}
+                />
+            )}
         </div>
     )
 }
