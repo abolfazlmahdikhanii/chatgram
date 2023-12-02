@@ -1,6 +1,6 @@
 import React from 'react'
 import { MdAlternateEmail } from 'react-icons/md'
-function InfoBox({ title, des,style="" }) {
+function InfoBox({ title, des,onCopy,style="" }) {
     let icon = null
     switch (title) {
         case 'Email':
@@ -64,7 +64,7 @@ function InfoBox({ title, des,style="" }) {
             break
     }
     return (
-        <div className="info-box">
+        <div className="info-box" onClick={()=>onCopy(des)}>
             {/* head */}
             <div className="flex  gap-x-3">
             {icon}
