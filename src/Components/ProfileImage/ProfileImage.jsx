@@ -11,6 +11,19 @@ const ProfileImage = ({
     let sizes = 16
     if (size === 'm') sizes = 22
     if (size === 'lg') sizes = 48
+
+    const userNameSpliter = (user) => {
+        let txt = ''
+        const words = user.split(' ')
+
+   
+        if (words.length > 0) {
+            words.forEach((item) => {
+                txt += `${item[0].toUpperCase()}`
+            })
+            return txt
+        }
+    }
     return (
         <div className="avatar">
             <div
@@ -28,13 +41,10 @@ const ProfileImage = ({
                         className={`grid place-items-center text-white h-full font-bold w-full `}
                     >
                         {!src || !isSave ? (
-                            <span>{userName && userName[0]}</span>
+                            <span>{userName && userNameSpliter(userName)}</span>
                         ) : (
                             <span>
-                                <BsFillBookmarkFill
-                                    size={sizes}
-                                    color="#fff"
-                                />
+                                <BsFillBookmarkFill size={sizes} color="#fff" />
                             </span>
                         )}
                     </div>
