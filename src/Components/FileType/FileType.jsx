@@ -22,7 +22,8 @@ const FileType = ({
     setAudio,
     autoPlay=true,
     imgSize,
-    isFile=true
+    isFile=true,
+    isChatInfo=false
 }) => {
     
 
@@ -38,6 +39,8 @@ const FileType = ({
                 src={src}
                 onRemove={onRemove}
                 autoPlay={autoPlay}
+                isChatInfo={isChatInfo}
+           
             />
         )
     } else if (type == 'mp3') {
@@ -57,7 +60,7 @@ const FileType = ({
   
             <li
                 className={` ${imgSize?'h-[100px]':'h-[210px]'} overflow-hidden inline-block rounded-xl basis-[40%]  bg-gray-200/20 flex-grow flex-1 relative`}
-                onContextMenu={(e) => contextMenu(e, messageId, idType)}
+                onContextMenu={(e) => contextMenu(e, messageId, idType,isChatInfo)}
             >
                 <Progress
                     size={progress}
@@ -80,6 +83,8 @@ const FileType = ({
               message={true}
               from={from}
               isColor={isColor}
+              isFile={false}
+              onContext={(e) => contextMenu(e, messageId, idType,isChatInfo)}
             />
           </div>
         )
@@ -94,7 +99,7 @@ const FileType = ({
                 message={true}
                 from={from}
                 onRemove={() => onRemove(messageId, idType)}
-                onContext={(e) => contextMenu(e, messageId, idType)}
+                onContext={(e) => contextMenu(e, messageId, idType,isChatInfo)}
                 isColor={isColor}
                 
             />
