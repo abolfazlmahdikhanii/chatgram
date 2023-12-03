@@ -42,6 +42,7 @@ const Chat = ({ chat, setChat }) => {
     const [isChatInfo, setISChatInfo] = useState(false)
     const [audio, setAudio] = useState()
     const match = useParams()
+
     const chatRef = useRef()
     const forwards = []
 
