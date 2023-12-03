@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { BsPin } from "react-icons/bs";
 import { FiEdit3 } from "react-icons/fi";
-
+import { genericHashLink } from "react-router-hash-link";
 import { MdDeleteOutline } from "react-icons/md";
 import { TbSquareRoundedCheck } from "react-icons/tb";
 import ReactionEmoji from "../ReactionEmoji/ReactionEmoji";
 
-const MessageMenu = ({ show, setClose, pageX, pageY,onRemove,messageID,onSelect,onEdit,onPin,onReply,onForward,onReaction,setAlert,remove,isPin,isChatInfo }) => {
+const MessageMenu = ({ show, setClose, pageX, pageY,onRemove,messageID,onSelect,onEdit,onPin,onReply,onForward,onReaction,setAlert,remove,isPin,isChatInfo,onShowMessage }) => {
   const [emoji, setEmoji] = useState([
     {
       id: crypto.randomUUID(),
@@ -161,7 +161,8 @@ const MessageMenu = ({ show, setClose, pageX, pageY,onRemove,messageID,onSelect,
       ,
       title: "Show in chat",
       styleTitle:'ml-1',
-      event:()=>onForward()
+      event:()=>onShowMessage(messageID),
+      style:isChatInfo?"flex":"hidden"
     },
 
     {
