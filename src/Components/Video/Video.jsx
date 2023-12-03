@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Progress from '../UI/Progress/Progress'
 
-const Video = ({ messageId, idType, onRemove, contextMenu, progress, src ,caption,autoPlay}) => {
+const Video = ({ messageId, idType, onRemove, contextMenu, progress, src ,caption,autoPlay,isChatInfo}) => {
     const [currentTime, setCurrentTime] = useState(0)
     const [second,setSecond]=useState(0)
     const [isLongVideo,setIsLongVideo]=useState(false)
@@ -23,7 +23,7 @@ const Video = ({ messageId, idType, onRemove, contextMenu, progress, src ,captio
       
           <li
             className="w-full h-full overflow-hidden  rounded-xl flex-auto relative"
-            onContextMenu={(e) => contextMenu(e, messageId, idType)}
+            onContextMenu={(e) => contextMenu(e, messageId, idType,isChatInfo)}
         >
             <div className=" flex items-center gap-1  px-2 absolute top-1 left-1 bg-gray-700/70 rounded-lg py-[1px]">
                 <p className="text-gray-100 text-[10px]">
