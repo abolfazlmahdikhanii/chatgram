@@ -5,7 +5,7 @@ import { IoCallSharp } from 'react-icons/io5'
 import { IoMdClose } from 'react-icons/io'
 import { ToastContainer, toast } from 'react-toastify'
 
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate} from 'react-router-dom'
 import InfoBox from './InfoBox'
 import FileType from '../FileType/FileType'
 import LinkContent from './LinkContent'
@@ -13,6 +13,7 @@ import AudioFile from '../AudioFIle/AudioFile'
 import VoiceBox from './VoiceBox'
 import CoustomToast from '../UI/CoustomToast/CoustomToast'
 import MessageMenu from '../UI/MessageMenu/MessageMenu'
+
 
 const ChatInfo = ({
     info,
@@ -28,13 +29,16 @@ const ChatInfo = ({
     setClose,
     show,
     onContext,
-    setChat
+    setChat,
 }) => {
     const [tab, setTab] = useState('Media')
     const [type, setType] = useState()
     const [link, setLink] = useState()
     const [voice, setVoice] = useState()
     const [isCall, setIsCall] = useState(false)
+
+    const navigate = useNavigate()
+
 
     const toastOptions = {
         position: toast.POSITION.BOTTOM_CENTER,
@@ -54,7 +58,7 @@ const ChatInfo = ({
         if (info) {
             filterSharedMedia('img', 'video')
         }
-    }, [info, chat])
+    }, [info, chat,link,setChatInfo])
 
     const filterSharedMedia = (type, type1 = null) => {
         const newMessages = [...info?.messages]
@@ -66,6 +70,7 @@ const ChatInfo = ({
             }
         }
         setType(newData)
+        console.log(type)
     }
     const filterSharedVoice = () => {
         const newMessages = [...info?.messages]
@@ -75,17 +80,17 @@ const ChatInfo = ({
                 if (val.type === 'mp3' && val.name === '')
                     newData.push({ ...val, messageId: item.messageId })
             }
-            console.log(item.messageId)
         }
         setVoice(newData)
     }
     const filterSharedLink = (dis) => {
+
         const newMessages = [...info?.messages]
         const newData = []
         for (const item of newMessages) {
             newData.push({
-                ...item?.messageDis.match(/\bhttps?:\/\/\S+/gi),
                 messageId: item.messageId,
+                url:item?.messageDis?.match(/(https?:\/\/[^\s]+)|(www\.[^\s]+)/g),
             })
         }
         setLink(newData)
@@ -118,6 +123,15 @@ const ChatInfo = ({
 
     const gotoMeet = () => {
         setIsCall(true)
+    }
+    const navigateMessage = (id) => {
+        navigate(`#${id}`)
+
+        const section = document.querySelector(`[data-id=${id}]`)
+
+        if (section) {
+            section.scrollIntoView({ behavior: 'smooth', block: 'end', inline: "nearest"  })
+        }
     }
 
     return (
@@ -278,7 +292,7 @@ const ChatInfo = ({
                         </button>
                     </div>
                     {/* shared-body */}
-                    <section className='relative min-h-[250px]'>
+                    <section className="relative min-h-[250px]">
                         {/* media */}
                         <div
                             className={` ${
@@ -293,11 +307,14 @@ const ChatInfo = ({
                                 type.map((content) => (
                                     <FileType
                                         key={content.id}
+                                        idType={content?.id}
                                         {...content}
+                                        messageId={content?.messageId}
                                         autoPlay={false}
                                         imgSize={true}
                                         isFile={false}
                                         contextMenu={onContext}
+                                        isChatInfo={true}
                                     />
                                 ))
                             ) : (
@@ -320,9 +337,11 @@ const ChatInfo = ({
                                 link.map((content) => (
                                     <LinkContent
                                         key={crypto.randomUUID()}
-                                        link={content}
+                                        link={content?.url}
                                         id={content?.messageId}
+                                        remove={remove}
                                         contextMenu={onContext}
+                                        setClose={setClose}
                                     />
                                 ))
                             ) : (
@@ -364,7 +383,7 @@ const ChatInfo = ({
                         </div>
 
                         {/* menu */}
-                  
+
                         <MessageMenu
                             pageX={pageX}
                             pageY={pageY}
@@ -375,6 +394,7 @@ const ChatInfo = ({
                             setAlert={setAlert}
                             remove={remove}
                             isChatInfo={true}
+                            onShowMessage={navigateMessage}
                         />
                     </section>
                 </div>
