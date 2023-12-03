@@ -1,6 +1,6 @@
 import React, { useState,useRef } from "react";
 
-const FileIcon = ({ type,path=null,message=false,from,isColor }) => {
+const FileIcon = ({ type,path=null,message=false,from,isColor,isFile,onContext }) => {
 
 
   let color = null;
@@ -47,11 +47,11 @@ const FileIcon = ({ type,path=null,message=false,from,isColor }) => {
   return (
     <>
       {!imgFormarts.includes(type)? (
-        <div className={`file-icon ${fileColor} ${color} `}>
+        <div className={`file-icon ${fileColor} ${color} `} onContextMenu={!isFile?onContext:false}>
           <p className="text-white font-bold text-lg truncate">{type}</p>
         </div>
       ) : (
-        <div className={`file-icon  ${fileColor} p-0 overflow-hidden   `}>
+        <div className={`file-icon  ${fileColor} p-0 overflow-hidden   `} onContextMenu={!isFile?onContext:false}>
           <img src={path} alt="" className="w-full h-full object-cover rounded-lg bg-white" />
         </div>
       )}
