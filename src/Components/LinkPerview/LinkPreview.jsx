@@ -2,7 +2,7 @@ import React from 'react'
 
 const LinkPreview = ({text}) => {
   // const splitURl=url.split(' ')
-  const urls = text.match(/\bhttps?:\/\/\S+/gi);
+  const urls = text.match(/(https?:\/\/[^\s]+)|(www\.[^\s]+)/g);
 
   const renderTextWithUrls = () => {
     let newText = text;
