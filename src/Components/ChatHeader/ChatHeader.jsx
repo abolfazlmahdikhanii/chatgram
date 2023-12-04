@@ -13,6 +13,8 @@ const ChatHeader = ({
     setShowChatInfo,
     setCheckBox,
     showCheckBox,
+    DeleteChat,
+    setCheckMessage
     
 }) => {
 
@@ -20,7 +22,7 @@ const ChatHeader = ({
     return (
         <Box>
             {!showPin ? (
-                <HeaderMessage info={info} setShowChatInfo={setShowChatInfo} showMenu={showMenu} setShowMenu={setShowMenu} setCheckBox={setCheckBox} showCheckBox={showCheckBox}/>
+                <HeaderMessage info={info} setShowChatInfo={setShowChatInfo} showMenu={showMenu} setShowMenu={setShowMenu} setCheckBox={setCheckBox} showCheckBox={showCheckBox} DeleteChat={DeleteChat} setCheckMessage={setCheckMessage}/>
             ) : (
                 <HeaderPinMessage
                     pinMessage={pinMessage}
@@ -30,7 +32,7 @@ const ChatHeader = ({
         </Box>
     )
 }
-const HeaderMessage = ({ info, setShowChatInfo,showMenu,setShowMenu,setCheckBox,showCheckBox }) => {
+const HeaderMessage = ({ info, setShowChatInfo,showMenu,setShowMenu,setCheckBox,showCheckBox,DeleteChat,setCheckMessage }) => {
     return (
         <section className="px-5 flex items-center justify-between relative">
             <div className="flex gap-4">
@@ -83,6 +85,7 @@ const HeaderMessage = ({ info, setShowChatInfo,showMenu,setShowMenu,setCheckBox,
             <div className={`menu bg-base-200  rounded-box absolute right-0 top-[70px] z-[11] w-[200px] space-y-1 transition-all duration-200 ease-linear ${!showMenu?'scale-0 opacity-0 translate-x-12':'scale-100 opacity-100 translate-x-0'}`} onMouseLeave={()=>setShowMenu(false)}>
                 <div className=" select-box--item " onClick={()=>{
                     setCheckBox(prev=>!prev)
+                    showCheckBox?setCheckMessage([]):null
                     setShowMenu(false)
                     }}>
                     <TbSquareRoundedCheck
@@ -120,7 +123,7 @@ const HeaderMessage = ({ info, setShowChatInfo,showMenu,setShowMenu,setCheckBox,
                     <p className={`font-[700] text-[14px] ml-1`}>Share contact</p>
                 </div>
 
-                <div className=" select-box--item text-red-500 hover:bg-red-400/20">
+                <div className=" select-box--item text-red-500 hover:bg-red-400/20" onClick={DeleteChat}>
                     <svg
                         width={18}
                         height={18}
