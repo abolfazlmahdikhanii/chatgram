@@ -11,6 +11,8 @@ const ChatHeader = ({
     pinMessage,
     setShowPin,
     setShowChatInfo,
+    setCheckBox,
+    showCheckBox,
     
 }) => {
 
@@ -18,7 +20,7 @@ const ChatHeader = ({
     return (
         <Box>
             {!showPin ? (
-                <HeaderMessage info={info} setShowChatInfo={setShowChatInfo} showMenu={showMenu} setShowMenu={setShowMenu}/>
+                <HeaderMessage info={info} setShowChatInfo={setShowChatInfo} showMenu={showMenu} setShowMenu={setShowMenu} setCheckBox={setCheckBox} showCheckBox={showCheckBox}/>
             ) : (
                 <HeaderPinMessage
                     pinMessage={pinMessage}
@@ -28,7 +30,7 @@ const ChatHeader = ({
         </Box>
     )
 }
-const HeaderMessage = ({ info, setShowChatInfo,showMenu,setShowMenu }) => {
+const HeaderMessage = ({ info, setShowChatInfo,showMenu,setShowMenu,setCheckBox,showCheckBox }) => {
     return (
         <section className="px-5 flex items-center justify-between relative">
             <div className="flex gap-4">
@@ -79,14 +81,17 @@ const HeaderMessage = ({ info, setShowChatInfo,showMenu,setShowMenu }) => {
 
             {/* menu */}
             <div className={`menu bg-base-200  rounded-box absolute right-0 top-[70px] z-[11] w-[200px] space-y-1 transition-all duration-200 ease-linear ${!showMenu?'scale-0 opacity-0 translate-x-12':'scale-100 opacity-100 translate-x-0'}`} onMouseLeave={()=>setShowMenu(false)}>
-                <div className=" select-box--item ">
+                <div className=" select-box--item " onClick={()=>{
+                    setCheckBox(prev=>!prev)
+                    setShowMenu(false)
+                    }}>
                     <TbSquareRoundedCheck
                         size={21}
                         strokeWidth={1.5}
                         className="self-start mr-1"
                     />
 
-                    <p className={`font-[700] text-[14px] `}>Select</p>
+                    <p className={`font-[700] text-[14px] `}>{!showCheckBox?"Select Message":"Clear Selection"}</p>
                 </div>
                 <div className=" select-box--item ">
                     <svg

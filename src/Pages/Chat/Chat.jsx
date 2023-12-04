@@ -423,6 +423,8 @@ const Chat = ({ chat, setChat }) => {
                     setShowPin={setShowPin}
                     pinMessage={pinMessage}
                     setShowChatInfo={setShowChatInfo}
+                    setCheckBox={setShowCheckBox}
+                    showCheckBox={showCheckBox}
                 />
 
                 <main
