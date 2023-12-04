@@ -23,9 +23,9 @@ const CheckMessageBox = ({checkMessage,setCheckMessage,setCheck,onRemove,onForwa
   <div className=' flex items-center gap-2 pr-2'>
 
 {/* forward */}
-<button className='  hover:bg-[rgba(170,170,170,0.08)]  check-message--btn' onClick={()=>onForward(true)}>
+<button className='  hover:bg-[rgba(170,170,170,0.08)]  check-message--btn text-white disabled:text-gray-500' onClick={()=>onForward(true)} disabled={checkMessage.length>0?false:true}>
     <TiArrowForwardOutline size={26}/>
-    <p className='text-white font-semibold capitalize text-base'>Forward</p>
+    <p className=' font-semibold capitalize text-base '>Forward</p>
 </button>
 {/* remove */}
 <button className='  hover:bg-red-500/10  check-message--btn' onClick={onRemove}>
