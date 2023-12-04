@@ -44,6 +44,9 @@ const ChatForm = ({
 
             setEmoji([])
         }
+        return()=>{
+           if( inputRef.current)inputRef.current.innerHTML=""
+        }
     }, [inputRef, text, emoji, set])
 
     // find chat with id and store  in the object in the place
