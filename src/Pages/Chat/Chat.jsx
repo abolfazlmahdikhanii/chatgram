@@ -42,6 +42,7 @@ const Chat = ({ chat, setChat }) => {
     const [isChatInfo, setISChatInfo] = useState(false)
     const [audio, setAudio] = useState()
     const match = useParams()
+    const navigate=useNavigate()
 
     const chatRef = useRef()
     const forwards = []
@@ -405,6 +406,12 @@ const Chat = ({ chat, setChat }) => {
         findedChat.messages = newMessage
         setChat(newChat)
     }
+
+    const DeleteChat=()=>{
+        setChat(chat.filter(item=>item.id!=match?.id))
+        navigate("/")
+    }
+ 
     return (
         <div
             className={`grid transition-all duration-200 ${
@@ -425,6 +432,8 @@ const Chat = ({ chat, setChat }) => {
                     setShowChatInfo={setShowChatInfo}
                     setCheckBox={setShowCheckBox}
                     showCheckBox={showCheckBox}
+                    DeleteChat={DeleteChat}
+                    setCheckMessage={setCheckMessage}
                 />
 
                 <main
@@ -507,7 +516,7 @@ const Chat = ({ chat, setChat }) => {
 
                     {/* FORM */}
                     {!showPin ? (
-                        !checkMessage.length ? (
+                        !checkMessage.length &&!showCheckBox? (
                             <ChatForm
                                 set={sendMessageHandler}
                                 edit={editContent}
