@@ -14,7 +14,8 @@ const ChatHeader = ({
     setCheckBox,
     showCheckBox,
     DeleteChat,
-    setCheckMessage
+    setCheckMessage,
+    forwardContact
     
 }) => {
 
@@ -22,7 +23,7 @@ const ChatHeader = ({
     return (
         <Box>
             {!showPin ? (
-                <HeaderMessage info={info} setShowChatInfo={setShowChatInfo} showMenu={showMenu} setShowMenu={setShowMenu} setCheckBox={setCheckBox} showCheckBox={showCheckBox} DeleteChat={DeleteChat} setCheckMessage={setCheckMessage}/>
+                <HeaderMessage info={info} setShowChatInfo={setShowChatInfo} showMenu={showMenu} setShowMenu={setShowMenu} setCheckBox={setCheckBox} showCheckBox={showCheckBox} DeleteChat={DeleteChat} setCheckMessage={setCheckMessage} forwardContact={forwardContact}/>
             ) : (
                 <HeaderPinMessage
                     pinMessage={pinMessage}
@@ -32,7 +33,7 @@ const ChatHeader = ({
         </Box>
     )
 }
-const HeaderMessage = ({ info, setShowChatInfo,showMenu,setShowMenu,setCheckBox,showCheckBox,DeleteChat,setCheckMessage }) => {
+const HeaderMessage = ({ info, setShowChatInfo,showMenu,setShowMenu,setCheckBox,showCheckBox,DeleteChat,setCheckMessage,forwardContact }) => {
     return (
         <section className="px-5 flex items-center justify-between relative">
             <div className="flex gap-4">
@@ -82,7 +83,7 @@ const HeaderMessage = ({ info, setShowChatInfo,showMenu,setShowMenu,setCheckBox,
             </div>
 
             {/* menu */}
-            <div className={`menu bg-base-200  rounded-box absolute right-0 top-[70px] z-[11] w-[200px] space-y-1 transition-all duration-200 ease-linear ${!showMenu?'scale-0 opacity-0 translate-x-12':'scale-100 opacity-100 translate-x-0'}`} onMouseLeave={()=>setShowMenu(false)}>
+            <div className={`menu bg-base-200  rounded-box absolute right-0 top-[70px] z-[11] w-[200px] space-y-1 transition-all duration-200  ${!showMenu?'scale-0 opacity-0 translate-x-12':'scale-100 opacity-100 translate-x-0'}`} onMouseLeave={()=>setShowMenu(false)}>
                 <div className=" select-box--item " onClick={()=>{
                     setCheckBox(prev=>!prev)
                     showCheckBox?setCheckMessage([]):null
@@ -96,7 +97,7 @@ const HeaderMessage = ({ info, setShowChatInfo,showMenu,setShowMenu,setCheckBox,
 
                     <p className={`font-[700] text-[14px] `}>{!showCheckBox?"Select Message":"Clear Selection"}</p>
                 </div>
-                <div className=" select-box--item ">
+                <div className=" select-box--item " onClick={forwardContact}>
                     <svg
                         width={19}
                         height={19}
