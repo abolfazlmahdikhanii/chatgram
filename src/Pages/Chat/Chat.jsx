@@ -40,9 +40,10 @@ const Chat = ({ chat, setChat }) => {
     const [checkForward, setCheckForward] = useState(false)
     const [showChatInfo, setShowChatInfo] = useState(false)
     const [isChatInfo, setISChatInfo] = useState(false)
+    const [forwardContact, setForwardContact] = useState(false)
     const [audio, setAudio] = useState()
     const match = useParams()
-    const navigate=useNavigate()
+    const navigate = useNavigate()
 
     const chatRef = useRef()
     const forwards = []
@@ -50,6 +51,9 @@ const Chat = ({ chat, setChat }) => {
     useEffect(() => {
         filterChat(match.id)
         displayCheckBoxHandler(checkMessage)
+
+
+        
     }, [
         match,
         chat,
@@ -159,7 +163,6 @@ const Chat = ({ chat, setChat }) => {
         e.preventDefault()
         e.stopPropagation()
 
-        
         setShowContextMenu((prev) => !prev)
         setPageX(e.pageX)
         setPageY(e.pageY)
@@ -167,12 +170,17 @@ const Chat = ({ chat, setChat }) => {
         setMessageID(id)
         setMessageIDFile(idFile)
     }
-    const contextmenuInfoHandler = (e, id, isChatInfo = false,idFile = null) => {
+    const contextmenuInfoHandler = (
+        e,
+        id,
+        isChatInfo = false,
+        idFile = null
+    ) => {
         e.preventDefault()
         e.stopPropagation()
 
         setISChatInfo(isChatInfo)
-       
+
         setPageX(e.pageX)
         setPageY(e.pageY)
 
@@ -281,6 +289,10 @@ const Chat = ({ chat, setChat }) => {
         setShowForwardModal(true)
         isCheck ? setCheckForward(true) : setCheckForward(false)
     }
+    const ForwardContactHandler = () => {
+        setForwardContact(true)
+        setShowForwardModal(true)
+    }
     // forward
     const forwardClickHandler = (userId) => {
         let findChat = null
@@ -299,12 +311,12 @@ const Chat = ({ chat, setChat }) => {
             relation,
             userName,
         } = userMessage
-        console.log(newMessages)
+
         if (!checkForward) {
             findChat = newMessages.find((item) => item?.messageId === messageID)
             console.log(findChat)
 
-            findChat.check = false
+           findChat.check = false
             const { replyData, check = false, ...chatData } = findChat
 
             findUserForward.messages.push({
@@ -345,6 +357,52 @@ const Chat = ({ chat, setChat }) => {
 
         console.log(findChat)
 
+        setChat(newChat)
+        setShowForwardModal(false)
+    }
+    // forwardContact
+    const forwardContactClickHandler = (userId) => {
+        let findChat = null
+        const newChat = [...chat]
+
+ 
+        // find user for forward message
+        const findUserForward = newChat?.find((user) => user.id === userId)
+
+        const {
+            activeStatus,
+            date,
+            id,
+            bgProfile,
+            profileImg,
+            relation,
+            userName,
+        } = userMessage
+    
+        const message = {
+            messageId: crypto.randomUUID(),
+            messageDis:"Contact",
+            contact: {
+                activeStatus,
+                date,
+                id,
+                bgProfile,
+                profileImg,
+                relation,
+                userName,
+            },
+            from: 'client',
+            reaction: null,
+            to: findUserForward.userName,
+            date: new Date(),
+            read: false,
+            send: true,
+            check: false,
+            edited: false,
+            pin: false,
+            replyData: null,
+        }
+        findUserForward.messages.push(message)
         setChat(newChat)
         setShowForwardModal(false)
     }
@@ -407,11 +465,11 @@ const Chat = ({ chat, setChat }) => {
         setChat(newChat)
     }
 
-    const DeleteChat=()=>{
-        setChat(chat.filter(item=>item.id!=match?.id))
-        navigate("/")
+    const DeleteChat = () => {
+        setChat(chat.filter((item) => item.id != match?.id))
+        navigate('/')
     }
- 
+
     return (
         <div
             className={`grid transition-all duration-200 ${
@@ -434,6 +492,7 @@ const Chat = ({ chat, setChat }) => {
                     showCheckBox={showCheckBox}
                     DeleteChat={DeleteChat}
                     setCheckMessage={setCheckMessage}
+                    forwardContact={ForwardContactHandler}
                 />
 
                 <main
@@ -463,6 +522,7 @@ const Chat = ({ chat, setChat }) => {
                                     key={crypto.randomUUID()}
                                     from={item.from}
                                     forward={item?.forward}
+                                    contact={item?.contact}
                                     {...item}
                                     remove={removeMessages}
                                     setCheckMessage={setCheckMessage}
@@ -516,7 +576,7 @@ const Chat = ({ chat, setChat }) => {
 
                     {/* FORM */}
                     {!showPin ? (
-                        !checkMessage.length &&!showCheckBox? (
+                        !checkMessage.length && !showCheckBox ? (
                             <ChatForm
                                 set={sendMessageHandler}
                                 edit={editContent}
@@ -540,30 +600,31 @@ const Chat = ({ chat, setChat }) => {
                     )}
                     {/* menu */}
 
-                    
-                        <MessageMenu
-                            pageX={pageX}
-                            pageY={pageY}
-                          
-                            show={showContextMenu}
-                            setClose={setShowContextMenu}
-                            messageID={messageID}
-                            onSelect={checkMessageHandler}
-                            onEdit={selectEditTextMessageHandler}
-                            onReply={replyMessageHandler}
-                            onForward={ForwardHandler}
-                            onReaction={reactionEmojiHandler}
-                            setAlert={setShowAlert}
-                            remove={clickRemoveHandler}
-                            isPin={isPin}
-                        />
-               
+                    <MessageMenu
+                        pageX={pageX}
+                        pageY={pageY}
+                        show={showContextMenu}
+                        setClose={setShowContextMenu}
+                        messageID={messageID}
+                        onSelect={checkMessageHandler}
+                        onEdit={selectEditTextMessageHandler}
+                        onReply={replyMessageHandler}
+                        onForward={ForwardHandler}
+                        onReaction={reactionEmojiHandler}
+                        setAlert={setShowAlert}
+                        remove={clickRemoveHandler}
+                        isPin={isPin}
+                    />
+
                     <Uploader />
 
                     <Modal
                         show={showFrowardModal}
                         chat={chat}
                         onForward={forwardClickHandler}
+                        onForwardContact={forwardContactClickHandler}
+                        forwardContact={forwardContact}
+                        setForwardContact={setForwardContact}
                         messageID={messageID}
                         setChat={setChat}
                         userID={match?.id}
