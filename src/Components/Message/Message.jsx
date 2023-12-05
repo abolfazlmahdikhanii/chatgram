@@ -10,6 +10,8 @@ import messageType from '../../Utility/MessageType'
 import ReactionBox from '../UI/ReactionBox/ReactionBox'
 
 import LinkPreview from '../LinkPerview/LinkPreview'
+import Profile from '../Profile/Profile'
+import { Link } from 'react-router-dom'
 
 const Message = ({
     id,
@@ -37,6 +39,7 @@ const Message = ({
     setFileId,
     caption,
     setAudio,
+    contact
 }) => {
     const location = useLocation()
     const navigate = useNavigate()
@@ -79,13 +82,15 @@ const Message = ({
         onCheck(id, check)
     }
     if (
+      
         messageDis.includes('http://') ||
         messageDis.includes('https://') ||
         messageDis.includes('www.')
     ) {
-        console.log(messageDis)
+      
         messageContent = <LinkPreview text={messageDis} />
     } else {
+       
         messageContent = (
             <div
                 className="text-white"
@@ -93,7 +98,10 @@ const Message = ({
                 dangerouslySetInnerHTML={{ __html: messageDis }}
             ></div>
         )
+        if(contact)messageContent=""
     }
+
+ 
 
     let arr = checkArr.findIndex((item) => item.messageId === messageId)
     return (
@@ -190,6 +198,20 @@ const Message = ({
                         </div>
                     </HashLink>
                 )}
+                {
+                    contact&&(
+                       <Link to={`/chat/${contact.id}`} className='flex gap-3 items-center px-0.5 py-1'>
+                        <div>
+                        <Profile size="m" path={contact.profileImg} userName={contact.userName} bgProfile={contact.bgProfile} relation={contact.relation} /> 
+                        </div>
+                        <div className='space-y-1'>
+                            <p className='font-semibold'>{contact.userName}</p>
+                            <p className='text-gray-300 text-sm max-w-[145px] truncate font-semibold'>abolfazlmk@gmail.com</p>
+                        </div>
+                       </Link>    
+
+                    )
+                }
 
                 {/* message for Text */}
                 {typeof messageDis === 'string' ? (
