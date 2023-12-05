@@ -6,6 +6,7 @@ import ChatInfo from '../ChatInfo/ChatInfo'
 import { Route, Routes, useParams } from 'react-router-dom'
 import {MusicControlContext, MusicControlProvider} from '../../Context/MusicContext'
 import PinAudio from '../PinAudio/PinAudio'
+import Home from '../../Pages/Home/Home'
 const Layout = () => {
 
 
@@ -76,6 +77,10 @@ const getRandomValue = () => {
         
             <Routes>
                 
+                <Route
+                    path="/"
+                    element={<Home />}
+                />
                 <Route
                     path="/chat/:id"
                     element={<Chat chat={chats} setChat={setChats} />}
