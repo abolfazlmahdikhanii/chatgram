@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {BiCheck} from "react-icons/bi"
 
-const BtnAction = ({ setRecord, isText, record, setText, isEdit,onEdit }) => {
+const BtnAction = ({ setRecord, isText, record, setText, isEdit,onEdit,forwardMessage }) => {
   const [recorder, setRecorder] = useState(record);
   const [content, setContent] = useState(isText);
   function hasImage(img) {
@@ -12,13 +12,13 @@ const BtnAction = ({ setRecord, isText, record, setText, isEdit,onEdit }) => {
   return (
     <button
       className="h-full px-[16px] btn btn-primary rounded-xl flex items-center justify-center  overflow-hidden max-w-[60px] flex-nowrap self-start"
-      onClick={() => (isText.innerHTML === "" &&!isEdit? setRecord(true) : null)}
+      onClick={() => (isText.innerHTML === "" &&!isEdit&&!forwardMessage? setRecord(true) : null)}
     >
       {!isEdit ? (
         <>
           <div
             className={`grid place-items-center transition-all duration-300 -z-[1] ${
-              isText.innerHTML !== "" || hasImage(isText.innerHTML)
+              isText.innerHTML !== "" || hasImage(isText.innerHTML)||forwardMessage
                 ? "translate-x-[76%] opacity-100 scale-100 z-[1]"
                 : " opacity-0 scale-0"
             }`}
@@ -43,7 +43,7 @@ const BtnAction = ({ setRecord, isText, record, setText, isEdit,onEdit }) => {
 
           <div
             className={`grid place-items-center transition-all duration-300 ${
-              isText.innerHTML === "" && !hasImage(isText.innerHTML)
+              isText.innerHTML === "" && !hasImage(isText.innerHTML) &&!forwardMessage
                 ? "-translate-x-[60%] opacity-100 scale-100"
                 : " opacity-0 scale-0"
             }`}
