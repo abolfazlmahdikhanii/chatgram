@@ -42,11 +42,15 @@ const MessageItem = ({ id, userName, profileImg, messages ,bgProfile,relation,is
           </p>
         </div>
         {/* bottom */}
-        <div className="flex items-center justify-between w-full" >
-          <MessageItemContent message={messages[messages.length - 1]}/>
+          {
+            messages.length>0?
+            <div className="flex items-center justify-between w-full" >
+              <MessageItemContent message={messages[messages.length - 1]}/>
           <p>{icon}</p>
-          {/* <NotifyNumber /> */}
-        </div>
+            {/* <NotifyNumber /> */}
+          </div>:
+          <p className="-mt-1 text-sm font-normal text-gray-400">{relation==="me"?"online":"last seen recently"}</p>
+          }
       </div>
     </Link>
   );
