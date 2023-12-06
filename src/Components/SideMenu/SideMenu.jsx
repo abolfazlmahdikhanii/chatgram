@@ -13,6 +13,7 @@ const SideMenu = ({chat}) => {
     const findChat=chat?.find((item)=>item.relation==="me")
     setProfileMe(findChat)
   }
+  console.log(profileMe)
   return (
     <Box>
       <section className="side-menu ">
@@ -46,7 +47,7 @@ const SideMenu = ({chat}) => {
         {/* footer */}
         <div className="flex flex-col gap-y-4 items-center mt-3 mb-9">
           <ThemSwitch/>
-          <ProfileImage {...profileMe} />
+          <ProfileImage {...profileMe} src={profileMe?.profileImg}/>
         </div>
       </section>
     </Box>
