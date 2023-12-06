@@ -30,6 +30,7 @@ const Chat = ({ chat, setChat }) => {
     const [showPin, setShowPin] = useState(false)
     const [showReply, setShowReply] = useState(false)
     const [replyMessage, setReplyMessage] = useState(null)
+    const [forwardSelfMessage, setForwardSelfMessage] = useState(null)
     const [showFrowardModal, setShowForwardModal] = useState(false)
     const [userMessage, setUserMessage] = useState()
     const [reactEmoji, setReactEmoji] = useState()
@@ -51,9 +52,6 @@ const Chat = ({ chat, setChat }) => {
     useEffect(() => {
         filterChat(match.id)
         displayCheckBoxHandler(checkMessage)
-
-
-        
     }, [
         match,
         chat,
@@ -283,6 +281,17 @@ const Chat = ({ chat, setChat }) => {
 
         setShowReply(true)
     }
+    const forwardSelfMessageHandler = (id) => {
+        const newMessage = [...message?.messages]
+
+        const findForwardMessage = newMessage.find(
+            (item) => item.messageId === id
+        )
+       
+        setForwardSelfMessage({ ...findForwardMessage, ...message })
+
+        setShowReply(true)
+    }
 
     const ForwardHandler = (isCheck = false) => {
         setShowContextMenu(false)
@@ -316,23 +325,26 @@ const Chat = ({ chat, setChat }) => {
             findChat = newMessages.find((item) => item?.messageId === messageID)
             console.log(findChat)
 
-           findChat.check = false
-            const { replyData, check = false, ...chatData } = findChat
+            if (useId !== match.id) forwardSelfMessageHandler(findChat.messageId)
+            else {
+                findChat.check = false
+                const { replyData, check = false, ...chatData } = findChat
 
-            findUserForward.messages.push({
-                ...chatData,
-                check,
+                findUserForward.messages.push({
+                    ...chatData,
+                    check,
 
-                forward: {
-                    activeStatus,
-                    date,
-                    id,
-                    bgProfile,
-                    profileImg,
-                    relation,
-                    userName,
-                },
-            })
+                    forward: {
+                        activeStatus,
+                        date,
+                        id,
+                        bgProfile,
+                        profileImg,
+                        relation,
+                        userName,
+                    },
+                })
+            }
         } else {
             findChat = newMessages.filter((item) => item?.check)
 
@@ -360,12 +372,83 @@ const Chat = ({ chat, setChat }) => {
         setChat(newChat)
         setShowForwardModal(false)
     }
+    // forward
+    const forwardSelfClickHandler = (userId) => {
+        let findChat = null
+        const newChat = [...chat]
+
+        setCheckMessage([])
+        // find user for forward message
+        const findUserForward = newChat?.find((user) => user.id === userId)
+        const newMessages = [...userMessage.messages]
+        const {
+            activeStatus,
+            date,
+            id,
+            bgProfile,
+            profileImg,
+            relation,
+            userName,
+        } = userMessage
+
+        if (!checkForward) {
+            findChat = newMessages.find((item) => item?.messageId === messageID)
+            console.log(findChat)
+
+
+         
+                findChat.check = false
+                
+                const { replyData, check = false,messageId, ...chatData } = findChat
+
+                findUserForward.messages.push({
+                    ...chatData,
+                    check,
+                    messageId:crypto.randomUUID(),
+                    forwardSelf: {
+                        activeStatus,
+                        date,
+                        id,
+                        bgProfile,
+                        profileImg,
+                        relation,
+                        userName,
+                    },
+                })
+            
+        } else {
+            findChat = newMessages.filter((item) => item?.check)
+
+            findChat.forEach((item) => {
+                item.check = false;
+                item.messageId=crypto.randomUUID()
+            })
+            const copiedItems = findChat.map((item) => ({
+                ...item,
+
+                forwardSelf: {
+                    activeStatus,
+                    date,
+                    id,
+                    bgProfile,
+                    profileImg,
+                    relation,
+                    userName,
+                },
+            }))
+            findUserForward.messages.push(...copiedItems)
+        }
+
+        console.log(findChat)
+
+        setChat(newChat)
+        setShowForwardModal(false)
+    }
     // forwardContact
     const forwardContactClickHandler = (userId) => {
         let findChat = null
         const newChat = [...chat]
 
- 
         // find user for forward message
         const findUserForward = newChat?.find((user) => user.id === userId)
 
@@ -378,10 +461,10 @@ const Chat = ({ chat, setChat }) => {
             relation,
             userName,
         } = userMessage
-    
+
         const message = {
             messageId: crypto.randomUUID(),
-            messageDis:"Contact",
+            messageDis: 'Contact',
             contact: {
                 activeStatus,
                 date,
@@ -586,6 +669,9 @@ const Chat = ({ chat, setChat }) => {
                                 setShowReply={setShowReply}
                                 replyMessage={replyMessage}
                                 setReply={setReplyMessage}
+                                forwardSelfMessage={forwardSelfMessage}
+                                setForwardSelfMessage={setReplyMessage}
+                                forwardHandler={forwardSelfClickHandler}
                             />
                         ) : (
                             <CheckMessageBox
