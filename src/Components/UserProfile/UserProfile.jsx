@@ -5,7 +5,7 @@ const UserProfile = ({userName,relation,bgProfile,profileImg,activeStatus,onForw
 
     return (
         <li className='user-profile hover:bg-gray-700/20' onClick={()=>onForward(id)}>
-           <Profile size="m" path={profileImg} userName={userName} bgProfile={bgProfile} relation={relation} />     
+           <Profile size="m" path={profileImg} userName={userName} bgProfile={bgProfile} relation={relation} isSave={relation==="me"?true:false}/>     
 
             <div className="w-full flex-col gap-0.5 flex">
                 {/* top */}
