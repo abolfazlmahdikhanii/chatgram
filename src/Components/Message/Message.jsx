@@ -39,7 +39,8 @@ const Message = ({
     setFileId,
     caption,
     setAudio,
-    contact
+    contact,
+    forwardSelf,
 }) => {
     const location = useLocation()
     const navigate = useNavigate()
@@ -82,15 +83,12 @@ const Message = ({
         onCheck(id, check)
     }
     if (
-      
         messageDis.includes('http://') ||
         messageDis.includes('https://') ||
         messageDis.includes('www.')
     ) {
-      
         messageContent = <LinkPreview text={messageDis} />
     } else {
-       
         messageContent = (
             <div
                 className="text-white"
@@ -98,10 +96,8 @@ const Message = ({
                 dangerouslySetInnerHTML={{ __html: messageDis }}
             ></div>
         )
-        if(contact)messageContent=""
+        if (contact) messageContent = ''
     }
-
- 
 
     let arr = checkArr.findIndex((item) => item.messageId === messageId)
     return (
@@ -130,6 +126,7 @@ const Message = ({
                         : 'max-w-[420px] px-1.5 py-1.5'
                 } `}
             >
+                {forwardSelf && <p className='text-xs pr-4 pb-1 pt-0.5 pl-0.5 text-gray-300'>Forward from {forwardSelf?.userName}</p>}
                 {forward && (
                     <HashLink to={`/chat/${forward.id}/#${messageId}`}>
                         <span
@@ -198,20 +195,28 @@ const Message = ({
                         </div>
                     </HashLink>
                 )}
-                {
-                    contact&&(
-                       <Link to={`/chat/${contact.id}`} className='flex gap-3 items-center px-0.5 py-1'>
+                {contact && (
+                    <Link
+                        to={`/chat/${contact.id}`}
+                        className="flex gap-3 items-center px-0.5 py-1"
+                    >
                         <div>
-                        <Profile size="m" path={contact.profileImg} userName={contact.userName} bgProfile={contact.bgProfile} relation={contact.relation} /> 
+                            <Profile
+                                size="m"
+                                path={contact.profileImg}
+                                userName={contact.userName}
+                                bgProfile={contact.bgProfile}
+                                relation={contact.relation}
+                            />
                         </div>
-                        <div className='space-y-1'>
-                            <p className='font-semibold'>{contact.userName}</p>
-                            <p className='text-gray-300 text-sm max-w-[145px] truncate font-semibold'>abolfazlmk@gmail.com</p>
+                        <div className="space-y-1">
+                            <p className="font-semibold">{contact.userName}</p>
+                            <p className="text-gray-300 text-sm max-w-[145px] truncate font-semibold">
+                                abolfazlmk@gmail.com
+                            </p>
                         </div>
-                       </Link>    
-
-                    )
-                }
+                    </Link>
+                )}
 
                 {/* message for Text */}
                 {typeof messageDis === 'string' ? (
