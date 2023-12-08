@@ -4,6 +4,7 @@ import Picker from '@emoji-mart/react'
 import data from '@emoji-mart/data/sets/14/apple.json'
 import { MdOutlineEdit } from 'react-icons/md'
 import { IoMdClose } from 'react-icons/io'
+import { TiArrowForwardOutline } from 'react-icons/ti'
 
 import BtnAction from '../UI/BtnAction/BtnAction'
 import BtnUploader from '../BtnUploader/BtnUploader'
@@ -24,13 +25,16 @@ const ChatForm = ({
     setReply,
     forwardSelfMessage,
     setForwardSelfMessage,
-    forwardHandler
+    forwardHandler,
+    forwardSelf,
+    setShowForwardSelf,
 }) => {
     const [text, setText] = useState('')
     const [emoji, setEmoji] = useState([])
     const [showEmoji, setShowEmoji] = useState(false)
     const [showUploader, setShowUploader] = useState(false)
     const [record, setRecord] = useState(false)
+    const [isEnterPressed, setIsEnterPressed] = useState(false)
     const [imagesUpload, setImagesUpload] = useState([])
     const [filesUpload, setFilesUpload] = useState([])
     const [content, setContent] = useState('')
@@ -47,33 +51,41 @@ const ChatForm = ({
 
             setEmoji([])
         }
-        return()=>{
-           if( inputRef.current)inputRef.current.innerHTML=""
+        return () => {
+            if (inputRef.current) inputRef.current.innerHTML = ''
+            // setReply(null)
+            // setForwardSelfMessage(null)
         }
     }, [inputRef, text, emoji, set])
 
     // find chat with id and store  in the object in the place
     const submitFormHandler = (e) => {
         e.preventDefault()
+
+        // if(e.key==="Enter") setIsEnterPressed(true)
+
         if (inputRef.current) {
             if (inputRef.current.innerHTML !== '') {
                 if (replyMessage) {
                     set(text.innerHTML, replyMessage)
                     setShowReply(false)
                     setReply(null)
-                }
-                
-                
-                else {
+                    // if(isEnterPressed)set(null)
+                }  if (forwardSelfMessage) {
+                    forwardHandler(forwardSelfMessage.id)
+                    set(text.innerHTML)
+                    setShowForwardSelf(false)
+                    setForwardSelfMessage(null)
+                    // if(isEnterPressed)set("")
+                } if(!replyMessage&&!forwardSelfMessage) {
                     set(text.innerHTML)
                 }
 
                 inputRef.current.innerHTML = ''
-            }
-            else{
-                 if(forwardSelfMessage){
+            } else {
+                if (forwardSelfMessage) {
                     forwardHandler(forwardSelfMessage.id)
-                    setShowReply(false)
+                    setShowForwardSelf(false)
                     setForwardSelfMessage(null)
                 }
             }
@@ -88,23 +100,19 @@ const ChatForm = ({
         }
     }
     const uploadFileHandler = (txt) => {
-        
         if (filesUpload) {
-            const newFileUpload=filesUpload.map((item)=>{
-                return {...item,caption:txt}
+            const newFileUpload = filesUpload.map((item) => {
+                return { ...item, caption: txt }
             })
             set(newFileUpload)
-          
         }
     }
     const uploadImageHandler = (txt) => {
-        
         if (imagesUpload) {
-            const newImageUpload=imagesUpload.map((item)=>{
-                return {...item,caption:txt}
+            const newImageUpload = imagesUpload.map((item) => {
+                return { ...item, caption: txt }
             })
             set(newImageUpload)
-            
         }
     }
     const closeEmojiPicker = () => {
@@ -139,8 +147,8 @@ const ChatForm = ({
                             input={inputRef}
                         />
                         <ForwardBox
-                            reply={reply}
-                            setShowReply={setShowReply}
+                            forwardSelf={forwardSelf}
+                            setShowForwardSelf={setShowForwardSelf}
                             forwardMessage={forwardSelfMessage}
                             input={inputRef}
                             forwardHandler={forwardHandler}
@@ -180,7 +188,8 @@ const ChatForm = ({
                                 </button>
 
                                 <div
-                                    className="chat__input overflow-hidden  z-10" dir='auto'
+                                    className="chat__input overflow-hidden  z-10"
+                                    dir="auto"
                                     ref={inputRef}
                                     onInput={(e) =>
                                         setContent(inputRef.current.innerHTML)
@@ -190,7 +199,7 @@ const ChatForm = ({
                                     placeholder="message"
                                     suppressContentEditableWarning={true}
                                     onKeyDown={(e) => {
-                                        e.key === 'Enter'&&!edit
+                                        e.key === 'Enter' && !edit
                                             ? submitFormHandler(e)
                                             : null
                                         // e.key === "Backspace"&&edit ? setEdit(e.target.innerText) : edit;
@@ -269,7 +278,6 @@ const ChatForm = ({
                 setFilesUpload={setFilesUpload}
                 onUploadImage={uploadImageHandler}
                 onUploadFile={uploadFileHandler}
-           
             />
         </form>
     )
@@ -295,7 +303,7 @@ const EditBox = ({ edit, setEdit, input }) => {
                     <p className="text-[15px] text-indigo-400 font-medium">
                         Editing
                     </p>
-                    <p className="text-[14px] truncate w-[80%]" dir='auto'>
+                    <p className="text-[14px] truncate w-[80%]" dir="auto">
                         <TypeMessage dis={edit} />
                     </p>
                 </div>
@@ -353,10 +361,13 @@ const ReplyBox = ({ reply, setShowReply, replyMessage, input }) => {
                     ) : null}
 
                     <div className="flex flex-col  gap-0.5  px-4 w-[95%]">
-                        <p className="text-[15px] text-indigo-400 font-medium" dir='auto'>
+                        <p
+                            className="text-[15px] text-indigo-400 font-medium"
+                            dir="auto"
+                        >
                             {replyMessage?.user}
                         </p>
-                        <p className="text-[14px] truncate " dir='auto'>
+                        <p className="text-[14px] truncate " dir="auto">
                             {replyMessage?.messageDis &&
                             replyMessage?.messageDis[0]?.type !== 'img' &&
                             replyMessage?.messageDis[0]?.type !== 'video' ? (
@@ -384,33 +395,26 @@ const ReplyBox = ({ reply, setShowReply, replyMessage, input }) => {
         </div>
     )
 }
-const ForwardBox = ({ reply, setShowReply, forwardMessage, input }) => {
+const ForwardBox = ({
+    forwardSelf,
+    setShowForwardSelf,
+    forwardMessage,
+    input,
+}) => {
     return (
         <div
             className={`form-box rounded-b-none  transition-all duration-300 absolute top-0 ${
-                !reply
+                !forwardSelf
                     ? '-translate-y-7 opacity-0  -z-[1] overflow-hidden'
                     : '-translate-y-14 opacity-100 -mb-2'
-            }`}
+            } `}
         >
             {/* info */}
-            <div className="flex items-center py-1">
+            <div className="flex items-center py-1 w-full">
                 <p className="px-1 text-[rgb(129,140,248)]">
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width={19}
-                        height={19}
-                        fill="none"
-                        viewBox="0 0 24 24"
-                    >
-                        <path
-                            stroke="currentColor"
-                            d="M3.34 8.898L9.874 3.09a.38.38 0 01.625.284v3.312H11.5c5.088 0 9.5 2.917 9.5 7.186a8.551 8.551 0 01-4.703 7.084.367.367 0 01-.173.044h-.009a.388.388 0 01-.379-.379.373.373 0 01.158-.306 5.508 5.508 0 001.357-3.07c0-2.817-3.241-4.5-6.376-4.5-.09 0-.178 0-.265-.006h-.11v2.633a.38.38 0 01-.625.284l-6.751-6a.379.379 0 01-.092-.434c.022-.048.269-.288.308-.324z"
-                            strokeWidth={1.5}
-                        />
-                    </svg>
+                    <TiArrowForwardOutline size={26} />
                 </p>
-                <div className="flex gap-0.5 ml-5 ">
+                <div className="flex gap-0.5 ml-5 w-full">
                     <p className="w-[2px] bg-indigo-700 mr-1"></p>
 
                     {(forwardMessage?.messageDis &&
@@ -422,11 +426,14 @@ const ForwardBox = ({ reply, setShowReply, forwardMessage, input }) => {
                         />
                     ) : null}
 
-                    <div className="flex flex-col  gap-0.5  px-4 w-[95%]">
-                        <p className="text-[15px] text-indigo-400 font-medium" dir='auto'>
+                    <div data-bg-color={forwardMessage?.bgProfile} className="flex flex-col  gap-0.5  px-4 w-[95%] rounded-lg">
+                        <p
+                            className="text-[15px] text-indigo-400 font-medium"
+                            dir="auto"
+                        >
                             {forwardMessage?.userName}
                         </p>
-                        <p className="text-[14px] truncate " dir='auto'>
+                        <p className="text-[14px] truncate " dir="auto">
                             {forwardMessage?.messageDis &&
                             forwardMessage?.messageDis[0]?.type !== 'img' &&
                             forwardMessage?.messageDis[0]?.type !== 'video' ? (
@@ -445,7 +452,7 @@ const ForwardBox = ({ reply, setShowReply, forwardMessage, input }) => {
                 className="btn btn-square btn-sm"
                 onClick={(e) => {
                     e.preventDefault()
-                    setShowReply(false)
+                    setShowForwardSelf(false)
                     input.current.innerHTML = ''
                 }}
             >
