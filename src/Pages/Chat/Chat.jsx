@@ -29,6 +29,7 @@ const Chat = ({ chat, setChat }) => {
     const [pinMessage, setPinMessage] = useState([])
     const [showPin, setShowPin] = useState(false)
     const [showReply, setShowReply] = useState(false)
+    const [showSelfForward, setShowSelfForward] = useState(false)
     const [replyMessage, setReplyMessage] = useState(null)
     const [forwardSelfMessage, setForwardSelfMessage] = useState(null)
     const [showFrowardModal, setShowForwardModal] = useState(false)
@@ -290,7 +291,7 @@ const Chat = ({ chat, setChat }) => {
        
         setForwardSelfMessage({ ...findForwardMessage, ...message })
 
-        setShowReply(true)
+        setShowSelfForward(true)
     }
 
     const ForwardHandler = (isCheck = false) => {
@@ -325,7 +326,7 @@ const Chat = ({ chat, setChat }) => {
             findChat = newMessages.find((item) => item?.messageId === messageID)
             console.log(findChat)
 
-            if (useId !== match.id) forwardSelfMessageHandler(findChat.messageId)
+            if (userId == match.id) forwardSelfMessageHandler(findChat.messageId)
             else {
                 findChat.check = false
                 const { replyData, check = false, ...chatData } = findChat
@@ -442,7 +443,7 @@ const Chat = ({ chat, setChat }) => {
         console.log(findChat)
 
         setChat(newChat)
-        setShowForwardModal(false)
+        
     }
     // forwardContact
     const forwardContactClickHandler = (userId) => {
@@ -605,6 +606,7 @@ const Chat = ({ chat, setChat }) => {
                                     key={crypto.randomUUID()}
                                     from={item.from}
                                     forward={item?.forward}
+                                    forwardSelf={item?.forwardSelf}
                                     contact={item?.contact}
                                     {...item}
                                     remove={removeMessages}
@@ -667,10 +669,12 @@ const Chat = ({ chat, setChat }) => {
                                 onEdit={editHandler}
                                 reply={showReply}
                                 setShowReply={setShowReply}
+                                forwardSelf={showSelfForward}
+                                setShowForwardSelf={setShowSelfForward}
                                 replyMessage={replyMessage}
                                 setReply={setReplyMessage}
                                 forwardSelfMessage={forwardSelfMessage}
-                                setForwardSelfMessage={setReplyMessage}
+                                setForwardSelfMessage={setForwardSelfMessage}
                                 forwardHandler={forwardSelfClickHandler}
                             />
                         ) : (
