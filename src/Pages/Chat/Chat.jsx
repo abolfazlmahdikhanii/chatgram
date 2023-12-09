@@ -398,7 +398,8 @@ const Chat = ({ chat, setChat }) => {
 
 
          
-                findChat.check = false
+             
+            if(findChat){
                 
                 const { replyData, check = false,messageId, ...chatData } = findChat
 
@@ -416,7 +417,7 @@ const Chat = ({ chat, setChat }) => {
                         userName,
                     },
                 })
-            
+            }
         } else {
             findChat = newMessages.filter((item) => item?.check)
 
