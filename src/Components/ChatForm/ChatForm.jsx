@@ -415,7 +415,7 @@ const ForwardBox = ({
                     <TiArrowForwardOutline size={26} />
                 </p>
                 <div className="flex gap-0.5 ml-5 w-full">
-                    <p className="w-[2px] bg-indigo-700 mr-1"></p>
+                    {/* <p className="w-[2px] bg-indigo-700 mr-1"></p> */}
 
                     {(forwardMessage?.messageDis &&
                         forwardMessage?.messageDis[0]?.type === 'img') ||
@@ -426,7 +426,7 @@ const ForwardBox = ({
                         />
                     ) : null}
 
-                    <div data-bg-color={forwardMessage?.bgProfile} className="flex flex-col  gap-0.5  px-4 w-[95%] rounded-lg">
+                    <div data-bg-color={forwardMessage?.bgProfile} className="flex flex-col  gap-0.5  px-4 w-[95%] rounded-lg relative">
                         <p
                             className="text-[15px] text-indigo-400 font-medium"
                             dir="auto"
