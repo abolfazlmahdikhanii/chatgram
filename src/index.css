@@ -208,4 +208,7 @@
     .Toastify__close-button{
         dispaly:none!important;
     }
+    .zoom-box{
+        @apply absolute bottom-4 bg-base-200/70 left-1/2 z-10 flex items-center gap-5 backdrop-blur-xl px-6 py-3 h-16 rounded-xl w-[320px] mx-auto -translate-x-1/2 justify-between
+    }
 }
