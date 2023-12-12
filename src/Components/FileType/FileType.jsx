@@ -23,7 +23,8 @@ const FileType = ({
     autoPlay=true,
     imgSize,
     isFile=true,
-    isChatInfo=false
+    isChatInfo=false,
+    setShowPreview
 }) => {
     
 
@@ -40,7 +41,7 @@ const FileType = ({
                 onRemove={onRemove}
                 autoPlay={autoPlay}
                 isChatInfo={isChatInfo}
-           
+                setShowPreview={setShowPreview}
             />
         )
     } else if (type == 'mp3') {
@@ -70,6 +71,7 @@ const FileType = ({
                     src={src}
                     alt=""
                     className="object-cover w-full h-full rounded-xl "
+                    onClick={()=>setShowPreview({show:true,type:"img",src})}
                 />
             </li>
         
