@@ -32,7 +32,7 @@ const getRandomValue = () => {
             userName: 'AbMk',
             
             relation: 'me',
-            profileImg: 'https://imgv3.fotor.com/images/gallery/Realistic-Male-Profile-Picture.jpg',
+            profileImg: '../../../src/assets/images/profile.jpg',
             bgProfile: 'violet',
             messages: [],
         },
