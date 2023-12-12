@@ -41,6 +41,7 @@ const Message = ({
     setAudio,
     contact,
     forwardSelf,
+    setShowPreview
 }) => {
     const location = useLocation()
     const navigate = useNavigate()
@@ -236,6 +237,7 @@ const Message = ({
                                     from={from}
                                     idType={content.id}
                                     messageId={messageId}
+                                    setShowPreview={setShowPreview}
                                     contextMenu={onContext}
                                     setAudio={
                                         content.type === 'mp3' ? setAudio : null
