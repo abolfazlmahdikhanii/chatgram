@@ -15,6 +15,7 @@ import Dialog from '../../Components/UI/Dialog/Dialog'
 import PinAudio from '../../Components/PinAudio/PinAudio'
 import { MusicControlContext } from '../../Context/MusicContext'
 import ChatInfo from '../../Components/ChatInfo/ChatInfo'
+import ModalPreviewImg from '../../Components/UI/ModalPreviewImg/ModalPreviewImg'
 
 const Chat = ({ chat, setChat }) => {
     const [message, setMessage] = useState()
@@ -43,6 +44,7 @@ const Chat = ({ chat, setChat }) => {
     const [showChatInfo, setShowChatInfo] = useState(false)
     const [isChatInfo, setISChatInfo] = useState(false)
     const [forwardContact, setForwardContact] = useState(false)
+    const [showPreview,setShowPreview]=useState({show:false,type:null,src:null})
     const [audio, setAudio] = useState()
     const match = useParams()
     const navigate = useNavigate()
@@ -53,6 +55,8 @@ const Chat = ({ chat, setChat }) => {
     useEffect(() => {
         filterChat(match.id)
         displayCheckBoxHandler(checkMessage)
+
+       
     }, [
         match,
         chat,
@@ -619,6 +623,7 @@ const Chat = ({ chat, setChat }) => {
                                     setReaction={removeReactionEmojiHandler}
                                     setFileId={setMessageIDFile}
                                     setAudio={setAudio}
+                                    setShowPreview={setShowPreview}
                                 />
                             ))}
                         {/* {message?.forward &&
@@ -755,6 +760,9 @@ const Chat = ({ chat, setChat }) => {
                     setChat={setMessage}
                 />
             )}
+
+
+            <ModalPreviewImg {...showPreview} setShowPreview={setShowPreview}/>
         </div>
     )
 }
