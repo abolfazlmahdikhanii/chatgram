@@ -12,6 +12,7 @@ const Video = ({
     autoPlay,
     isChatInfo,
     setShowPreview,
+    from
 }) => {
     const [currentTime, setCurrentTime] = useState(0)
     const [duration, setDuration] = useState(0)
@@ -63,7 +64,7 @@ const Video = ({
                     setCurrentTime(videoRef.current.currentTime)
                 }
                 onClick={(e) => {
-                    setShowPreview({ show: true, type: 'video', src })
+                    setShowPreview({ show: true, type: 'video',from, src })
                 }}
             >
                 <source src={src} />
