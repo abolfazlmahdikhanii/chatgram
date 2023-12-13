@@ -10,18 +10,38 @@ import Backdrop from '../Backdrop/Backdrop'
 import VideoPlayer from './VideoPlayer'
 import ImagePreview from './ImagePreview'
 
-const ModalPreviewImg = ({ show, type, src, setShowPreview }) => {
+
+const ModalPreviewImg = ({ show, type, src,from, setShowPreview }) => {
     const [isZoom, setIsZoom] = useState(false)
     const [rotate, setRotate] = useState(0)
     const [isPiPActive, setIsPiPActive] = useState(false)
 
+    console.log(from?.date)
+    const formatMonth=(date)=>{
+        const month=new Intl.DateTimeFormat("en",{
+            month:"short",
+            day:'2-digit',
+           
+        }).format(date)
+
+        return month
+    }
+    const formatTime=(date)=>{
+        const time=new Intl.DateTimeFormat("en",{
+            hour:'2-digit',
+            minute:"2-digit",
+          
+        }).format(date)
+
+        return time
+    }
     return (
         <>
             <Backdrop
                 show={show}
                 preview={true}
                 close={() =>
-                    setShowPreview({ show: false, type: null, path: null })
+                    setShowPreview({ show: false, type: null,from:null, path: null })
                 }
             />
             <div
@@ -36,8 +56,8 @@ const ModalPreviewImg = ({ show, type, src, setShowPreview }) => {
                     {/* left */}
                     <div className="flex gap-4 items-center">
                         <Profile
-                            userName="Sar An"
-                            bgProfile="orange"
+                            {...from}
+                            path={from?.profileImg}
                             size="m"
                         />
 
@@ -45,9 +65,10 @@ const ModalPreviewImg = ({ show, type, src, setShowPreview }) => {
                             <p className="text-white font-semibold text-lg">
                                 Abolfazl
                             </p>
-                            <p className="text-gray-400">
-                                <span dir="auto">Oct 14</span> <span>at</span>{' '}
-                                <span dir="auto">06:06 PM</span>
+                            <p className="text-gray-400 flex items-center gap-1.5">
+                                <span dir="auto">{formatMonth(from?.data)}</span> 
+                                 <span>at</span>
+                                <span dir="auto">{formatTime(from?.date)}</span>
                             </p>
                         </div>
                     </div>
