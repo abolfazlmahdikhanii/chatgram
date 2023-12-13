@@ -49,6 +49,8 @@ const Message = ({
     const [style, setStyle] = useState('')
     const [url, setUrl] = useState('')
     let messageContent = null
+
+    console.log(from)
     useEffect(() => {
         if (hashId === messageId) {
             setStyle('bg-indigo-300/10')
@@ -58,6 +60,9 @@ const Message = ({
                 location.hash.substring(0, -1)
                 navigate(location.pathname)
             }, 800)
+        }
+        return()=>{
+            setStyle('')
         }
     }, [location, forward])
 
@@ -103,21 +108,22 @@ const Message = ({
     let arr = checkArr.findIndex((item) => item.messageId === messageId)
     return (
         <div
-            className={`flex w-full relative  justify-between px-6 py-3 ${
-                from === 'client' && !forward ? 'chat-end ' : 'chat-start'
+            className={`grid w-full  relative  px-6 py-3 ${
+                from?.relation === "me" && !forward ? 'chat-end ' : 'chat-start '
             } 
       ${
           checkArr[arr]?.check ? 'bg-indigo-300/10' : ''
       }  ${style}  transition-all duration-200`}
             onContextMenu={(e) => onContext(e, messageId)}
         >
+            <section className='flex justify-between w-full '>
             {/* messageBody */}
             <div
                 data-id={messageId}
                 className={`chat-bubble relative justify-self-end break-words px-2.5 group ${
                     reaction ? 'min-w-[140px]' : ''
                 } ${
-                    from === 'client' && !forward
+                    from.relation === "me" && !forward
                         ? 'chat-bubble-primary order-1 justify-self-end'
                         : 'chat-bubble order-0'
                 }  ${
@@ -135,7 +141,7 @@ const Message = ({
                             className={`text-sm  `}
                             dir="auto"
                         >
-                            {from}
+                            {from.userName}
                         </span>
 
                         <button className="absolute bottom-2 -right-11 btn btn-circle btn-sm text-white bg-opacity-70 -translate-x-5 opacity-0 group-hover:opacity-100 group-hover:translate-x-0">
@@ -155,7 +161,7 @@ const Message = ({
                             })
                         }
                         className={`  mx-0 py-1 px-2 mb-2 w-32 rounded-lg flex gap-2.5 cursor-pointer transition-all duration-200  ${
-                            from === 'client' && !forward
+                            from?.relation === 'me' && !forward
                                 ? 'bg-indigo-400/30 hover:bg-indigo-400/60 '
                                 : 'bg-gray-600/30'
                         }`}
@@ -173,7 +179,7 @@ const Message = ({
                         <div className="flex flex-col gap-0.5 ">
                             <p
                                 className={`font-semibold  text-sm ${
-                                    from === 'client' && !forward
+                                    from?.relation === 'me' && !forward
                                         ? 'text-white'
                                         : 'text-indigo-500'
                                 }`}
@@ -235,6 +241,7 @@ const Message = ({
                                     {...content}
                                     onRemove={remove}
                                     from={from}
+                                    
                                     idType={content.id}
                                     messageId={messageId}
                                     setShowPreview={setShowPreview}
@@ -243,7 +250,7 @@ const Message = ({
                                         content.type === 'mp3' ? setAudio : null
                                     }
                                     isColor={
-                                        from === 'client' && !forward
+                                        from.relation === 'me' && !forward
                                             ? true
                                             : false
                                     }
@@ -279,8 +286,8 @@ const Message = ({
                 className={`checkbox checkbox-primary ${
                     showCheck ? 'opacity-100' : 'opacity-0'
                 } ${
-                    from === 'client' && !forward
-                        ? 'order-0 mr-16'
+                    from?.relation === "me" && !forward
+                        ? 'order-0 mr-16 self-end'
                         : 'order-1 ml-16'
                 }`}
                 checked={checkArr[arr]?.check}
@@ -288,6 +295,7 @@ const Message = ({
                     checkHandler(messageId, e.target.checked ? false : true)
                 }
             />
+            </section>
         </div>
     )
 }
