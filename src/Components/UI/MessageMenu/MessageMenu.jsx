@@ -39,6 +39,7 @@ const MessageMenu = ({ show, setClose, pageX, pageY,onRemove,messageID,onSelect,
       alt: "❤",
     },
   ]);
+  const [mID,setMID]=useState()
   const selectItems = [
     {
       id: crypto.randomUUID(),
@@ -88,10 +89,11 @@ const MessageMenu = ({ show, setClose, pageX, pageY,onRemove,messageID,onSelect,
     {
       id: crypto.randomUUID(),
       icon: <BsPin size={17} className="self-start mr-1.5" />,
-      title: !isPin?"Pin":"Unpin",
+      title: isPin?"Unpin":"Pin",
       event:()=>{
         setAlert(true)
         setClose(false)
+     
       },
       style:isChatInfo?"hidden":"flex",
     },
