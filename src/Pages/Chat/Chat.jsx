@@ -16,6 +16,7 @@ import PinAudio from '../../Components/PinAudio/PinAudio'
 import { MusicControlContext } from '../../Context/MusicContext'
 import ChatInfo from '../../Components/ChatInfo/ChatInfo'
 import ModalPreviewImg from '../../Components/UI/ModalPreviewImg/ModalPreviewImg'
+import { data } from 'autoprefixer'
 
 const Chat = ({ chat, setChat }) => {
     const [message, setMessage] = useState()
@@ -83,10 +84,10 @@ const Chat = ({ chat, setChat }) => {
         const message = {
             messageId: crypto.randomUUID(),
             messageDis: txt,
-            from: 'client',
             reaction: null,
-            to: 'ab',
+            to: userMessage?.userName,
             date: new Date(),
+            from: {...chat[0],date:new Date()},
             read: false,
             send: true,
             check: false,
@@ -609,7 +610,7 @@ const Chat = ({ chat, setChat }) => {
                             message?.messages?.map((item, i, arr) => (
                                 <Message
                                     key={crypto.randomUUID()}
-                                    from={item.from}
+                                
                                     forward={item?.forward}
                                     forwardSelf={item?.forwardSelf}
                                     contact={item?.contact}
