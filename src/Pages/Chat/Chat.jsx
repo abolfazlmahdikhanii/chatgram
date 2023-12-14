@@ -56,8 +56,6 @@ const Chat = ({ chat, setChat }) => {
     useEffect(() => {
         filterChat(match.id)
         displayCheckBoxHandler(checkMessage)
-
-       
     }, [
         match,
         chat,
@@ -67,6 +65,7 @@ const Chat = ({ chat, setChat }) => {
         chatRef,
         pinMessage,
         setShowContextMenu,
+    
     ])
 
     useEffect(() => {
