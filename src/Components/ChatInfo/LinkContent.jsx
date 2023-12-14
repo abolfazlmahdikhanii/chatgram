@@ -4,9 +4,11 @@ import { FiLink } from 'react-icons/fi'
 const LinkContent = ({ link, contextMenu, id, remove }) => {
     const showHostName = (links) => {
 
-        if (!links.startsWith('www')) {
+        if (!links?.startsWith('www')) {
             const url = new URL(links)
-            return url?.hostname
+          
+            console.log(links)
+              return url?.hostname
         }
         else return links
     }
@@ -27,12 +29,12 @@ const LinkContent = ({ link, contextMenu, id, remove }) => {
                     {showHostName(link&&link[0])}
                 </p>
                 <a
-                    href={link&&link[0].startsWith("www")?`https://${link[0]}`:link[0]}
+                    href={link&&link[0]?.startsWith("www")?`https://${link[0]}`:link[0]}
                     target="_blank"
                     rel="noreferrer noopener"
-                    className="truncate text-sm text-indigo-400 max-w-[90%] line-clamp-1 block"
+                    className="truncate text-sm text-indigo-400 max-w-[160px] line-clamp-1 block"
                 >
-                    {link&&link[0].startsWith("www")?`https://${link[0]}`:link[0]}
+                    {link&&link[0]?.startsWith("www")?`https://${link[0]}`:link[0]}
                 </a>
             </div>
         </div>
