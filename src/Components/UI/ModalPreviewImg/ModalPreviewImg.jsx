@@ -63,7 +63,7 @@ const ModalPreviewImg = ({ show, type, src,from, setShowPreview }) => {
 
                         <div>
                             <p className="text-white font-semibold text-lg">
-                                Abolfazl
+                                {from?.userName}
                             </p>
                             <p className="text-gray-400 flex items-center gap-1.5">
                                 <span dir="auto">{formatMonth(from?.data)}</span> 
