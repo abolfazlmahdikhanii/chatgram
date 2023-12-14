@@ -124,10 +124,10 @@ const VideoPlayer = ({ src, setIsPiPActive, isPiPActive }) => {
         setIsFullScreen(false)
     }
     return (
-        <section className="my-1 h-[85%] relative ">
+        <section className="my-1 h-[85%] relative "    ref={mainRef}>
             <div
                 className="w-9/12 mx-auto flex items-center justify-center h-[80%]  rounded-xl relative z-[7]"
-                ref={mainRef}
+             
                 onKeyDown={(e) =>
                     isFullScreen && e.key === 'Escape'
                         ? setIsFullScreen(false)
