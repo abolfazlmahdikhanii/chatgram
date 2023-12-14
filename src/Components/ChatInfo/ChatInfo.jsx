@@ -5,7 +5,7 @@ import { IoCallSharp } from 'react-icons/io5'
 import { IoMdClose } from 'react-icons/io'
 import { ToastContainer, toast } from 'react-toastify'
 
-import { NavLink, useNavigate} from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import InfoBox from './InfoBox'
 import FileType from '../FileType/FileType'
 import LinkContent from './LinkContent'
@@ -13,7 +13,6 @@ import AudioFile from '../AudioFIle/AudioFile'
 import VoiceBox from './VoiceBox'
 import CoustomToast from '../UI/CoustomToast/CoustomToast'
 import MessageMenu from '../UI/MessageMenu/MessageMenu'
-
 
 const ChatInfo = ({
     info,
@@ -33,12 +32,11 @@ const ChatInfo = ({
 }) => {
     const [tab, setTab] = useState('Media')
     const [type, setType] = useState()
-    const [link, setLink] = useState()
+    const [link, setLink] = useState([])
     const [voice, setVoice] = useState()
     const [isCall, setIsCall] = useState(false)
 
     const navigate = useNavigate()
-
 
     const toastOptions = {
         position: toast.POSITION.BOTTOM_CENTER,
@@ -56,9 +54,18 @@ const ChatInfo = ({
 
     useEffect(() => {
         if (info) {
-            filterSharedMedia('img', 'video')
+            if(tab==="Media")filterSharedMedia('img', 'video')
+            if(tab==="File")filterSharedMedia('file')
+            if(tab==="Voice")filterSharedVoice()
+            if(tab==="Link")filterSharedLink()
         }
-    }, [info, chat,link,setChatInfo])
+        return()=>{
+            setTab("Media")
+            setLink([])
+        }
+       
+    }, [info, chat, setChatInfo])
+
 
     const filterSharedMedia = (type, type1 = null) => {
         const newMessages = [...info?.messages]
@@ -88,12 +95,15 @@ const ChatInfo = ({
         const newMessages = [...info?.messages]
         const newData = []
         for (const item of newMessages) {
-            newData.push({
-                messageId: item.messageId,
-                url:item?.messageDis?.match(/(https?:\/\/[^\s]+)|(www\.[^\s]+)/g),
-            })
+            if (item?.messageDis?.match(/(https?:\/\/[^\s]+)|(www\.[^\s]+)/g)) {
+                newData.push({
+                    messageId: item.messageId,
+                    url: item?.messageDis?.match(/(https?:\/\/[^\s]+)|(www\.[^\s]+)/g),
+                })
+            }
         }
         setLink(newData)
+        
     }
 
     const copyEmailHandler = async (email) => {
@@ -130,7 +140,11 @@ const ChatInfo = ({
         const section = document.querySelector(`[data-id=${id}]`)
 
         if (section) {
-            section.scrollIntoView({ behavior: 'smooth', block: 'end', inline: "nearest"  })
+            section.scrollIntoView({
+                behavior: 'smooth',
+                block: 'end',
+                inline: 'nearest',
+            })
         }
     }
 
