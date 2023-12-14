@@ -109,7 +109,7 @@ const Message = ({
     return (
         <div
             className={`grid w-full  relative  px-6 py-3 ${
-                from?.relation === "me" && !forward ? 'chat-end ' : 'chat-start '
+                from?.relation === "me" && !forward? 'chat-end ' : 'chat-start '
             } 
       ${
           checkArr[arr]?.check ? 'bg-indigo-300/10' : ''
