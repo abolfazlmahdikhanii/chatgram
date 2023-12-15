@@ -12,18 +12,27 @@ const Dialog = ({
     onPin,
     messageID,
     userInfo,
-    isPin
+    isPin,
+    pinMessage
 }) => {
    
 
 
     let title=""
     let dis=""
+
+    const findItemPin=(messageID)=>{
+        const findedItem=pinMessage.find((item)=>item.messageId===messageID)
+        console.log(findedItem)
+        if(findedItem&&findedItem?.pin)return true
+        else return false
+      }
+    
     if(isRemove){
         title="Delete Message"
         dis="Are you sure you want to delete this message?"
     }
-    else if(isPin){
+    else if(findItemPin(messageID)){
         title="Unpin Message"
         dis="Would you like to unpin this message?"
       }
@@ -31,7 +40,7 @@ const Dialog = ({
         title="Pin Message"
         dis="Would you like to pin this message?"
       }
-      
+     
     
     return (
         <div>
@@ -67,11 +76,11 @@ const Dialog = ({
                                 Delete
                             </button>
                         ) : (
-                            <button className={`btn bg-transparent border-none  text-lg px-5  ${isPin?"text-[#ff595a] hover:bg-[rgba(255,89,90,0.08)]":" hover:bg-[rgba(135,116,225,0.08)] text-[#8774e1]"}`} onClick={()=>{
+                            <button className={`btn bg-transparent border-none  text-lg px-5  ${findItemPin(messageID)?"text-[#ff595a] hover:bg-[rgba(255,89,90,0.08)]":" hover:bg-[rgba(135,116,225,0.08)] text-[#8774e1]"}`} onClick={()=>{
                                 onPin(messageID)
                                 setShow(false)
                                 }}>
-                                {!isPin?"Pin":"UNPIN"}
+                                {!findItemPin(messageID)?"Pin":"UNPIN"}
                             </button>
                         )}
                     </div>
