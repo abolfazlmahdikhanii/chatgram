@@ -45,7 +45,11 @@ const Chat = ({ chat, setChat }) => {
     const [showChatInfo, setShowChatInfo] = useState(false)
     const [isChatInfo, setISChatInfo] = useState(false)
     const [forwardContact, setForwardContact] = useState(false)
-    const [showPreview,setShowPreview]=useState({show:false,type:null,src:null})
+    const [showPreview, setShowPreview] = useState({
+        show: false,
+        type: null,
+        src: null,
+    })
     const [audio, setAudio] = useState()
     const match = useParams()
     const navigate = useNavigate()
@@ -65,7 +69,6 @@ const Chat = ({ chat, setChat }) => {
         chatRef,
         pinMessage,
         setShowContextMenu,
-    
     ])
 
     useEffect(() => {
@@ -86,7 +89,7 @@ const Chat = ({ chat, setChat }) => {
             reaction: null,
             to: userMessage?.userName,
             date: new Date(),
-            from: {...chat[0],date:new Date()},
+            from: { ...chat[0], date: new Date() },
             read: false,
             send: true,
             check: false,
@@ -292,7 +295,7 @@ const Chat = ({ chat, setChat }) => {
         const findForwardMessage = newMessage.find(
             (item) => item.messageId === id
         )
-       
+
         setForwardSelfMessage({ ...findForwardMessage, ...message })
 
         setShowSelfForward(true)
@@ -330,7 +333,8 @@ const Chat = ({ chat, setChat }) => {
             findChat = newMessages.find((item) => item?.messageId === messageID)
             console.log(findChat)
 
-            if (userId == match.id) forwardSelfMessageHandler(findChat.messageId)
+            if (userId == match.id)
+                forwardSelfMessageHandler(findChat.messageId)
             else {
                 findChat.check = false
                 const { replyData, check = false, ...chatData } = findChat
@@ -400,17 +404,18 @@ const Chat = ({ chat, setChat }) => {
             findChat = newMessages.find((item) => item?.messageId === messageID)
             console.log(findChat)
 
-
-         
-             
-            if(findChat){
-                
-                const { replyData, check = false,messageId, ...chatData } = findChat
+            if (findChat) {
+                const {
+                    replyData,
+                    check = false,
+                    messageId,
+                    ...chatData
+                } = findChat
 
                 findUserForward.messages.push({
                     ...chatData,
                     check,
-                    messageId:crypto.randomUUID(),
+                    messageId: crypto.randomUUID(),
                     forwardSelf: {
                         activeStatus,
                         date,
@@ -426,8 +431,8 @@ const Chat = ({ chat, setChat }) => {
             findChat = newMessages.filter((item) => item?.check)
 
             findChat.forEach((item) => {
-                item.check = false;
-                item.messageId=crypto.randomUUID()
+                item.check = false
+                item.messageId = crypto.randomUUID()
             })
             const copiedItems = findChat.map((item) => ({
                 ...item,
@@ -448,7 +453,6 @@ const Chat = ({ chat, setChat }) => {
         console.log(findChat)
 
         setChat(newChat)
-        
     }
     // forwardContact
     const forwardContactClickHandler = (userId) => {
@@ -609,7 +613,6 @@ const Chat = ({ chat, setChat }) => {
                             message?.messages?.map((item, i, arr) => (
                                 <Message
                                     key={crypto.randomUUID()}
-                                
                                     forward={item?.forward}
                                     forwardSelf={item?.forwardSelf}
                                     contact={item?.contact}
@@ -740,7 +743,6 @@ const Chat = ({ chat, setChat }) => {
                         userInfo={message}
                         isPin={isPin}
                         pinMessage={pinMessage}
-
                     />
                 )}
             </div>
@@ -764,8 +766,13 @@ const Chat = ({ chat, setChat }) => {
                 />
             )}
 
-
-            <ModalPreviewImg {...showPreview} setShowPreview={setShowPreview}/>
+            <ModalPreviewImg
+                {...showPreview}
+                setShowPreview={setShowPreview}
+                DeleteChat={clickRemoveHandler}
+                forward={ForwardHandler}
+                setMessageID={setMessageID}
+            />
         </div>
     )
 }
