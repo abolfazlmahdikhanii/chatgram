@@ -710,6 +710,7 @@ const Chat = ({ chat, setChat }) => {
                         setAlert={setShowAlert}
                         remove={clickRemoveHandler}
                         isPin={isPin}
+                        pinMessage={pinMessage}
                     />
 
                     <Uploader />
@@ -738,6 +739,8 @@ const Chat = ({ chat, setChat }) => {
                         messageID={messageID}
                         userInfo={message}
                         isPin={isPin}
+                        pinMessage={pinMessage}
+
                     />
                 )}
             </div>
