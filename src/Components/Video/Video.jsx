@@ -21,6 +21,7 @@ const Video = ({
     const [isAutoPlay, setIsAutoPlay] = useState(true)
     const videoRef = useRef(null)
 
+  
     
 
     const handleLoadedMetadata = () => {
@@ -64,7 +65,8 @@ const Video = ({
                     setCurrentTime(videoRef.current.currentTime)
                 }
                 onClick={(e) => {
-                    setShowPreview({ show: true, type: 'video',from, src })
+                    setShowPreview({ show: true, type: 'video',from, src,messageId,caption })
+                    console.log(caption)
                 }}
             >
                 <source src={src} />
