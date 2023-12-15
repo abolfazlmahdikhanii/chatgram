@@ -10,27 +10,37 @@ import Backdrop from '../Backdrop/Backdrop'
 import VideoPlayer from './VideoPlayer'
 import ImagePreview from './ImagePreview'
 
+const ModalPreviewImg = ({
+    show,
+    type,
+    src,
+    messageId,
+    caption,
+    from,
 
-const ModalPreviewImg = ({ show, type, src,from, setShowPreview }) => {
+    setShowPreview,
+    DeleteChat,
+    forward,
+    setMessageID,
+}) => {
     const [isZoom, setIsZoom] = useState(false)
     const [rotate, setRotate] = useState(0)
     const [isPiPActive, setIsPiPActive] = useState(false)
+    const [showMenu, setShowMenu] = useState(false)
 
-    console.log(from?.date)
-    const formatMonth=(date)=>{
-        const month=new Intl.DateTimeFormat("en",{
-            month:"short",
-            day:'2-digit',
-           
+    console.log(caption)
+    const formatMonth = (date) => {
+        const month = new Intl.DateTimeFormat('en', {
+            month: 'short',
+            day: '2-digit',
         }).format(date)
 
         return month
     }
-    const formatTime=(date)=>{
-        const time=new Intl.DateTimeFormat("en",{
-            hour:'2-digit',
-            minute:"2-digit",
-          
+    const formatTime = (date) => {
+        const time = new Intl.DateTimeFormat('en', {
+            hour: '2-digit',
+            minute: '2-digit',
         }).format(date)
 
         return time
@@ -41,7 +51,12 @@ const ModalPreviewImg = ({ show, type, src,from, setShowPreview }) => {
                 show={show}
                 preview={true}
                 close={() =>
-                    setShowPreview({ show: false, type: null,from:null, path: null })
+                    setShowPreview({
+                        show: false,
+                        type: null,
+                        from: null,
+                        path: null,
+                    })
                 }
             />
             <div
@@ -55,25 +70,23 @@ const ModalPreviewImg = ({ show, type, src,from, setShowPreview }) => {
                 <section className="flex items-center justify-between  w-11/12 mx-auto py-5 my-3">
                     {/* left */}
                     <div className="flex gap-4 items-center">
-                        <Profile
-                            {...from}
-                            path={from?.profileImg}
-                            size="m"
-                        />
+                        <Profile {...from} path={from?.profileImg} size="m" />
 
                         <div>
                             <p className="text-white font-semibold text-lg">
                                 {from?.userName}
                             </p>
                             <p className="text-gray-400 flex items-center gap-1.5">
-                                <span dir="auto">{formatMonth(from?.data)}</span> 
-                                 <span>at</span>
+                                <span dir="auto">
+                                    {formatMonth(from?.data)}
+                                </span>
+                                <span>at</span>
                                 <span dir="auto">{formatTime(from?.date)}</span>
                             </p>
                         </div>
                     </div>
                     {/* right */}
-                    <div className="flex items-center gap-x-4">
+                    <div className="flex items-center gap-x-4 relative">
                         <div className="flex items-center gap-5 px-6 py-2 border border-gray-500/40 rounded-xl z-10">
                             <button>
                                 <svg
@@ -124,7 +137,9 @@ const ModalPreviewImg = ({ show, type, src,from, setShowPreview }) => {
                                     </button>
                                 </>
                             ) : null}
-                            <button>
+                            <button
+                                onClick={() => setShowMenu((prev) => !prev)}
+                            >
                                 <svg
                                     width={21}
                                     height={21}
@@ -161,6 +176,79 @@ const ModalPreviewImg = ({ show, type, src,from, setShowPreview }) => {
                         >
                             <IoCloseSharp size={22} color="#fff" />
                         </button>
+
+                        {/* menu */}
+                        <div
+                            className={`menu bg-base-100  rounded-box absolute right-20 top-[47px] z-[11] w-[200px] space-y-1 transition-all duration-200   ${
+                                !showMenu
+                                    ? 'scale-0 opacity-0 translate-x-12'
+                                    : 'scale-100 opacity-100 translate-x-0'
+                            }`}
+                            onMouseLeave={() => setShowMenu(false)}
+                        >
+                            <div
+                                className=" select-box--item "
+                                onClick={() => {
+                                    setMessageID(messageId)
+                                    forward()
+                                    setShowPreview(false)
+                                }}
+                            >
+                                <svg
+                                    width={19}
+                                    height={19}
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        d="M9 22h6c5 0 7-2 7-7V9c0-5-2-7-7-7H9C4 2 2 4 2 9v6c0 5 2 7 7 7z"
+                                        stroke="currentColor"
+                                        strokeWidth={1.5}
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    />
+                                    <path
+                                        d="M10.74 15.53L14.26 12l-3.52-3.53"
+                                        stroke="currentColor"
+                                        strokeWidth={1.5}
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    />
+                                </svg>
+
+                                <p className={`font-[700] text-[14px] ml-1`}>
+                                    Forward{' '}
+                                </p>
+                            </div>
+
+                            <div
+                                className=" select-box--item text-red-500 hover:bg-red-400/20"
+                                onClick={() => {
+                                    setMessageID(messageId)
+                                    DeleteChat()
+                                    setShowPreview(false)
+                                }}
+                            >
+                                <svg
+                                    width={18}
+                                    height={18}
+                                    viewBox="0 0 19 21"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        d="M16.459 7.012c.199 0 .38.087.523.234.133.157.2.352.18.558 0 .068-.532 6.808-.837 9.645-.19 1.741-1.313 2.798-2.996 2.827-1.295.029-2.56.039-3.806.039-1.322 0-2.616-.01-3.871-.04-1.627-.038-2.75-1.114-2.932-2.826-.313-2.847-.836-9.577-.846-9.645a.79.79 0 01.19-.558.706.706 0 01.524-.234h13.87zM11.584.315c.884 0 1.674.617 1.903 1.497l.163.73a1.28 1.28 0 001.24 1.016h2.917c.389 0 .713.323.713.734v.38a.73.73 0 01-.713.734H1.233a.73.73 0 01-.713-.734v-.38c0-.411.323-.734.713-.734H4.15c.592 0 1.108-.421 1.241-1.015l.153-.682C5.78.93 6.56.315 7.455.315h4.13z"
+                                        stroke="currentColor"
+                                        strokeWidth={1.5}
+                                    />
+                                </svg>
+
+                                <p className={`font-[700] text-[14px] ml-1`}>
+                                    Delete
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </section>
 
@@ -174,9 +262,13 @@ const ModalPreviewImg = ({ show, type, src,from, setShowPreview }) => {
                     <ImagePreview isZoom={isZoom} rotate={rotate} src={src} />
                 )}
 
-                <section className="absolute bottom-4 bg-gray-900/20 left-1/2 z-[5] flex items-center gap-5 backdrop-blur-xl px-6 py-3 rounded-xl max-w-[75%] w-fit  -translate-x-1/2 mx-auto text-gray-200 bg-opacity-50 ">
-                    <p className="text-sm  leading-[1.8]   max-h-[110px] overflow-y-scroll n-scroll select-text line-clamp-3"></p>
-                </section>
+                {caption ? (
+                    <section className={`absolute ${type === 'video' ?'bottom-48':'bottom-5'} bg-gray-900/50 left-1/2 z-[10] flex items-center gap-5 backdrop-blur-xl px-6 py-3 rounded-xl max-w-[75%] w-fit  -translate-x-1/2 mx-auto text-gray-200 bg-opacity-50 `}>
+                        <p className="text-sm  leading-[1.8]   max-h-[110px] overflow-y-scroll n-scroll  line-clamp-3">
+                            {caption}
+                        </p>
+                    </section>
+                ) : null}
             </div>
         </>
     )
