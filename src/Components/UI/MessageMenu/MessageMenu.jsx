@@ -6,7 +6,7 @@ import { MdDeleteOutline } from "react-icons/md";
 import { TbSquareRoundedCheck } from "react-icons/tb";
 import ReactionEmoji from "../ReactionEmoji/ReactionEmoji";
 
-const MessageMenu = ({ show, setClose, pageX, pageY,onRemove,messageID,onSelect,onEdit,onPin,onReply,onForward,onReaction,setAlert,remove,isPin,isChatInfo,onShowMessage }) => {
+const MessageMenu = ({ show, setClose, pageX, pageY,onRemove,messageID,onSelect,onEdit,onPin,onReply,onForward,onReaction,setAlert,remove,isPin,isChatInfo,onShowMessage,pinMessage }) => {
   const [emoji, setEmoji] = useState([
     {
       id: crypto.randomUUID(),
@@ -40,6 +40,15 @@ const MessageMenu = ({ show, setClose, pageX, pageY,onRemove,messageID,onSelect,
     },
   ]);
   const [mID,setMID]=useState()
+
+
+  const findItemPin=(messageID)=>{
+    const findedItem=pinMessage.find((item)=>item.messageId===messageID)
+    console.log(findedItem)
+    if(findedItem&&findedItem?.pin)return "Unpin"
+    else return "Pin"
+  }
+
   const selectItems = [
     {
       id: crypto.randomUUID(),
@@ -89,7 +98,7 @@ const MessageMenu = ({ show, setClose, pageX, pageY,onRemove,messageID,onSelect,
     {
       id: crypto.randomUUID(),
       icon: <BsPin size={17} className="self-start mr-1.5" />,
-      title: isPin?"Unpin":"Pin",
+      title: findItemPin(messageID),
       event:()=>{
         setAlert(true)
         setClose(false)
