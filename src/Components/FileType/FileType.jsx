@@ -43,6 +43,7 @@ const FileType = ({
                 isChatInfo={isChatInfo}
                 setShowPreview={setShowPreview}
                 from={from}
+                caption={caption}
             />
         )
     } else if (type == 'mp3') {
@@ -72,7 +73,7 @@ const FileType = ({
                     src={src}
                     alt=""
                     className="object-cover w-full h-full rounded-xl "
-                    onClick={()=>setShowPreview({show:true,type:"img",from,src})}
+                    onClick={()=>setShowPreview({show:true,type:"img",from,src,messageId,caption})}
                 />
             </li>
         
