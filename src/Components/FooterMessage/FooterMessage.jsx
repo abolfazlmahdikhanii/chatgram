@@ -28,9 +28,9 @@ const FooterMessage = ({message,date,read,send,edited,pin,reaction}) => {
     <>
       {message?.type === "file"||message?.type === "mp3" || typeof message === "string"||reaction||message?.caption ? (
         <div className=" flex items-center gap-1 mt-1 px-3 justify-end chat-footer -mr-4">
-          <p className="text-gray-500 text-[12px] mr-1.5">{pin?<BsFillPinAngleFill size={12}/>:''}</p>
-          <p className="text-gray-400 text-[12px] mr-0.5 italic">{edited?'edited':''}</p>
-          <p className="text-gray-400 text-[10px]">{date}</p>
+          <p className="dark:text-gray-500 text-gray-400 text-[12px] mr-1.5">{pin?<BsFillPinAngleFill size={12}/>:''}</p>
+          <p className="dark:text-gray-400 text-gray-300 text-[12px] mr-0.5 italic">{edited?'edited':''}</p>
+          <p className="dark:text-gray-400 text-gray-300 text-[10px]">{date}</p>
         
           {icon}
         </div>
