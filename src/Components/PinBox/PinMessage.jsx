@@ -14,7 +14,7 @@ const PinMessage = ({ title, index, show, arr, id }) => {
                 className="flex gap-3"
             >
          
-                    { title[0]?.type === 'img' || title[0]?.type === 'video' ? (
+                    {title&& title[0]?.type === 'img' || title&& title[0]?.type === 'video' ? (
                             <TypeMessage dis={title} w={'w-9 aspect-square'} />
                         ):null}
               
@@ -28,7 +28,7 @@ const PinMessage = ({ title, index, show, arr, id }) => {
                         title[0]?.type !== 'video' ? (
                             <TypeMessage dis={title} />
                         ) : (
-                            messageType(title[0]?.type, title[0]?.name)
+                           title&& messageType(title[0]?.type, title[0]?.name)
                         )}
                     </p>
                 </div>

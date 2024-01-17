@@ -38,7 +38,7 @@ const ProfileImage = ({
                 ) : (
                     <div
                         data-color={bgProfile}
-                        className={`grid place-items-center text-white h-full font-bold w-full `}
+                        className={`grid place-items-center text-white h-full font-bold w-full  `}
                     >
                         {!src || !isSave ? (
                             <span>{userName && userNameSpliter(userName)}</span>
