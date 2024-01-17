@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Box from "../UI/Box/Box";
 import SideMenuItem from "./SideMenuItem";
 import ThemSwitch from "../UI/ThemSwitch/ThemSwitch";
 import ProfileImage from "../ProfileImage/ProfileImage";
+import { ChatContext } from "../../Context/ChatContext";
 
-const SideMenu = ({chat}) => {
+const SideMenu = () => {
+
+  const {chat}=useContext(ChatContext)
   const [profileMe,setProfileMe]=useState()
   useEffect(()=>{
    findProfileMe()
@@ -13,7 +16,7 @@ const SideMenu = ({chat}) => {
     const findChat=chat?.find((item)=>item.relation==="me")
     setProfileMe(findChat)
   }
-  console.log(profileMe)
+  
   return (
     <Box>
       <section className="side-menu ">
