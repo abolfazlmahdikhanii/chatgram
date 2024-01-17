@@ -7,56 +7,13 @@ import { Route, Routes, useParams } from 'react-router-dom'
 import {MusicControlContext, MusicControlProvider} from '../../Context/MusicContext'
 import PinAudio from '../PinAudio/PinAudio'
 import Home from '../../Pages/Home/Home'
+import { ChatProvider } from '../../Context/ChatContext'
 const Layout = () => {
 
 
-const getRandomValue = () => {
-    const colors = [
-        'red',
-        'blue',
-        'green',
-        'yellow',
-        'indigo',
-        'purple',
-        'rose',
-        'violet'
-    ]
-    const randomIndex = Math.floor(Math.random() * colors.length)
-    return colors[randomIndex]
-}
 
 
-    const [chats, setChats] = useState([
-        {
-            id: 1,
-            userName: 'AbMk',
-            
-            relation: 'me',
-            profileImg: '../../../src/assets/images/profile.jpg',
-            bgProfile: 'violet',
-            messages: [],
-        },
-        {
-            id: 2,
-            userName: 'Abolfazl',
-            activeStatus: 'last seen recently',
-            relation: 'friend',
-            bgProfile: getRandomValue(),
-            profileImg:
-                'https://imgv3.fotor.com/images/gallery/Realistic-Male-Profile-Picture.jpg',
-            messages: [],
-        },
-        {
-            id: 3,
-            userName: 'Elizabeth',
-            activeStatus: 'last seen recently',
-            relation: 'friend',
-            bgProfile: getRandomValue(),
-            profileImg:
-                'https://images.nightcafe.studio/jobs/X0DIQhUI5yfPMmykyDSi/X0DIQhUI5yfPMmykyDSi--4--a0vw0.jpg?tr=w-1600,c-at_max',
-            messages: [],
-        },
-    ])
+   
    
 
 
@@ -64,7 +21,7 @@ const getRandomValue = () => {
     
         
     return (
-        <MusicControlProvider>
+        <ChatProvider>
         <div
             className={`${
                 match.id
@@ -72,8 +29,8 @@ const getRandomValue = () => {
                     : 'grid-cols-[95px_340px_1fr]'
             } h-screen grid  overflow-hidden`}
         >
-            <SideMenu chat={chats}/>
-            <MessageList chats={chats} />
+            <SideMenu />
+            <MessageList />
         
             <Routes>
                 
@@ -83,13 +40,13 @@ const getRandomValue = () => {
                 />
                 <Route
                     path="/chat/:id"
-                    element={<Chat chat={chats} setChat={setChats} />}
+                    element={<MusicControlProvider><Chat /></MusicControlProvider>}
                 />
             </Routes>
 
          
         </div>
-        </MusicControlProvider>
+        </ChatProvider>
     )
 }
 
