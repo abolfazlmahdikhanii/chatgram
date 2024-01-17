@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import FileItem from '../FIleItem/FileItem'
 import Progress from '../UI/Progress/Progress'
 import AudioFile from '../AudioFIle/AudioFile'
 import Video from '../Video/Video'
 import FileIcon from '../UI/FIleIcon/FileIcon'
+import { ChatContext } from '../../Context/ChatContext'
 
 const FileType = ({
     type,
@@ -11,24 +12,25 @@ const FileType = ({
     name,
     size,
     progress,
-    onRemove,
     id,
     from,
-    contextMenu,
     idType,
     messageId,
     isColor,
     caption,
-    setAudio,
     autoPlay=true,
     imgSize,
     isFile=true,
     isChatInfo=false,
-    setShowPreview
+    contextMenu
 }) => {
     
+    const {removeMessages,setShowPreview,setAudio}=useContext(ChatContext)
 
     let file = null
+
+
+
 
     if (type == 'video') {
         file = (
@@ -38,7 +40,7 @@ const FileType = ({
                 messageId={messageId}
                 idType={idType}
                 src={src}
-                onRemove={onRemove}
+                onRemove={removeMessages}
                 autoPlay={autoPlay}
                 isChatInfo={isChatInfo}
                 setShowPreview={setShowPreview}
@@ -52,7 +54,7 @@ const FileType = ({
                 path={src}
                 size={size}
                 name={name}
-                onRemove={() => onRemove(messageId, idType)}
+                onRemove={() => removeMessages(messageId, idType)}
                 isColor={isColor}
                 setAudio={setAudio}
                
@@ -62,12 +64,12 @@ const FileType = ({
         file = (
   
             <li
-                className={` ${imgSize?'h-[100px]':'h-[210px]'} overflow-hidden inline-block rounded-xl basis-[40%]  bg-gray-200/20 flex-grow flex-1 relative`}
+                className={` ${imgSize?'h-[100px]':'h-[210px]'} overflow-hidden inline-block rounded-xl basis-[40%]  dark:bg-gray-200/20 flex-grow flex-1 relative bg-gray-400/20`}
                 onContextMenu={(e) => contextMenu(e, messageId, idType,isChatInfo)}
             >
                 <Progress
                     size={progress}
-                    onRemove={() => onRemove(messageId, idType)}
+                    onRemove={() => removeMessages(messageId, idType)}
                 />
                 <img
                     src={src}
@@ -102,7 +104,7 @@ const FileType = ({
                 size={size}
                 message={true}
                 from={from}
-                onRemove={() => onRemove(messageId, idType)}
+                onRemove={() => removeMessages(messageId, idType)}
                 onContext={(e) => contextMenu(e, messageId, idType,isChatInfo)}
                 isColor={isColor}
                 
