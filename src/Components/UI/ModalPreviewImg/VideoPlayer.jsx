@@ -156,7 +156,7 @@ const VideoPlayer = ({ src, setIsPiPActive, isPiPActive }) => {
                 {/* row */}
                 <div className="flex items-center justify-between w-full">
                     <div className="flex items-center gap-3">
-                        <p className="text-white">
+                        <p className="dark:text-white text-gray-700">
                             {volume > 0 ? (
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -209,16 +209,16 @@ const VideoPlayer = ({ src, setIsPiPActive, isPiPActive }) => {
                             step={0.01}
                             value={volume}
                             onChange={volumeChangeHandler}
-                            className="range range-xs"
+                            className="range range-xs range-error"
                         />
                     </div>
 
                     <div className="">
-                        <button className="" onClick={playHandler}>
+                        <button className="dark:text-white text-gray-600" onClick={playHandler}>
                             {!isPlay ? (
-                                <FaPlay size={24} color="#fff" />
+                                <FaPlay size={24} color="currentColor" />
                             ) : (
-                                <FaPause size={24} color="#fff" />
+                                <FaPause size={24} color="currentColor" />
                             )}
                         </button>
                     </div>
