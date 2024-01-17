@@ -32,7 +32,7 @@ const MessageItemContent = ({ message }) => {
 const TextContent = ({ txt }) => {
   return (
     <p
-      className="text-gray-400 text-[13px] truncate max-w-[190px] w-full" dir="auto"
+      className="dark:text-gray-400 text-[13px] truncate max-w-[190px] w-full text-gray-500" dir="auto"
       dangerouslySetInnerHTML={{
         __html: txt,
       }}
