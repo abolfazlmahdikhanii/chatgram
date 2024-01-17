@@ -42,13 +42,13 @@ const ImagePreview = ({ isZoom ,rotate=0,src}) => {
                 {isZoom ? (
                     <div className="zoom-box">
                         <button
-                            className="disabled:text-gray-500 text-white"
+                            className="dark:disabled:text-gray-500 text-white disabled:text-gray-600/60 "
                             onClick={() =>
                                 zoomNum > 0.1
                                     ? setZoomNum((prev) => +prev - 0.1)
                                     : null
                             }
-                            disabled={zoomNum == 1}
+                            disabled={zoomNum <=1}
                         >
                             <BiZoomOut size={24} />
                         </button>
@@ -70,7 +70,7 @@ const ImagePreview = ({ isZoom ,rotate=0,src}) => {
                                     : null
                             }
                             disabled={zoomNum >= 3}
-                            className="disabled:text-gray-500 text-white"
+                            className="dark:disabled:text-gray-500 text-white disabled:text-gray-600/60"
                         >
                             <BiZoomIn size={24} />
                         </button>
