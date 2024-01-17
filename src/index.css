@@ -17,7 +17,7 @@
         @apply w-[9px];
     }
     ::-webkit-scrollbar-thumb {
-        @apply rounded-full bg-transparent  border-4 border-white;
+        @apply rounded-full bg-transparent  border-4 dark:border-white border-gray-700 ;
     }
     ::-webkit-scrollbar-trak {
         @apply bg-transparent;
@@ -29,16 +29,16 @@
         @apply bg-gray-600/50;
     }
     body {
-        @apply bg-gray-950 scroll-smooth select-none;
+        @apply dark:bg-gray-950 scroll-smooth select-none   bg-gradient-to-br from-violet-500 to-pink-300 dark:bg-gradient-to-t dark:from-[unset] dark:to-[unset] ;
     }
 
     .message-item,
     .user-profile {
-        @apply flex  p-2.5 w-full gap-5 transition-all duration-300 hover:bg-gray-700/20 rounded-lg cursor-pointer;
+        @apply flex  p-2.5 w-full gap-5 transition-all duration-300 dark:hover:bg-gray-700/20 rounded-lg cursor-pointer hover:bg-gray-300/40;
     }
 
     .chat__input {
-        @apply appearance-none px-3 py-2 placeholder:text-xs w-full text-gray-50 bg-transparent focus-visible:outline-0 break-all transition-all duration-300;
+        @apply appearance-none px-3 py-2 placeholder:text-xs w-full dark:text-gray-50 bg-transparent focus-visible:outline-0 break-all transition-all duration-300 text-gray-800;
     }
 
     .message {
@@ -48,7 +48,7 @@
         @apply bg-primary self-end rounded-tr-none;
     }
     .message--client {
-        @apply bg-gray-800 self-start rounded-tl-none;
+        @apply bg-gray-800 self-start rounded-tl-none dark:bg-slate-100/30 backdrop-blur-xl;
     }
     .profile-img {
         @apply rounded-xl overflow-hidden bg-indigo-500;
@@ -60,7 +60,7 @@
         @apply flex flex-col gap-6;
     }
     .side-menu--border {
-        @apply w-9/12 mx-auto my-6 h-[1px] bg-gray-700;
+        @apply w-9/12 mx-auto my-6 h-[1px] dark:bg-gray-700 bg-gray-300;
     }
 
     .switch {
@@ -70,11 +70,11 @@
         @apply rounded-xl  p-2.5;
     }
     .select-box {
-        @apply rounded-xl bg-[rgba(33,33,33,.75)] shadow-gray-800/30 shadow-lg backdrop-blur-[40px] absolute bottom-16 right-20 w-[190px] py-1.5 px-1.5 scale-0 opacity-0  transition-all duration-300;
+        @apply rounded-xl dark:bg-[rgba(33,33,33,.75)] dark:shadow-gray-800/30 shadow-lg backdrop-blur-[40px] absolute bottom-16 right-20 w-[190px] py-1.5 px-1.5 scale-0 opacity-0  transition-all duration-300 bg-base-200/70 shadow-gray-400/20;
     }
 
     .select-box--item {
-        @apply flex items-center gap-5 text-white py-1.5 px-3 transition-all duration-300 hover:bg-[rgba(170,170,170,0.08)] rounded-lg cursor-pointer;
+        @apply flex items-center gap-5 dark:text-white py-1.5 px-3 transition-all duration-300 hover:bg-[rgba(170,170,170,0.08)] rounded-lg cursor-pointer text-gray-600;
     }
     .modal-preview {
         @apply justify-items-start [overflow-y:hidden] px-0 max-h-[600px] -translate-x-1/2 left-1/2 pt-0 mt-0;
@@ -83,10 +83,10 @@
         @apply w-full overflow-y-auto  px-4 py-3    rounded-xl scroll-hover;
     }
     .file-item {
-        @apply flex gap-5 transition-all duration-300 hover:bg-gray-700/30 select-none cursor-pointer py-2 rounded-lg overflow-hidden;
+        @apply flex gap-5 transition-all duration-300 hover:bg-gray-300/40 dark:hover:bg-gray-700/30 select-none cursor-pointer py-2 rounded-lg overflow-hidden;
     }
     .file-icon {
-        @apply flex items-center justify-center px-3 rounded-xl relative before:absolute before:w-6 before:h-6 before:inline-block before:bg-[linear-gradient(45deg,rgba(0,0,0,0.3)_50%,#1D232A_50%)] before:-top-0.5 before:-right-0.5 before:rounded-sm w-[68px]  h-[81px];
+        @apply flex items-center justify-center px-3 rounded-xl relative before:absolute before:w-6 before:h-6 before:inline-block dark:before:bg-[linear-gradient(45deg,rgba(0,0,0,0.3)_50%,#1D232A_50%)] before:-top-0.5 before:-right-0.5 before:rounded-sm w-[68px]  h-[81px] before:bg-[linear-gradient(45deg,rgba(0,0,0,0.3)_50%,#eee_50%)];
     }
     .file-icon--2 {
         @apply before:bg-[linear-gradient(45deg,rgba(0,0,0,0.3)_50%,#641AE6_50%)] w-[65px]  h-[70px];
@@ -104,25 +104,25 @@
         @apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-base-100/40 border-[6px] border-transparent cursor-pointer;
     }
     div[contenteditable='true']:empty:before {
-        @apply [content:attr(placeholder)] absolute left-10 text-gray-400 transition-all duration-200 translate-x-0 opacity-100 text-sm capitalize scale-100  top-1/2 -translate-y-1/2;
+        @apply [content:attr(placeholder)] absolute left-10 text-gray-600 dark:text-gray-400 transition-all duration-200 translate-x-0 opacity-100 text-sm capitalize scale-100  top-1/2 -translate-y-1/2;
     }
     div[contenteditable='true']:before {
-        @apply [content:attr(placeholder)] absolute left-10 text-gray-400 transition-all duration-200 translate-x-[40px] opacity-0 text-sm capitalize scale-50  top-1/2 -translate-y-1/2;
+        @apply [content:attr(placeholder)] absolute left-10 text-gray-600 dark:text-gray-400 transition-all duration-200 translate-x-[40px] opacity-0 text-sm capitalize scale-50  top-1/2 -translate-y-1/2;
     }
     .recorder-box .audio-recorder {
         @apply [display:none!important];
     }
     .check-message {
-        @apply py-3 px-2 bg-base-200 rounded-xl recorder-box   w-10/12 mx-auto  mb-24 flex gap-3.5 h-[60px] max-w-lg items-center relative;
+        @apply py-3 px-2 bg-base-200 rounded-xl recorder-box   w-10/12 mx-auto  mb-24 flex gap-3.5 h-[60px] max-w-lg items-center relative ;
     }
     .check-message--btn {
         @apply flex items-center gap-3 transition-all duration-300 px-4 py-2 rounded-xl w-auto;
     }
     .form-box {
-        @apply bg-base-200 flex items-center justify-between py-1.5 rounded-xl w-full px-3;
+        @apply dark:bg-base-200 flex items-center justify-between py-1.5 rounded-xl w-full px-3  backdrop-blur-xl bg-base-300/80;
     }
     .unpin-btn {
-        @apply capitalize font-semibold text-white py-4 px-8 rounded-xl bg-base-100 -mt-32 mb-16 w-fit mx-auto  z-[1] hover:bg-base-200 transition-all duration-200 active:scale-90 cursor-pointer;
+        @apply capitalize font-semibold dark:text-white py-4 px-8 rounded-xl bg-base-100 -mt-32 mb-16 w-fit mx-auto  z-[1] hover:bg-base-200 transition-all duration-200 active:scale-90 cursor-pointer text-gray-700;
     }
 
     [data-text-color='violet'] {
@@ -203,7 +203,7 @@
         @apply bg-blue-400/50;
     } */
     .info-box{
-        @apply px-[14px] transition-all duration-200 bg-base-200 hover:bg-gray-700/30 py-3.5 rounded-xl cursor-pointer 
+        @apply px-[14px] transition-all duration-200 bg-base-200 dark:hover:bg-gray-700/30 py-3.5 rounded-xl cursor-pointer hover:bg-gray-400/20
     }
     .Toastify__close-button{
         dispaly:none!important;
