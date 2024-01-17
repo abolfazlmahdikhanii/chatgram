@@ -1,16 +1,18 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import PinMessage from './PinMessage'
 
 import { AiOutlineClose } from 'react-icons/ai'
+import { ChatContext } from '../../Context/ChatContext'
 
-const PinBox = ({ pins, setPin, setShowPin }) => {
+const PinBox = () => {
+    const {pinMessage,setPinMessage,setShowPin,chat,message,chatId}=useContext(ChatContext)
     const [indexPin, setIndexPin] = useState(0)
 
     const [currentPage, setCurrentPage] = useState(1)
 
     useEffect(() => {
-        setIndexPin(pins.length - 1)
-    }, [pins])
+        setIndexPin(pinMessage.length - 1)
+    }, [pinMessage])
 
     const goToPage = (pageNumber) => {
         setCurrentPage(pageNumber)
@@ -22,13 +24,13 @@ const PinBox = ({ pins, setPin, setShowPin }) => {
                 {/* dot */}
 
                 <div className="h-full flex flex-col gap-[3px] mr-2">
-                    {pins.map((pin, i) => (
+                    {message?.messages.filter(item=>item.pin).map((pin, i) => (
                         <div
                             key={pin?.messageId}
                             className={`w-[2.1px] ${
                                 i === indexPin
                                     ? 'bg-indigo-600'
-                                    : 'bg-indigo-400'
+                                    : 'dark:bg-indigo-400 bg-indigo-300'
                             } h-full rounded-xl transition-all duration-200 cursor-pointer`}
                             onClick={() => goToPage(i)}
                         ></div>
@@ -36,7 +38,7 @@ const PinBox = ({ pins, setPin, setShowPin }) => {
                 </div>
                 {/* message */}
                 <ul className="flex flex-col">
-                    {pins.map(
+                    {message?.messages.filter(item=>item.pin).map(
                         (pin, i, arr) =>
                             indexPin === i && (
                                 <li key={pin.messageId}>
@@ -53,9 +55,9 @@ const PinBox = ({ pins, setPin, setShowPin }) => {
                 </ul>
             </div>
             <div>
-                {pins.length > 1 ? (
+                {message?.messages.filter(item=>item.pin&&chatId).length > 1 ? (
                     <button
-                        className="grid place-items-center "
+                        className="grid place-items-center text-gray-500 dark:text-gray-700"
                         onClick={() => setShowPin(true)}
                     >
                         <svg
@@ -76,7 +78,7 @@ const PinBox = ({ pins, setPin, setShowPin }) => {
                 ) : (
                     <button
                         className="btn btn-sm btn-square   grid place-items-center"
-                        onClick={() => setPin([])}
+                        onClick={() => setPinMessage([])}
                     >
                         <AiOutlineClose size={16} />
                     </button>
