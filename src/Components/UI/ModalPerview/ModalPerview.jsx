@@ -7,7 +7,7 @@ const ModalPerview = ({ show, close, images, onUpload,dis,setDis }) => {
   const submitFormHandler = (caption) => {
 
     onUpload(caption)
-    console.log(caption)
+
 
     close()
  
