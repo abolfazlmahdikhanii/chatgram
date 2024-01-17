@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Box from '../UI/Box/Box'
 import Profile from '../Profile/Profile'
 import { IoCallSharp } from 'react-icons/io5'
@@ -13,23 +13,14 @@ import AudioFile from '../AudioFIle/AudioFile'
 import VoiceBox from './VoiceBox'
 import CoustomToast from '../UI/CoustomToast/CoustomToast'
 import MessageMenu from '../UI/MessageMenu/MessageMenu'
+import { ChatContext } from '../../Context/ChatContext'
 
 const ChatInfo = ({
-    info,
-    chat,
     setChatInfo,
-    setAudio,
-    pageX,
-    pageY,
-    messageID,
-    onForward,
-    setAlert,
-    remove,
     setClose,
-    show,
-    onContext,
-    setChat,
+    show, 
 }) => {
+    const {message,messageID,chat,setAudio,pageX,pageY,ForwardHandler,setShowAlert,clickRemoveHandler,contextmenuInfoHandler,isChatInfo,setShowContextMenu}=useContext(ChatContext)
     const [tab, setTab] = useState('Media')
     const [type, setType] = useState()
     const [link, setLink] = useState([])
@@ -53,7 +44,7 @@ const ChatInfo = ({
     }
 
     useEffect(() => {
-        if (info) {
+        if (message) {
             if(tab==="Media")filterSharedMedia('img', 'video')
             if(tab==="File")filterSharedMedia('file')
             if(tab==="Voice")filterSharedVoice()
@@ -64,11 +55,11 @@ const ChatInfo = ({
             setLink([])
         }
        
-    }, [info, chat, setChatInfo])
+    }, [message, chat, setChatInfo])
 
 
     const filterSharedMedia = (type, type1 = null) => {
-        const newMessages = [...info?.messages]
+        const newMessages = [...message?.messages]
         const newData = []
         for (const item of newMessages) {
             for (const val of item.messageDis) {
@@ -80,7 +71,7 @@ const ChatInfo = ({
         console.log(type)
     }
     const filterSharedVoice = () => {
-        const newMessages = [...info?.messages]
+        const newMessages = [...message?.messages]
         const newData = []
         for (const item of newMessages) {
             for (const val of item.messageDis) {
@@ -92,10 +83,11 @@ const ChatInfo = ({
     }
     const filterSharedLink = (dis) => {
 
-        const newMessages = [...info?.messages]
+        const newMessages = [...message?.messages]
         const newData = []
         for (const item of newMessages) {
-            if (item?.messageDis?.match(/(https?:\/\/[^\s]+)|(www\.[^\s]+)/g)) {
+            
+            if (!item?.messageDis?.startsWith('<img src=')&&item?.messageDis?.match(/(https?:\/\/[^\s]+)|(www\.[^\s]+)/g)) {
                 newData.push({
                     messageId: item.messageId,
                     url: item?.messageDis?.match(/(https?:\/\/[^\s]+)|(www\.[^\s]+)/g),
@@ -152,11 +144,14 @@ const ChatInfo = ({
         <>
             <Box
                 style={`w-full transition-all duration-200 overflow-y-scroll h-full n-scroll max-h-[100vh] relative `}
-                context={(e) => e.preventDefault()}
+                context={(e) => {
+                    e.preventDefault()
+                    setShowContextMenu(false)
+                }}
             >
                 {/* header */}
                 <div className="sticky -top-4 bg-base-100 z-10  py-4 -mt-3 w-full px-2 transition-all duration-200 flex items-center justify-between ">
-                    <p className="text-xl text-white font-semibold">Profile</p>
+                    <p className="text-xl dark:text-white font-semibold text-gray-900">Profile</p>
                     <button
                         className="btn btn-ghost mask mask-squircle"
                         onClick={() => setChatInfo(false)}
@@ -167,17 +162,17 @@ const ChatInfo = ({
                 <div className="mt-14  flex flex-col gap-5 items-center justify-center ">
                     <div className=" flex items-center justify-center">
                         <Profile
-                            path={info?.profileImg}
-                            userName={info?.userName}
-                            bgProfile={info?.bgProfile}
-                            relation={info?.relation}
-                            isSave={info?.relation === 'me' ? true : false}
+                            path={message?.profileImg}
+                            userName={message?.userName}
+                            bgProfile={message?.bgProfile}
+                            relation={message?.relation}
+                            isSave={message?.relation === 'me' ? true : false}
                             size="lg"
                         />
                     </div>
                     <div className="space-y-1.5">
-                        <p className="text-3xl text-gray-50 font-semibold truncate">
-                            {info?.userName}
+                        <p className="text-3xl text-gray-900 dark:text-gray-50 font-semibold truncate">
+                            {message?.userName}
                         </p>
                         <p className="text-center text-sm text-indigo-400">
                             Online
@@ -235,7 +230,7 @@ const ChatInfo = ({
                     {/* item-2 */}
                     <InfoBox
                         title="Username"
-                        des={info?.userName}
+                        des={message?.userName}
                         onCopy={copyUsernameHandler}
                     />
                     {/* item-3 */}
@@ -249,7 +244,7 @@ const ChatInfo = ({
 
                 {/* shared */}
                 <div className="mt-9 px-2.5 relative">
-                    <p className="text-lg text-gray-100 font-semibold mb-5 px-1 ">
+                    <p className="text-lg dark:text-gray-100 font-semibold mb-5 px-1 text-gray-700 ">
                         Shared Media
                     </p>
                     <div
@@ -259,7 +254,7 @@ const ChatInfo = ({
                         <button
                             role="tab"
                             className={`tab h-[2.2rem]  transition-all duration-200 ${
-                                tab === 'Media' ? 'tab-active' : ''
+                                tab === 'Media' ? 'tab-active text-white' : ''
                             }`}
                             onClick={(e) => {
                                 setTab(e.target.textContent)
@@ -327,13 +322,13 @@ const ChatInfo = ({
                                         autoPlay={false}
                                         imgSize={true}
                                         isFile={false}
-                                        contextMenu={onContext}
+                                        contextMenu={contextmenuInfoHandler}
                                         isChatInfo={true}
                                     />
                                 ))
                             ) : (
                                 <div className="flex flex-col items-center justify-center my-5 w-full gap-2">
-                                    <p className="text-gray-200 text-sm">
+                                    <p className="dark:text-gray-200 text-sm text-gray-800">
                                         No media found
                                     </p>
                                 </div>
@@ -353,8 +348,8 @@ const ChatInfo = ({
                                         key={crypto.randomUUID()}
                                         link={content?.url}
                                         id={content?.messageId}
-                                        remove={remove}
-                                        contextMenu={onContext}
+                                        remove={clickRemoveHandler}
+                                        contextMenu={contextmenuInfoHandler}
                                         setClose={setClose}
                                     />
                                 ))
@@ -381,9 +376,9 @@ const ChatInfo = ({
                                         path={content.src}
                                         isFile={false}
                                         setAudio={setAudio}
-                                        name={info?.userName}
-                                        remove={remove}
-                                        contextMenu={onContext}
+                                        name={message?.userName}
+                                        remove={clickRemoveHandler}
+                                        contextMenu={contextmenuInfoHandler}
                                         setClose={setClose}
                                     />
                                 ))
@@ -399,14 +394,7 @@ const ChatInfo = ({
                         {/* menu */}
 
                         <MessageMenu
-                            pageX={pageX}
-                            pageY={pageY}
-                            show={show}
-                            setClose={setClose}
-                            messageID={messageID}
-                            onForward={onForward}
-                            setAlert={setAlert}
-                            remove={remove}
+                            show={isChatInfo}
                             isChatInfo={true}
                             onShowMessage={navigateMessage}
                         />
