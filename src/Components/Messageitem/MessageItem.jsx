@@ -7,7 +7,7 @@ import NotifyNumber from "../UI/NotifyNumber/NotifyNumber";
 import { Link } from "react-router-dom";
 import MessageItemContent from "../MessageItemContent/MessageItemContent";
 
-const MessageItem = ({ id, userName, profileImg, messages ,bgProfile,relation,isSave}) => {
+const MessageItem = ({ id, userName, profileImg, messages ,bgProfile,relation,isSave,onContext}) => {
 
   const formatTime = (date) => {
     return new Intl.DateTimeFormat("tr", {
@@ -28,17 +28,17 @@ const MessageItem = ({ id, userName, profileImg, messages ,bgProfile,relation,is
   }
 
   return (
-    <Link to={`/chat/${id}`} className="message-item ">
+    <Link to={`/chat/${id}`} className="message-item " onContextMenu={onContext}>
       <Profile size="m" path={profileImg} userName={userName} bgProfile={bgProfile} relation={relation} isSave={isSave}/>
 
       <div className="w-full flex-col gap-2 flex">
         {/* top */}
         <div className="flex items-center justify-between w-full">
-          <p className="font-semibold  text-white capitalize text-[17px]" >
+          <p className="font-semibold  dark:text-white capitalize text-[17px] text-gray-800" >
             {userName}
           </p>
-          <p className="text-[11px] text-gray-400">
-            {formatTime(messages[messages.length - 1]?.date)}
+          <p className="text-[11px] dark:text-gray-400 text-gray-600">
+            { messages.length>0&&formatTime(messages[messages.length - 1]?.date)}
           </p>
         </div>
         {/* bottom */}
@@ -49,7 +49,7 @@ const MessageItem = ({ id, userName, profileImg, messages ,bgProfile,relation,is
           <p>{icon}</p>
             {/* <NotifyNumber /> */}
           </div>:
-          <p className="-mt-1 text-sm font-normal text-gray-400">{relation==="me"?"online":"last seen recently"}</p>
+          <p className="-mt-1 text-sm font-normal dark:text-gray-400 text-gray-500">{relation==="me"?"online":"last seen recently"}</p>
           }
       </div>
     </Link>
