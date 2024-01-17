@@ -133,7 +133,7 @@ const AudioRecorders = ({ record = false, setRecord, setMessage }) => {
   return (
     <div className="flex items-stretch gap-4">
       <div
-        className={`py-2 px-3 bg-base-200   rounded-xl recorder-box  items-center ${
+        className={`py-2 px-3 dark:bg-base-200   rounded-xl recorder-box  items-center bg-base-300/80  backdrop-blur-xl ${
           record ? "flex" : "hidden"
         } `}
       >
@@ -162,7 +162,7 @@ const AudioRecorders = ({ record = false, setRecord, setMessage }) => {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-300 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-4 w-4 bg-red-500"></span>
             </span>
-            <span className="text-white whitespace-nowrap text-sm">
+            <span className="dark:text-white whitespace-nowrap text-sm text-gray-800">
               {formatTimer(timer)}
             </span>
           </p>
