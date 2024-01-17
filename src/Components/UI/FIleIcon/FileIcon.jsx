@@ -52,7 +52,7 @@ const FileIcon = ({ type,path=null,message=false,from,isColor,isFile,onContext }
         </div>
       ) : (
         <div className={`file-icon  ${fileColor} p-0 overflow-hidden   `} onContextMenu={!isFile?onContext:false}>
-          <img src={path} alt="" className="w-full h-full object-cover rounded-lg bg-white" />
+          <img src={path} alt="" className="w-full h-full object-cover rounded-lg dark:bg-white bg-gray-300" />
         </div>
       )}
     </>
