@@ -70,10 +70,10 @@ function InfoBox({ title, des,onCopy,style="" }) {
             {icon}
                 <div className="flex flex-col gap-1">
                
-                    <p className=" text-gray-500 text-sm font-medium">
+                    <p className=" dark:text-gray-500 text-sm font-medium text-gray-700">
                         {title}
                     </p>
-                    <p className={ ` text-gray-200 px-1.5 font-normal ${style&&style}`}>{des}</p>
+                    <p className={ ` text-gray-200 px-1.5 font-normal ${style&&style} text-gray-500`}>{des}</p>
                 </div>
             </div>
         </div>
