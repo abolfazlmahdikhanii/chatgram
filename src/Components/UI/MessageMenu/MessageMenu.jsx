@@ -1,12 +1,16 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { BsPin } from "react-icons/bs";
 import { FiEdit3 } from "react-icons/fi";
 import { genericHashLink } from "react-router-hash-link";
 import { MdDeleteOutline } from "react-icons/md";
 import { TbSquareRoundedCheck } from "react-icons/tb";
 import ReactionEmoji from "../ReactionEmoji/ReactionEmoji";
+import { ChatContext } from "../../../Context/ChatContext";
 
-const MessageMenu = ({ show, setClose, pageX, pageY,onRemove,messageID,onSelect,onEdit,onPin,onReply,onForward,onReaction,setAlert,remove,isPin,isChatInfo,onShowMessage,pinMessage }) => {
+const MessageMenu = ({onShowMessage,show,isChatInfo=false}) => {
+const {pageX,pageY,messageID,checkMessageHandler,selectEditTextMessageHandler,replyMessageHandler,ForwardHandler,reactionEmojiHandler,clickRemoveHandler,pinMessage,setShowContextMenu,setShowAlert,setIsPin,setISChatInfo}=useContext(ChatContext)
+
+
   const [emoji, setEmoji] = useState([
     {
       id: crypto.randomUUID(),
@@ -43,8 +47,8 @@ const MessageMenu = ({ show, setClose, pageX, pageY,onRemove,messageID,onSelect,
 
 
   const findItemPin=(messageID)=>{
-    const findedItem=pinMessage.find((item)=>item.messageId===messageID)
-    console.log(findedItem)
+    const findedItem=pinMessage?.find((item)=>item.messageId===messageID)
+  
     if(findedItem&&findedItem?.pin)return "Unpin"
     else return "Pin"
   }
@@ -68,7 +72,7 @@ const MessageMenu = ({ show, setClose, pageX, pageY,onRemove,messageID,onSelect,
     </svg>
       ,
       title: "Reply",
-      event:()=>onReply(messageID),
+      event:()=>replyMessageHandler(messageID),
       style:isChatInfo?"hidden":"flex",
     },
     {
@@ -92,7 +96,7 @@ const MessageMenu = ({ show, setClose, pageX, pageY,onRemove,messageID,onSelect,
     </svg>
       ,
       title: "Edit",
-      event:()=>onEdit(messageID),
+      event:()=>selectEditTextMessageHandler(messageID),
       style:isChatInfo?"hidden":"flex",
     },
     {
@@ -100,8 +104,9 @@ const MessageMenu = ({ show, setClose, pageX, pageY,onRemove,messageID,onSelect,
       icon: <BsPin size={17} className="self-start mr-1.5" />,
       title: findItemPin(messageID),
       event:()=>{
-        setAlert(true)
-        setClose(false)
+        setIsPin(true)
+        setShowAlert(true)
+        setShowContextMenu(false)
      
       },
       style:isChatInfo?"hidden":"flex",
@@ -134,7 +139,7 @@ const MessageMenu = ({ show, setClose, pageX, pageY,onRemove,messageID,onSelect,
       ,
       title: "Forward",
       styleTitle:'ml-1',
-      event:()=>onForward()
+      event:()=>ForwardHandler()
     },
     {
       id: crypto.randomUUID(),
@@ -186,7 +191,7 @@ const MessageMenu = ({ show, setClose, pageX, pageY,onRemove,messageID,onSelect,
         />
       ),
       title: "Select",
-      event:()=>onSelect(messageID),
+      event:()=>checkMessageHandler(messageID),
       style:isChatInfo?"hidden":"flex",
       styleTitle:isChatInfo?"hidden":"flex",
     },
@@ -200,6 +205,7 @@ const MessageMenu = ({ show, setClose, pageX, pageY,onRemove,messageID,onSelect,
             viewBox="0 0 19 21"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
+            className="text-red-500"
           >
             <path
               d="M16.459 7.012c.199 0 .38.087.523.234.133.157.2.352.18.558 0 .068-.532 6.808-.837 9.645-.19 1.741-1.313 2.798-2.996 2.827-1.295.029-2.56.039-3.806.039-1.322 0-2.616-.01-3.871-.04-1.627-.038-2.75-1.114-2.932-2.826-.313-2.847-.836-9.577-.846-9.645a.79.79 0 01.19-.558.706.706 0 01.524-.234h13.87zM11.584.315c.884 0 1.674.617 1.903 1.497l.163.73a1.28 1.28 0 001.24 1.016h2.917c.389 0 .713.323.713.734v.38a.73.73 0 01-.713.734H1.233a.73.73 0 01-.713-.734v-.38c0-.411.323-.734.713-.734H4.15c.592 0 1.108-.421 1.241-1.015l.153-.682C5.78.93 6.56.315 7.455.315h4.13z"
@@ -209,8 +215,13 @@ const MessageMenu = ({ show, setClose, pageX, pageY,onRemove,messageID,onSelect,
           </svg>
       ,
       title: "Delete",
-      styleTitle:'ml-1',
-      event:()=>remove()
+      styleTitle:'ml-1 text-red-500',
+      event:()=>{
+    
+        clickRemoveHandler()
+        setShowContextMenu(false)
+        setISChatInfo(false)
+      }
     },
   ];
   return (
@@ -221,10 +232,10 @@ const MessageMenu = ({ show, setClose, pageX, pageY,onRemove,messageID,onSelect,
           : "[scale-z:0] scale-0 opacity-0"
       } fixed `}
       style={{ left: `${pageX-200}px`, top: `${pageY}px` }}
-      onMouseLeave={() => setClose(false)}
+      onMouseLeave={() => setShowContextMenu(false)}
     >
       <div
-        className={`menu bg-[rgba(33,33,33,.75)] backdrop-blur-[50px] rounded-xl gap-1.5 w-[190px]`}
+        className={`menu dark:bg-[rgba(33,33,33,.75)] backdrop-blur-[50px] rounded-xl gap-1.5 w-[190px] bg-base-200/60`}
       >
       {
         selectItems.map((item)=>(
@@ -244,11 +255,11 @@ const MessageMenu = ({ show, setClose, pageX, pageY,onRemove,messageID,onSelect,
       {/* emoji */}
       {!isChatInfo&&
          <div
-         className=" bg-[rgba(33,33,33,.75)]  backdrop-blur-[40px]   rounded-xl 
-       gap-2.5  w-[190px]   flex items-center mt-1 p-3"
+         className=" dark:bg-[rgba(33,33,33,.75)]  backdrop-blur-[40px]   rounded-xl 
+       gap-2.5  w-[190px]   flex items-center mt-1 p-3 bg-base-200/60"
        >
          {emoji.map((item) => (
-          <ReactionEmoji key={item.id} {...item} onReaction={()=>onReaction(item.emojiName)}/>
+          <ReactionEmoji key={item.id} {...item} onReaction={()=>reactionEmojiHandler(item.emojiName)}/>
          ))}
        </div>
       }
