@@ -13,22 +13,10 @@ import SelectBox from '../UI/SelectBox/SelectBox'
 import AudioRecorders from '../AudioRecorder/AudioRecorder'
 import TypeMessage from '../TypeMessage/TypeMessage'
 import messageType from '../../Utility/MessageType'
+import { useContext } from 'react'
+import { ChatContext } from '../../Context/ChatContext'
 
-const ChatForm = ({
-    set,
-    edit,
-    setEdit,
-    onEdit,
-    reply,
-    replyMessage,
-    setShowReply,
-    setReply,
-    forwardSelfMessage,
-    setForwardSelfMessage,
-    forwardHandler,
-    forwardSelf,
-    setShowForwardSelf,
-}) => {
+const ChatForm = () => {
     const [text, setText] = useState('')
     const [emoji, setEmoji] = useState([])
     const [showEmoji, setShowEmoji] = useState(false)
@@ -40,6 +28,23 @@ const ChatForm = ({
     const [content, setContent] = useState('')
 
     const inputRef = useRef(null)
+    const {
+        sendMessageHandler,
+        editContent,
+        editHandler,
+        showReply,
+        showSelfForward,
+        forwardSelfClickHandler,
+        forwardSelfMessage,
+        replyMessage,
+        setShowSelfForward,
+        setEditContent,
+        setForwardSelfMessage,
+        setShowReply,
+        setReplyMessage,
+    } = useContext(ChatContext)
+
+
 
     useEffect(() => {
         if (inputRef.current) {
@@ -52,11 +57,11 @@ const ChatForm = ({
             setEmoji([])
         }
         return () => {
-            if (inputRef.current) inputRef.current.innerHTML = ''
+            if (inputRef.current&&!emoji) inputRef.current.innerHTML = ''
             // setReply(null)
             // setForwardSelfMessage(null)
         }
-    }, [inputRef, text, emoji, set])
+    }, [inputRef, text, emoji])
 
     // find chat with id and store  in the object in the place
     const submitFormHandler = (e) => {
@@ -67,34 +72,36 @@ const ChatForm = ({
         if (inputRef.current) {
             if (inputRef.current.innerHTML !== '') {
                 if (replyMessage) {
-                    set(text.innerHTML, replyMessage)
+                    sendMessageHandler(text.innerHTML, replyMessage)
                     setShowReply(false)
-                    setReply(null)
+                    setReplyMessage(null)
                     // if(isEnterPressed)set(null)
-                }  if (forwardSelfMessage) {
-                    forwardHandler(forwardSelfMessage.id)
-                    set(text.innerHTML)
-                    setShowForwardSelf(false)
+                }
+                if (forwardSelfMessage) {
+                    forwardSelfClickHandler(forwardSelfMessage.id)
+                    sendMessageHandler(text.innerHTML)
+                    setShowSelfForward(false)
                     setForwardSelfMessage(null)
                     // if(isEnterPressed)set("")
-                } if(!replyMessage&&!forwardSelfMessage) {
-                    set(text.innerHTML)
+                }
+                if (!replyMessage && !forwardSelfMessage) {
+                    sendMessageHandler(text.innerHTML)
                 }
 
                 inputRef.current.innerHTML = ''
             } else {
                 if (forwardSelfMessage) {
-                    forwardHandler(forwardSelfMessage.id)
-                    setShowForwardSelf(false)
+                    forwardSelfClickHandler(forwardSelfMessage.id)
+                    setShowSelfForward(false)
                     setForwardSelfMessage(null)
                 }
             }
         }
     }
-    const editHandler = (e) => {
+    const editContentHandler = (e) => {
         e.preventDefault()
         if (inputRef.current) {
-            onEdit(inputRef.current.innerHTML)
+            editHandler(inputRef.current.innerHTML)
             inputRef.current ? (inputRef.current.innerHTML = '') : null
             setText('')
         }
@@ -104,7 +111,7 @@ const ChatForm = ({
             const newFileUpload = filesUpload.map((item) => {
                 return { ...item, caption: txt }
             })
-            set(newFileUpload)
+            sendMessageHandler(newFileUpload)
         }
     }
     const uploadImageHandler = (txt) => {
@@ -112,7 +119,7 @@ const ChatForm = ({
             const newImageUpload = imagesUpload.map((item) => {
                 return { ...item, caption: txt }
             })
-            set(newImageUpload)
+            sendMessageHandler(newImageUpload)
         }
     }
     const closeEmojiPicker = () => {
@@ -136,27 +143,27 @@ const ChatForm = ({
                 <>
                     <div className="flex flex-col w-full relative">
                         <EditBox
-                            edit={edit}
-                            setEdit={setEdit}
+                            edit={editContent}
+                            setEdit={setEditContent}
                             input={inputRef}
                         />
                         <ReplyBox
-                            reply={reply}
+                            reply={showReply}
                             setShowReply={setShowReply}
                             replyMessage={replyMessage}
                             input={inputRef}
                         />
                         <ForwardBox
-                            forwardSelf={forwardSelf}
-                            setShowForwardSelf={setShowForwardSelf}
+                            forwardSelf={showSelfForward}
+                            setShowForwardSelf={setForwardSelfMessage}
                             forwardMessage={forwardSelfMessage}
                             input={inputRef}
-                            forwardHandler={forwardHandler}
+                            forwardHandler={forwardSelfClickHandler}
                         />
                         <div className="form-box ">
                             <div className="flex items-center gap-0.5 w-full relative">
                                 <button
-                                    className="text-yellow-500 grid place-items-center"
+                                    className="dark:text-yellow-500 grid place-items-center text-yellow-600"
                                     onClick={(e) => {
                                         e.preventDefault()
                                         setShowEmoji((prev) => !prev)
@@ -199,7 +206,7 @@ const ChatForm = ({
                                     placeholder="message"
                                     suppressContentEditableWarning={true}
                                     onKeyDown={(e) => {
-                                        e.key === 'Enter' && !edit
+                                        e.key === 'Enter' && !editContent
                                             ? submitFormHandler(e)
                                             : null
                                         // e.key === "Backspace"&&edit ? setEdit(e.target.innerText) : edit;
@@ -227,9 +234,9 @@ const ChatForm = ({
                             setRecord={setRecord}
                             setText={setEmoji}
                             emoji={emoji}
-                            isEdit={edit}
-                            setEdit={setEdit}
-                            onEdit={editHandler}
+                            isEdit={editContent}
+                            setEdit={setEditContent}
+                            onEdit={editContentHandler}
                             forwardMessage={forwardSelfMessage}
                         />
                     </div>
@@ -238,7 +245,7 @@ const ChatForm = ({
                 <AudioRecorders
                     record={record}
                     setRecord={setRecord}
-                    setMessage={set}
+                    setMessage={sendMessageHandler}
                 />
             )}
 
@@ -404,7 +411,7 @@ const ForwardBox = ({
     return (
         <div
             className={`form-box rounded-b-none  transition-all duration-300 absolute top-0 ${
-                !forwardSelf
+                !forwardMessage
                     ? '-translate-y-7 opacity-0  -z-[1] overflow-hidden'
                     : '-translate-y-14 opacity-100 -mb-2'
             } `}
@@ -426,7 +433,10 @@ const ForwardBox = ({
                         />
                     ) : null}
 
-                    <div data-bg-color={forwardMessage?.bgProfile} className="flex flex-col  gap-0.5  px-4 w-[95%] rounded-lg relative">
+                    <div
+                        data-bg-color={forwardMessage?.bgProfile}
+                        className="flex flex-col  gap-0.5  px-4 w-[95%] rounded-lg relative"
+                    >
                         <p
                             className="text-[15px] text-indigo-400 font-medium"
                             dir="auto"
@@ -452,7 +462,7 @@ const ForwardBox = ({
                 className="btn btn-square btn-sm"
                 onClick={(e) => {
                     e.preventDefault()
-                    setShowForwardSelf(false)
+                    setShowForwardSelf()
                     input.current.innerHTML = ''
                 }}
             >
