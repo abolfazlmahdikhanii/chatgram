@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { BsDownload } from 'react-icons/bs'
 import { TbZoomInArea } from 'react-icons/tb'
 import { IoCloseSharp } from 'react-icons/io5'
@@ -9,26 +9,21 @@ import Profile from '../../Profile/Profile'
 import Backdrop from '../Backdrop/Backdrop'
 import VideoPlayer from './VideoPlayer'
 import ImagePreview from './ImagePreview'
+import { ChatContext } from '../../../Context/ChatContext'
 
-const ModalPreviewImg = ({
-    show,
-    type,
-    src,
-    messageId,
-    caption,
-    from,
+const ModalPreviewImg = () => {
 
-    setShowPreview,
-    DeleteChat,
-    forward,
-    setMessageID,
-}) => {
+    const {clickRemoveHandler,ForwardHandler,setMessageID,setShowPreview,showPreview,messageID}=useContext(ChatContext)
+
+
     const [isZoom, setIsZoom] = useState(false)
     const [rotate, setRotate] = useState(0)
     const [isPiPActive, setIsPiPActive] = useState(false)
     const [showMenu, setShowMenu] = useState(false)
+    const {show,type,src,messageId,caption,from}=showPreview
 
-    console.log(caption)
+   
+
     const formatMonth = (date) => {
         const month = new Intl.DateTimeFormat('en', {
             month: 'short',
@@ -73,10 +68,10 @@ const ModalPreviewImg = ({
                         <Profile {...from} path={from?.profileImg} size="m" />
 
                         <div>
-                            <p className="text-white font-semibold text-lg">
+                            <p className="dark:text-white font-semibold text-lg text-gray-800">
                                 {from?.userName}
                             </p>
-                            <p className="text-gray-400 flex items-center gap-1.5">
+                            <p className="dark:text-gray-400 flex items-center gap-1.5 text-gray-500">
                                 <span dir="auto">
                                     {formatMonth(from?.data)}
                                 </span>
@@ -87,7 +82,7 @@ const ModalPreviewImg = ({
                     </div>
                     {/* right */}
                     <div className="flex items-center gap-x-4 relative">
-                        <div className="flex items-center gap-5 px-6 py-2 border border-gray-500/40 rounded-xl z-10">
+                        <div className="flex items-center gap-5 px-6 py-2 border dark:border-gray-500/40 rounded-xl z-10 border-gray-300">
                             <button>
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -190,7 +185,7 @@ const ModalPreviewImg = ({
                                 className=" select-box--item "
                                 onClick={() => {
                                     setMessageID(messageId)
-                                    forward()
+                                    ForwardHandler()
                                     setShowPreview(false)
                                 }}
                             >
@@ -226,7 +221,7 @@ const ModalPreviewImg = ({
                                 className=" select-box--item text-red-500 hover:bg-red-400/20"
                                 onClick={() => {
                                     setMessageID(messageId)
-                                    DeleteChat()
+                                    clickRemoveHandler()
                                     setShowPreview(false)
                                 }}
                             >
