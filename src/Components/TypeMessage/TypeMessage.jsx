@@ -48,7 +48,7 @@ const TypeMessage = ({ dis, w }) => {
                 </div>
             )
         }
-        if (dis[0].type === 'file') {
+        if (dis[0]?.type === 'file') {
             element = (
                 <div className='flex gap-1.5 items-center w-full'>
                     <p>
