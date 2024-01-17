@@ -6,7 +6,7 @@ const LinkPreview = ({text}) => {
 
   const renderTextWithUrls = () => {
     let newText = text;
-    if (urls) {
+    if (urls&&!text.startsWith('<img src=')) {
       urls.forEach((url) => {
         newText = newText.replace(url, `<a href="${url}" target="_blank" class="underline " rel='noreferrer noopener'>${url}</a>`);
       });
