@@ -6,7 +6,7 @@ import 'swiper/css'
 const StorySlider = () => {
     return (
         <div >
-            <div className="py-1 px-2 mb-5">
+            <div className="py-1 px-2 mb-4">
                 <h2 className="font-bold text-2xl dark:text-white text-gray-800">
                     Stories
                 </h2>
