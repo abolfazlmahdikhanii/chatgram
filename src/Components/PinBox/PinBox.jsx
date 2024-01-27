@@ -4,22 +4,23 @@ import PinMessage from './PinMessage'
 import { AiOutlineClose } from 'react-icons/ai'
 import { ChatContext } from '../../Context/ChatContext'
 
-const PinBox = () => {
-    const {pinMessage,setPinMessage,setShowPin,chat,message,chatId}=useContext(ChatContext)
+const PinBox = ({close}) => {
+    const {pinMessage,setPinMessage,setShowPin,chat,message,chatId,showPin}=useContext(ChatContext)
     const [indexPin, setIndexPin] = useState(0)
 
     const [currentPage, setCurrentPage] = useState(1)
 
     useEffect(() => {
         setIndexPin(pinMessage.length - 1)
-    }, [pinMessage])
+    }, [message,pinMessage])
 
     const goToPage = (pageNumber) => {
         setCurrentPage(pageNumber)
         setIndexPin(pageNumber)
     }
+
     return (
-        <div className="py-2 px-4 bg-base-200  flex items-center  justify-between sticky top-0 ">
+        <div className={`py-2 px-4 bg-base-200  flex items-center  justify-between sticky top-0 `}>
             <div className="flex items-center gap-2 h-full">
                 {/* dot */}
 
@@ -78,7 +79,11 @@ const PinBox = () => {
                 ) : (
                     <button
                         className="btn btn-sm btn-square   grid place-items-center"
-                        onClick={() => setPinMessage([])}
+                        onClick={() => {
+                            
+                           close()
+                           setPinMessage([])
+                        }}
                     >
                         <AiOutlineClose size={16} />
                     </button>
