@@ -5,6 +5,7 @@ import { ChatContext } from '../../Context/ChatContext'
 import UserMenu from './UserMenu'
 import {useNavigate} from 'react-router-dom'
 import StorySlider from '../StorySlider/StorySlider'
+import SearchBar from '../UI/SearchBar/SearchBar'
 
 const MessageList = () => {
     const [chatId, setChatId] = useState(null)
@@ -24,6 +25,7 @@ const MessageList = () => {
 
     return (
         <Box style={'ml-3 overflow-hidden'}>
+            <SearchBar/>
             <StorySlider/>
             <div className="py-1 px-2 mb-5">
                 <h2 className="font-bold text-2xl dark:text-white text-gray-800">
