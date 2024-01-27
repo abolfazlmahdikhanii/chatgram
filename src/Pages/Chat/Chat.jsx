@@ -21,10 +21,7 @@ import { ChatContext, ChatProvider } from '../../Context/ChatContext'
 
 const Chat = () => {
     const [showChatInfo, setShowChatInfo] = useState(false)
-    
-  
-
-
+    const [groupedMessages, setGroupedMessages] = useState([])
     const match = useParams()
     const navigate = useNavigate()
     const chatRef = useRef()
@@ -48,25 +45,53 @@ const Chat = () => {
         audio,
         setISChatInfo,
         isChatInfo,
-        chatId
+        chatId,
     } = useContext(ChatContext)
 
-    
     useEffect(() => {
         filterChat(match?.id)
         findUserMessage(match?.id)
         displayCheckBoxHandler(checkMessage)
-   
-    
-    }, [match,chat,pinMessage])
+        groupMessageHandler(message?.messages)
+    }, [match, chat, pinMessage, message])
 
     const deleteChat = () => {
         DeleteChat()
-        navigate('/',{replace:true})
+        navigate('/', { replace: true })
     }
+    const groupMessageHandler = (message) => {
+     
+        const messageGroup = [];
+        let currentDate = null;
+    
+        message?.forEach((messages) => {
+          const messageDate = new Date(messages.date).toDateString();
+    
+          // If the message belongs to a new day, create a new group
+          if (messageDate !== currentDate) {
+            messageGroup.push({
+              date: messageDate,
+              messages: [messages],
+            });
+            currentDate = messageDate;
+          } else {
+            // If the message belongs to the current day, add it to the last group
+            messageGroup[messageGroup.length - 1].messages.push(messages);
+          }
+        });
 
+        setGroupedMessages(messageGroup)
+    }
+    const closePinBox = () => {
+        const pinArr = message?.messages?.filter(
+            (item) => item.pin && chatId == match.id
+        )
+        pinArr.forEach((item) => {
+            item.pin = false
+        })
+    }
+    console.log(groupedMessages)
     return (
-      
         <div
             className={`grid transition-all duration-200 ${
                 showChatInfo ? 'grid-cols-[1fr_30%]' : 'grid-cols-1'
@@ -78,10 +103,10 @@ const Chat = () => {
                 }  h-screen relative overflow-hidden  transition-all duration-200 ease-in-out`}
                 onContextMenu={(e) => e.preventDefault()}
             >
-                <ChatHeader 
-                DeleteChat={deleteChat} 
-                setShowChatInfo={setShowChatInfo}
-                deleteChat={deleteChat}
+                <ChatHeader
+                    DeleteChat={deleteChat}
+                    setShowChatInfo={setShowChatInfo}
+                    deleteChat={deleteChat}
                 />
 
                 <main
@@ -89,7 +114,11 @@ const Chat = () => {
                     ref={chatRef}
                 >
                     {audio && <PinAudio path={audio} />}
-                    {!showPin&&message?.messages?.filter(item=>item.pin&&chatId==match.id).length>0 ? <PinBox /> : null}
+                    {message?.messages?.filter(
+                        (item) => item.pin && chatId == match.id
+                    ).length > 0 ? (
+                        <PinBox close={closePinBox} />
+                    ) : null}
 
                     {/* simple message */}
                     <section
@@ -100,16 +129,34 @@ const Chat = () => {
                         }`}
                     >
                         {message?.messages?.messageDis !== '' &&
-                            message?.messages?.map((item, i, arr) => (
-                                <Message
-                                    key={crypto.randomUUID()}
-                                    forward={item?.forward}
-                                    forwardSelf={item?.forwardSelf}
-                                    contact={item?.contact}
-                                 
-                                    {...item}
-                                />
-                            ))}
+                            groupedMessages?.map((group) => (
+                                    // console.log(grouped[item])
+                                    <>
+                                        <div key={group.date} className={`bg-gray-500/20 backdrop-blur-lg px-4 py-1 w-fit text-sm rounded-full mx-auto mt-2 mb-1 sticky top-2`}>
+                                            {group.date}
+                                        </div>
+
+                                        {
+                                            group.messages.map((item)=>(
+                                                <Message
+                                                key={crypto.randomUUID()}
+                                                 forward={item?.forward}
+                                                 forwardSelf={
+                                                     item?.forwardSelf
+                                                }
+                                                 contact={item?.contact}
+                                                  {...item}
+                                             />
+                                            ))
+                                        }
+                                     
+                                               
+                                       
+                                            
+                                           
+                                    </>
+                                ))
+                            }
                     </section>
                     {/* pin message */}
                     <section
@@ -123,7 +170,6 @@ const Chat = () => {
                             pinMessage.map((item, i) => (
                                 <Message
                                     key={crypto.randomUUID()}
-                        
                                     forwardSelf={item?.forwardSelf}
                                     contact={item?.contact}
                                     {...item}
@@ -143,11 +189,7 @@ const Chat = () => {
                     )}
                     {/* menu */}
 
-                    <MessageMenu 
-                    show={showContextMenu}
-                     isChatInfo={false}
-                    />
-                    
+                    <MessageMenu show={showContextMenu} isChatInfo={false} />
 
                     {/* <Uploader /> */}
 
@@ -160,7 +202,6 @@ const Chat = () => {
             {showChatInfo && (
                 <ChatInfo
                     setChatInfo={setShowChatInfo}
-                  
                     show={isChatInfo}
                     setClose={setISChatInfo}
                 />
@@ -168,7 +209,6 @@ const Chat = () => {
 
             <ModalPreviewImg />
         </div>
-  
     )
 }
 
