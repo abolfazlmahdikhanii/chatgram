@@ -686,7 +686,8 @@ export const ChatProvider = ({ children }) => {
                 setIsPin,
                 setShowCheckBox,
                 showCheckBox,
-                clearHistory
+                clearHistory,
+                
             }}
         >
             {children}
