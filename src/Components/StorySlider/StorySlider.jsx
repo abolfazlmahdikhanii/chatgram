@@ -2,6 +2,7 @@ import React from 'react'
 import StoryItem from './StoryItem'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/css'
+import StoryModal from '../UI/StoryModal/StoryModal'
 
 const StorySlider = () => {
     return (
@@ -32,6 +33,8 @@ const StorySlider = () => {
                     <StoryItem />
                 </SwiperSlide>
             </Swiper>
+
+            <StoryModal/>
         </div>
     )
 }
