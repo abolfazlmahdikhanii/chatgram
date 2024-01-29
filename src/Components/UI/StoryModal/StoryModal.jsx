@@ -6,30 +6,63 @@ import { FaPause } from 'react-icons/fa6'
 
 const StoryModal = ({ show = true }) => {
     const [time, setTime] = useState(0)
+    const [currentUser,setCurrentUser]=[0]
     // const [slider, setSlider] = useState(0)
     // const [isPlay, setIsPlay] = useState(true)
     // const rendersCount = useRef(0)
     const [currentSlide, setCurrentSlide] = useState(0)
     const [isPlaying, setIsPlaying] = useState(true)
     const StoryData = [
-        {
-            id: 1,
-            src: '../../../../src/assets/images/profile.jpg',
-        },
-        {
-            id: 2,
-            src: 'https://newspaperw-cdn.varzesh3.com/newspapers/2024/01/28/A/bmbokbmg.jpg?w=870',
-        },
-        {
-            id: 3,
-            src: 'https://newspaperw-cdn.varzesh3.com/newspapers/2024/01/28/A/cqm5akgy.jpg?w=870',
-        },
+        [
+            {
+                id: 1,
+                src: '../../../../src/assets/images/profile.jpg',
+            },
+            {
+                id: 2,
+                src: 'https://newspaperw-cdn.varzesh3.com/newspapers/2024/01/28/A/bmbokbmg.jpg?w=870',
+            },
+            {
+                id: 3,
+                src: 'https://newspaperw-cdn.varzesh3.com/newspapers/2024/01/28/A/cqm5akgy.jpg?w=870',
+            },
+        ],
+      [
+            {
+                id: 1,
+                src: '../../../../src/assets/images/profile.jpg',
+            },
+            {
+                id: 2,
+                src: 'https://newspaperw-cdn.varzesh3.com/newspapers/2024/01/28/A/bmbokbmg.jpg?w=870',
+            },
+            {
+                id: 3,
+                src: 'https://newspaperw-cdn.varzesh3.com/newspapers/2024/01/28/A/cqm5akgy.jpg?w=870',
+            },
+        ],
+         [
+            {
+                id: 1,
+                src: '../../../../src/assets/images/profile.jpg',
+            },
+            {
+                id: 2,
+                src: 'https://newspaperw-cdn.varzesh3.com/newspapers/2024/01/28/A/bmbokbmg.jpg?w=870',
+            },
+            {
+                id: 3,
+                src: 'https://newspaperw-cdn.varzesh3.com/newspapers/2024/01/28/A/cqm5akgy.jpg?w=870',
+            },
+        ],
     ]
-   
+
+
     useEffect(() => {
         let timerId
 
         if (isPlaying) {
+       
             timerId = setInterval(() => {
                 setTime((prev) => prev + 1)
                 if (time >= 100) {
@@ -37,17 +70,23 @@ const StoryModal = ({ show = true }) => {
 
                     // clearInterval(timerId)
                     setCurrentSlide(
-                        (prevSlide) => (prevSlide + 1) % StoryData.length
+                        (prevSlide) => (prevSlide + 1) % StoryData[currentUser].length
                     )
+                  if(currentSlide>=StoryData.length){
+                    setCurrentUser(prev=>prev+1)
+                  }
                 }
 
-                if (time >= 100 && currentSlide >= StoryData.length) {
+                if (time >= 100 && currentUser>=StoryData.length) {
                     setTime(0)
                     setIsPlaying(false)
                     clearInterval(timerId)
-                    setCurrentSlide(StoryData.length )
+                    setCurrentUser(0)
+                    
+                    setCurrentUser(prev=>prev++)
                 }
             }, 100)
+       
         }
 
         return () => {
@@ -119,11 +158,11 @@ const StoryModal = ({ show = true }) => {
                         <div className="display">
                             <div className="artboard artboard-demo phone-1 relative">
                                 <div className="flex items-center gap-x-2 absolute top-9 left-0 right-0 w-full px-4">
-                                    {StoryData.map((_, i) => (
+                                    {StoryData[currentUser]?.map((_, i) => (
                                         <div
                                             key={i + 1}
                                             className="h-1 rounded-full bg-gray-700/60 backdrop-blur-xl w-full overflow-hidden"
-                                            onClick={()=>{
+                                            onClick={() => {
                                                 setCurrentSlide(i)
                                                 setTime(0)
                                             }}
@@ -147,7 +186,7 @@ const StoryModal = ({ show = true }) => {
                                     <source src="https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-576p.mp4" />
                                 </video> */}
                                 <div className="flex items-center">
-                                    {StoryData.map((item, i) => (
+                                    {StoryData[currentUser]?.map((item, i) => (
                                         <div
                                             key={item.id}
                                             className={`${
