@@ -1,68 +1,26 @@
 import React, { useEffect, useState, useRef } from 'react'
 import Backdrop from '../Backdrop/Backdrop'
+import chatData from '../../../data'
 import { IoCloseSharp } from 'react-icons/io5'
 import { FaPlay } from 'react-icons/fa6'
 import { FaPause } from 'react-icons/fa6'
+import { IoIosArrowBack } from 'react-icons/io'
+import { IoIosArrowForward } from 'react-icons/io'
 
 const StoryModal = ({ show = true }) => {
     const [time, setTime] = useState(0)
-    const [currentUser,setCurrentUser]=[0]
+    const [currentUser, setCurrentUser] = useState(0)
     // const [slider, setSlider] = useState(0)
     // const [isPlay, setIsPlay] = useState(true)
     // const rendersCount = useRef(0)
     const [currentSlide, setCurrentSlide] = useState(0)
     const [isPlaying, setIsPlaying] = useState(true)
-    const StoryData = [
-        [
-            {
-                id: 1,
-                src: '../../../../src/assets/images/profile.jpg',
-            },
-            {
-                id: 2,
-                src: 'https://newspaperw-cdn.varzesh3.com/newspapers/2024/01/28/A/bmbokbmg.jpg?w=870',
-            },
-            {
-                id: 3,
-                src: 'https://newspaperw-cdn.varzesh3.com/newspapers/2024/01/28/A/cqm5akgy.jpg?w=870',
-            },
-        ],
-      [
-            {
-                id: 1,
-                src: '../../../../src/assets/images/profile.jpg',
-            },
-            {
-                id: 2,
-                src: 'https://newspaperw-cdn.varzesh3.com/newspapers/2024/01/28/A/bmbokbmg.jpg?w=870',
-            },
-            {
-                id: 3,
-                src: 'https://newspaperw-cdn.varzesh3.com/newspapers/2024/01/28/A/cqm5akgy.jpg?w=870',
-            },
-        ],
-         [
-            {
-                id: 1,
-                src: '../../../../src/assets/images/profile.jpg',
-            },
-            {
-                id: 2,
-                src: 'https://newspaperw-cdn.varzesh3.com/newspapers/2024/01/28/A/bmbokbmg.jpg?w=870',
-            },
-            {
-                id: 3,
-                src: 'https://newspaperw-cdn.varzesh3.com/newspapers/2024/01/28/A/cqm5akgy.jpg?w=870',
-            },
-        ],
-    ]
-
-
+    const StoryData = chatData
     useEffect(() => {
         let timerId
+        console.log(currentUser)
 
         if (isPlaying) {
-       
             timerId = setInterval(() => {
                 setTime((prev) => prev + 1)
                 if (time >= 100) {
@@ -70,29 +28,31 @@ const StoryModal = ({ show = true }) => {
 
                     // clearInterval(timerId)
                     setCurrentSlide(
-                        (prevSlide) => (prevSlide + 1) % StoryData[currentUser].length
+                        (prevSlide) =>
+                            (prevSlide + 1) %
+                            StoryData[currentUser].stories.length
                     )
-                  if(currentSlide>=StoryData.length){
-                    setCurrentUser(prev=>prev+1)
-                  }
+                
+                    if (currentSlide >= StoryData[currentUser].stories.length-1) {
+                        setCurrentUser((prev) => prev + 1)
+                        setTime(0)
+                    }
+                    console.log(StoryData.length-1 )
+                     if ( currentUser >= StoryData.length-1 && currentSlide >= StoryData[currentUser]?.stories.length-1) {
+                        setTime(0)
+                        clearInterval(timerId)
+                        setIsPlaying(false)
+                        setCurrentUser(0)
+                    }
                 }
-
-                if (time >= 100 && currentUser>=StoryData.length) {
-                    setTime(0)
-                    setIsPlaying(false)
-                    clearInterval(timerId)
-                    setCurrentUser(0)
-                    
-                    setCurrentUser(prev=>prev++)
-                }
+             
             }, 100)
-       
         }
 
         return () => {
             clearInterval(timerId)
         }
-    }, [time, isPlaying])
+    }, [time, isPlaying, currentUser])
 
     const handlePlay = () => {
         setIsPlaying((prev) => !prev)
@@ -152,59 +112,74 @@ const StoryModal = ({ show = true }) => {
                 </section>
 
                 {/* Start Story Content */}
-                <section className="flex items-center justify-center -mt-4">
+                <section className="flex items-center justify-center -mt-4 relative">
                     <div className="mockup-phone">
                         <div className="camera h-3"></div>
                         <div className="display">
                             <div className="artboard artboard-demo phone-1 relative">
                                 <div className="flex items-center gap-x-2 absolute top-9 left-0 right-0 w-full px-4">
-                                    {StoryData[currentUser]?.map((_, i) => (
-                                        <div
-                                            key={i + 1}
-                                            className="h-1 rounded-full bg-gray-700/60 backdrop-blur-xl w-full overflow-hidden"
-                                            onClick={() => {
-                                                setCurrentSlide(i)
-                                                setTime(0)
-                                            }}
-                                        >
+                                    {StoryData[currentUser]?.stories&&StoryData[currentUser]?.stories?.map(
+                                        (_, i) => (
                                             <div
-                                                className={`bg-gray-100  origin-left absolute inset-0 ${
-                                                    i > currentSlide
-                                                        ? 'hidden'
-                                                        : 'block'
-                                                }`}
-                                                style={{
-                                                    width:
-                                                        i === currentSlide &&
-                                                        `${time}%`,
+                                                key={i + 1}
+                                                className="h-1 rounded-full bg-gray-700/60 backdrop-blur-xl w-full overflow-hidden"
+                                                onClick={() => {
+                                                    setCurrentSlide(i)
+                                                    setTime(0)
                                                 }}
-                                            ></div>
-                                        </div>
-                                    ))}
+                                            >
+                                                <div
+                                                    className={`bg-gray-100  origin-left absolute inset-0 ${
+                                                        i > currentSlide
+                                                            ? 'hidden'
+                                                            : 'block'
+                                                    }`}
+                                                    style={{
+                                                        width:
+                                                            i ===
+                                                                currentSlide &&
+                                                            `${time}%`,
+                                                    }}
+                                                ></div>
+                                            </div>
+                                        )
+                                    )}
                                 </div>
                                 {/* <video    autoPlay playsInline className='h-auto w-full  aspect-video' >
                                     <source src="https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-576p.mp4" />
                                 </video> */}
                                 <div className="flex items-center">
-                                    {StoryData[currentUser]?.map((item, i) => (
-                                        <div
-                                            key={item.id}
-                                            className={`${
-                                                i === currentSlide
-                                                    ? 'block'
-                                                    : 'hidden'
-                                            }`}
-                                        >
-                                            <img
-                                                src={item.src}
-                                                alt=""
-                                                className={`w-full h-auto object-cover `}
-                                            />
-                                        </div>
-                                    ))}
+                                    {StoryData[currentUser]?.stories&&StoryData[currentUser]?.stories?.map(
+                                        (item, i) => (
+                                            <div
+                                                key={item.id}
+                                                className={`${
+                                                    i === currentSlide
+                                                        ? 'block'
+                                                        : 'hidden'
+                                                }`}
+                                            >
+                                                <img
+                                                    src={item.src}
+                                                    alt=""
+                                                    className={`w-full h-auto object-cover `}
+                                                />
+                                            </div>
+                                        )
+                                    )}
                                 </div>
                             </div>
                         </div>
+                    </div>
+
+                    {/* Buttons Slider */}
+                    <div className="w-1/3 absolute top-1/2 -translate-x-1/2 -translate-y-1/2 left-1/2 flex items-center justify-between">
+                        <button className="btn btn-primary mask mask-squircle">
+                            <IoIosArrowBack size={22} />
+                        </button>
+                        <button className="btn btn-primary mask mask-squircle">
+                            <IoIosArrowForward size={22} />
+                        </button>
                     </div>
                 </section>
                 {/* Finish Story Content */}
