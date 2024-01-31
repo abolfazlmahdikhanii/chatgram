@@ -40,7 +40,7 @@ const chatData=[
             },
             {
                 id: 2,
-                src: 'https://newspaperw-cdn.varzesh3.com/newspapers/2024/01/28/A/bmbokbmg.jpg?w=870',
+                src: 'https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-576p.mp4',
             },
             {
                 id: 3,
