@@ -1,11 +1,11 @@
 import React from 'react'
 
-const StoryItem = () => {
+const StoryItem = ({userName,profileImg,onStoryClick}) => {
     return (
-        <div className="flex flex-col gap-2 justify-center items-center ">
+        <div className="flex flex-col gap-2 justify-center items-center " onClick={onStoryClick}>
             <div className='p-1 relative '>
                 <div className="w-[70px] h-[70px] mask mask-squircle z-[5] relative">
-                    <img src="../../../src/assets/images/profile.jpg" alt="" />
+                    <img src={profileImg} alt="story img" />
                 </div>
               
                 {/* border */}
@@ -17,7 +17,7 @@ const StoryItem = () => {
                        
                 </div>
             </div>
-            <p className="dark:text-gray-200 font-medium truncate text-gray-800">abolfazl</p>
+            <p className="dark:text-gray-200 font-medium truncate text-gray-800">{userName}</p>
         </div>
     )
 }
