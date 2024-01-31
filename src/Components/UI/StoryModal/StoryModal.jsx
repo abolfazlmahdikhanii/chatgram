@@ -7,34 +7,35 @@ import { FaPause } from 'react-icons/fa6'
 import { IoIosArrowBack } from 'react-icons/io'
 import { IoIosArrowForward } from 'react-icons/io'
 
-const StoryModal = ({ show = true }) => {
+const StoryModal = ({ show, currentUserStory, close }) => {
+    const StoryData = chatData
     const [time, setTime] = useState(0)
-    const [currentUser, setCurrentUser] = useState(0)
-    // const [slider, setSlider] = useState(0)
-    // const [isPlay, setIsPlay] = useState(true)
-    // const rendersCount = useRef(0)
+    const [currentUser, setCurrentUser] = useState(currentUserStory)
     const [currentSlide, setCurrentSlide] = useState(0)
     const [isPlaying, setIsPlaying] = useState(true)
-    const StoryData = chatData
+    const [duration,setDuration]=useState(0)
+    const [currentTime,setCurrentTime]=useState(0)
+    const videoRef=useRef(null)
+
     useEffect(() => {
         let timerId
 
         if (isPlaying) {
             timerId = setInterval(() => {
                 setTime((prev) => prev + 1)
+
                 if (time >= 100) {
                     setTime(0)
-
                     // clearInterval(timerId)
                     setCurrentSlide(
                         (prevSlide) =>
                             (prevSlide + 1) %
-                            StoryData[currentUser].stories.length
+                            StoryData[currentUser]?.stories.length
                     )
 
                     if (
                         currentSlide >=
-                        StoryData[currentUser].stories.length - 1
+                        StoryData[currentUser]?.stories.length - 1
                     ) {
                         setCurrentUser((prev) => prev + 1)
                         setTime(0)
@@ -48,16 +49,46 @@ const StoryModal = ({ show = true }) => {
                         setTime(0)
                         clearInterval(timerId)
                         setIsPlaying(false)
-                        setCurrentUser(0)
+                        close(false)
                     }
                 }
+                
+               
             }, 100)
+         
+          
         }
+        // if(currentTime>=duration){
+        //     setCurrentSlide(
+        //         (prevSlide) =>
+        //             (prevSlide + 1) %
+        //             StoryData[currentUser]?.stories.length
+        //     )
 
+        //     if (
+        //         currentSlide >=
+        //         StoryData[currentUser]?.stories.length - 1
+        //     ) {
+        //         setCurrentUser((prev) => prev + 1)
+        //         setTime(0)
+        //     }
+
+        //     if (
+        //         currentUser >= StoryData.length - 1 &&
+        //         currentSlide >=
+        //             StoryData[currentUser]?.stories.length - 1
+        //     ) {
+        //         setTime(0)
+        //         clearInterval(timerId)
+        //         setIsPlaying(false)
+        //         close(false)
+        //     }
+        // }
+        
         return () => {
             clearInterval(timerId)
         }
-    }, [time, isPlaying, currentUser])
+    }, [time, isPlaying, currentUserStory])
 
     const handlePlay = () => {
         setIsPlaying((prev) => !prev)
@@ -72,11 +103,11 @@ const StoryModal = ({ show = true }) => {
             setCurrentSlide(0)
         }
         if (
-            currentUser >= StoryData.length-1 &&
+            currentUser >= StoryData.length - 1 &&
             currentSlide >= StoryData[currentUser]?.stories.length - 1
         ) {
             setTime(0)
-            setCurrentUser(0)
+            close(false)
             setCurrentSlide(0)
         }
     }
@@ -91,7 +122,7 @@ const StoryModal = ({ show = true }) => {
         }
         if (currentUser === 0) {
             if (currentSlide === 0) {
-                setCurrentUser(StoryData.length - 1)
+                setCurrentUser(0)
             } else {
                 setTime(0)
                 setCurrentUser(0)
@@ -99,9 +130,21 @@ const StoryModal = ({ show = true }) => {
             }
         }
     }
+
+    const getFileType = (src) => {
+        const fileExtension = src.split('.').pop().toLowerCase()
+        const imageExtensions = ['jpeg', 'jpg', 'png', 'gif']
+        const videoExtensions = ['mp4', 'avi', 'mov']
+      
+        if (fileExtension.includes('jpeg')||fileExtension.includes('jpg')||fileExtension.includes('png')||fileExtension.includes('gif')){ 
+            return 'img'
+    }
+        if (fileExtension.includes('mp4')||fileExtension.includes('avi')||fileExtension.includes('mov')){
+             return 'video'}
+    }
     return (
         <>
-            <Backdrop show={true} preview={true} />
+            <Backdrop show={show} preview={true} close={() => close(false)} />
             <div
                 className={`fixed top-0 left-0 w-full h-full z-30 ${
                     show
@@ -147,7 +190,10 @@ const StoryModal = ({ show = true }) => {
                                 </svg>
                             </button>
                         </div>
-                        <button className="btn btn-ghost btn-md mask mask-squircle min-h-[42px] h-4 ">
+                        <button
+                            className="btn btn-ghost btn-md mask mask-squircle min-h-[42px] h-4 "
+                            onClick={() => close(false)}
+                        >
                             <IoCloseSharp size={22} color="#fff" />
                         </button>
                     </div>
@@ -180,36 +226,59 @@ const StoryModal = ({ show = true }) => {
                                                         style={{
                                                             width:
                                                                 i ===
-                                                                    currentSlide &&
-                                                                `${time}%`,
+                                                                    currentSlide &&`${time}%`,
                                                         }}
                                                     ></div>
                                                 </div>
                                             )
                                         )}
                                 </div>
-                                {/* <video    autoPlay playsInline className='h-auto w-full  aspect-video' >
-                                    <source src="https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-576p.mp4" />
-                                </video> */}
+
                                 <div className="flex items-center">
                                     {StoryData[currentUser]?.stories &&
                                         StoryData[currentUser]?.stories?.map(
-                                            (item, i) => (
-                                                <div
-                                                    key={item.id}
-                                                    className={`${
-                                                        i === currentSlide
-                                                            ? 'block'
-                                                            : 'hidden'
-                                                    }`}
-                                                >
-                                                    <img
-                                                        src={item.src}
-                                                        alt=""
-                                                        className={`w-full h-auto object-cover `}
-                                                    />
-                                                </div>
-                                            )
+                                            (item, i) =>
+                                                getFileType(item.src) ==='img' ? (
+                                                    <div
+                                                        key={item.id}
+                                                        className={`${
+                                                            i === currentSlide
+                                                                ? 'block'
+                                                                : 'hidden'
+                                                        }`}
+                                                    >
+                                                        <img
+                                                            src={item.src}
+                                                            alt=""
+                                                            className={`w-full h-auto object-cover `}
+                                                        />
+                                                    </div>
+                                                ) : (
+                                                    <div
+                                                        key={item.id}
+                                                        className={`${
+                                                            i === currentSlide
+                                                                ? 'block'
+                                                                : 'hidden'
+                                                        }`}
+                                                    >
+                                                        <video
+                                                           autoPlay= {i===currentSlide?true:false}
+                                                            
+                                                            playsInline
+                                                            className="h-auto w-full  aspect-video"
+                                                            ref={videoRef}
+                                                            onLoadedMetadata={(e) => setDuration(e.target.duration)}
+                                                            onTimeUpdate={(e) =>
+                                                                // setCurrentTime(videoRef.current.currentTime)
+                                                                time>=100?e.target.pause():e.target.play()
+                                                            }
+                                                            // onPlay={()=>}
+                                                        >
+                                                            <source src={item.src} />
+                                                        </video>
+                                                    </div>
+                                                )
                                         )}
                                 </div>
                             </div>
