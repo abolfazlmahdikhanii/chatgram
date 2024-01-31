@@ -28,6 +28,7 @@ const StorySlider = () => {
                 className="w-full px-2 pt-1 pb-5"
             >
                 {chatData.map((user) => (
+                    user.stories&&
                     <SwiperSlide key={user.id}>
                         <StoryItem userName={user.userName} profileImg={user.profileImg} onStoryClick={()=>storyProfileClickHandler(user.id)}/>
                     </SwiperSlide>
