@@ -18,7 +18,6 @@ const StoryModal = ({ show = true }) => {
     const StoryData = chatData
     useEffect(() => {
         let timerId
-        console.log(currentUser)
 
         if (isPlaying) {
             timerId = setInterval(() => {
@@ -32,20 +31,26 @@ const StoryModal = ({ show = true }) => {
                             (prevSlide + 1) %
                             StoryData[currentUser].stories.length
                     )
-                
-                    if (currentSlide >= StoryData[currentUser].stories.length-1) {
+
+                    if (
+                        currentSlide >=
+                        StoryData[currentUser].stories.length - 1
+                    ) {
                         setCurrentUser((prev) => prev + 1)
                         setTime(0)
                     }
-                    console.log(StoryData.length-1 )
-                     if ( currentUser >= StoryData.length-1 && currentSlide >= StoryData[currentUser]?.stories.length-1) {
+
+                    if (
+                        currentUser >= StoryData.length - 1 &&
+                        currentSlide >=
+                            StoryData[currentUser]?.stories.length - 1
+                    ) {
                         setTime(0)
                         clearInterval(timerId)
                         setIsPlaying(false)
                         setCurrentUser(0)
                     }
                 }
-             
             }, 100)
         }
 
@@ -56,6 +61,43 @@ const StoryModal = ({ show = true }) => {
 
     const handlePlay = () => {
         setIsPlaying((prev) => !prev)
+    }
+    const forwardSliderHandler = () => {
+        if (currentSlide < StoryData[currentUser]?.stories.length - 1) {
+            setCurrentSlide((prev) => prev + 1)
+        }
+        if (currentSlide >= StoryData[currentUser]?.stories.length - 1) {
+            setTime(0)
+            setCurrentUser((prev) => prev + 1)
+            setCurrentSlide(0)
+        }
+        if (
+            currentUser >= StoryData.length-1 &&
+            currentSlide >= StoryData[currentUser]?.stories.length - 1
+        ) {
+            setTime(0)
+            setCurrentUser(0)
+            setCurrentSlide(0)
+        }
+    }
+    const backwardSliderHandler = () => {
+        if (StoryData[currentUser]?.stories.length > 1 && currentSlide > 1) {
+            setCurrentSlide((prev) => prev - 1)
+        }
+        if (currentSlide === 0) {
+            setTime(0)
+            setCurrentUser((prev) => prev - 1)
+            setCurrentSlide(0)
+        }
+        if (currentUser === 0) {
+            if (currentSlide === 0) {
+                setCurrentUser(StoryData.length - 1)
+            } else {
+                setTime(0)
+                setCurrentUser(0)
+                setCurrentSlide(0)
+            }
+        }
     }
     return (
         <>
@@ -118,55 +160,57 @@ const StoryModal = ({ show = true }) => {
                         <div className="display">
                             <div className="artboard artboard-demo phone-1 relative">
                                 <div className="flex items-center gap-x-2 absolute top-9 left-0 right-0 w-full px-4">
-                                    {StoryData[currentUser]?.stories&&StoryData[currentUser]?.stories?.map(
-                                        (_, i) => (
-                                            <div
-                                                key={i + 1}
-                                                className="h-1 rounded-full bg-gray-700/60 backdrop-blur-xl w-full overflow-hidden"
-                                                onClick={() => {
-                                                    setCurrentSlide(i)
-                                                    setTime(0)
-                                                }}
-                                            >
+                                    {StoryData[currentUser]?.stories &&
+                                        StoryData[currentUser]?.stories?.map(
+                                            (_, i) => (
                                                 <div
-                                                    className={`bg-gray-100  origin-left absolute inset-0 ${
-                                                        i > currentSlide
-                                                            ? 'hidden'
-                                                            : 'block'
-                                                    }`}
-                                                    style={{
-                                                        width:
-                                                            i ===
-                                                                currentSlide &&
-                                                            `${time}%`,
+                                                    key={i + 1}
+                                                    className="h-1 rounded-full bg-gray-700/60 backdrop-blur-xl w-full overflow-hidden"
+                                                    onClick={() => {
+                                                        setCurrentSlide(i)
+                                                        setTime(0)
                                                     }}
-                                                ></div>
-                                            </div>
-                                        )
-                                    )}
+                                                >
+                                                    <div
+                                                        className={`bg-gray-100  origin-left absolute inset-0 ${
+                                                            i > currentSlide
+                                                                ? 'hidden'
+                                                                : 'block'
+                                                        }`}
+                                                        style={{
+                                                            width:
+                                                                i ===
+                                                                    currentSlide &&
+                                                                `${time}%`,
+                                                        }}
+                                                    ></div>
+                                                </div>
+                                            )
+                                        )}
                                 </div>
                                 {/* <video    autoPlay playsInline className='h-auto w-full  aspect-video' >
                                     <source src="https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-576p.mp4" />
                                 </video> */}
                                 <div className="flex items-center">
-                                    {StoryData[currentUser]?.stories&&StoryData[currentUser]?.stories?.map(
-                                        (item, i) => (
-                                            <div
-                                                key={item.id}
-                                                className={`${
-                                                    i === currentSlide
-                                                        ? 'block'
-                                                        : 'hidden'
-                                                }`}
-                                            >
-                                                <img
-                                                    src={item.src}
-                                                    alt=""
-                                                    className={`w-full h-auto object-cover `}
-                                                />
-                                            </div>
-                                        )
-                                    )}
+                                    {StoryData[currentUser]?.stories &&
+                                        StoryData[currentUser]?.stories?.map(
+                                            (item, i) => (
+                                                <div
+                                                    key={item.id}
+                                                    className={`${
+                                                        i === currentSlide
+                                                            ? 'block'
+                                                            : 'hidden'
+                                                    }`}
+                                                >
+                                                    <img
+                                                        src={item.src}
+                                                        alt=""
+                                                        className={`w-full h-auto object-cover `}
+                                                    />
+                                                </div>
+                                            )
+                                        )}
                                 </div>
                             </div>
                         </div>
@@ -174,10 +218,16 @@ const StoryModal = ({ show = true }) => {
 
                     {/* Buttons Slider */}
                     <div className="w-1/3 absolute top-1/2 -translate-x-1/2 -translate-y-1/2 left-1/2 flex items-center justify-between">
-                        <button className="btn btn-primary mask mask-squircle">
+                        <button
+                            className="btn btn-primary mask mask-squircle"
+                            onClick={backwardSliderHandler}
+                        >
                             <IoIosArrowBack size={22} />
                         </button>
-                        <button className="btn btn-primary mask mask-squircle">
+                        <button
+                            className="btn btn-primary mask mask-squircle"
+                            onClick={forwardSliderHandler}
+                        >
                             <IoIosArrowForward size={22} />
                         </button>
                     </div>
