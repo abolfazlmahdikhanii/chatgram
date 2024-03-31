@@ -9,20 +9,21 @@ const chatData=[
         profileImg: '../../../src/assets/images/profile.jpg',
         bgProfile: 'violet',
         messages: [],
-        stories:[
-            {
-                id: 1,
-                src: '../../../../src/assets/images/profile.jpg',
-            },
-            {
-                id: 2,
-                src: 'https://newspaperw-cdn.varzesh3.com/newspapers/2024/01/28/A/bmbokbmg.jpg?w=870',
-            },
-            {
-                id: 3,
-                src: 'https://newspaperw-cdn.varzesh3.com/newspapers/2024/01/28/A/cqm5akgy.jpg?w=870',
-            }
-        ]
+        stories:[]
+        // stories:[
+        //     {
+        //         id: 1,
+        //         src: '../../../../src/assets/images/profile.jpg',
+        //     },
+        //     {
+        //         id: 2,
+        //         src: 'https://newspaperw-cdn.varzesh3.com/newspapers/2024/01/28/A/bmbokbmg.jpg?w=870',
+        //     },
+        //     {
+        //         id: 3,
+        //         src: 'https://newspaperw-cdn.varzesh3.com/newspapers/2024/01/28/A/cqm5akgy.jpg?w=870',
+        //     }
+        // ]
     },
     {
         id: 2,
