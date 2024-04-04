@@ -39,8 +39,8 @@ const StoryEditor = ({ addContent, onHide }) => {
   }
 
   return (
-    <div className="absolute -top-[185px] bg-[#26344F]/70  w-full h-[95vh] bottom-[60px]">
-      <div className="absolute top-24 left-4 mt-3">
+    <div className="absolute -top-0 bg-[#26344F]/70  w-full h-full bottom-[60px]">
+      <div className="absolute top-5 left-4 mt-3">
         <button
           className="btn btn-outline btn-warning text-white px-6 z-40 relative"
           onClick={saveStoryHandler}
