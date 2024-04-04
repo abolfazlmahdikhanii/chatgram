@@ -103,22 +103,22 @@ const StoryModal = ({ show, currentUserStory, close }) => {
     setTime(0)
   }
   const getFileType = (src) => {
-    const fileExtension = src.split('.').pop().toLowerCase()
+    const fileExtension = src?.split('.').pop().toLowerCase()
     const imageExtensions = ['jpeg', 'jpg', 'png', 'gif']
     const videoExtensions = ['mp4', 'avi', 'mov']
 
     if (
-      fileExtension.includes('jpeg') ||
-      fileExtension.includes('jpg') ||
-      fileExtension.includes('png') ||
-      fileExtension.includes('gif')
+      fileExtension?.includes('jpeg') ||
+      fileExtension?.includes('jpg') ||
+      fileExtension?.includes('png') ||
+      fileExtension?.includes('gif')
     ) {
       return 'img'
     }
     if (
-      fileExtension.includes('mp4') ||
-      fileExtension.includes('avi') ||
-      fileExtension.includes('mov')
+      fileExtension?.includes('mp4') ||
+      fileExtension?.includes('avi') ||
+      fileExtension?.includes('mov')
     ) {
       return 'video'
     }
@@ -182,7 +182,7 @@ const StoryModal = ({ show, currentUserStory, close }) => {
             <div className="camera h-3"></div>
             <div className="display">
               <div className="artboard artboard-demo phone-1 relative">
-                <div className="flex items-center gap-x-2 absolute top-9 left-0 right-0 w-full px-4">
+                <div className="flex items-center gap-x-2 absolute top-9 left-0 right-0 w-full px-4 z-10">
                   {StoryData[currentUser]?.stories &&
                     StoryData[currentUser]?.stories?.map((_, i) => (
                       <div
@@ -205,23 +205,70 @@ const StoryModal = ({ show, currentUserStory, close }) => {
                     ))}
                 </div>
 
-                <div className="flex items-center">
+                <div className="flex items-center w-full h-full justify-center">
                   {StoryData[currentUser]?.stories &&
                     StoryData[currentUser]?.stories?.map((item, i) =>
-                      getFileType(item.src) === 'img' ||
+                      getFileType(item?.src) === 'img' ||
                       (item.type && item.type === 'img') ? (
                         <div
                           key={item.id}
-                          className={`relative ${
+                          className={`relative ${item.isQuote?'h-full w-full':''} ${
                             i === currentSlide ? 'block' : 'hidden'
                           }`}
                         >
-                          <img
-                            src={item.src}
-                            // onLoad={handleOnLoad}
-                            alt=""
-                            className={`w-full h-auto object-cover `}
-                          />
+                          {!item.isQuote ? (
+                            <img
+                              src={item?.src}
+                              // onLoad={handleOnLoad}
+                              alt=""
+                              className={`w-full h-auto object-cover aspect-video`}
+                            />
+                          ) : (
+                            <div
+                              data-color="orange"
+                              className="w-full h-full p-4"
+                            >
+                              <div className=" border-2 relative rounded-xl w-full h-[82%] mb-8 mt-20">
+                                <p className="absolute -top-6 right-6 grid place-items-center py-2 px-3  bg-[#FA8A21] rounded">
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="32"
+                                    height="32"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      stroke="#fff"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth="1.5"
+                                      d="M22 11.65h-5.8c-1.53 0-2.58-1.16-2.58-2.58V5.85c0-1.42 1.05-2.58 2.58-2.58h3.22c1.42 0 2.58 1.16 2.58 2.58v5.8zM22 11.65c0 6.05-1.13 7.05-4.53 9.07M10.37 11.65h-5.8c-1.53 0-2.58-1.16-2.58-2.58V5.85c0-1.42 1.05-2.58 2.58-2.58H7.8c1.42 0 2.58 1.16 2.58 2.58v5.8M10.37 11.65c0 6.05-1.13 7.05-4.53 9.07"
+                                    ></path>
+                                  </svg>
+                                </p>
+                                <p className="text-white font-bold text-xl flex items-center justify-center h-full">
+                                  {item.quoteText}
+                                </p>
+                                <p className="absolute -bottom-4 left-6 bg-[#FDD241] py-2 px-3">
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="32"
+                                    height="32"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      stroke="#fff"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth="1.5"
+                                      d="M2 12.35h5.8c1.53 0 2.58 1.16 2.58 2.58v3.22c0 1.42-1.05 2.58-2.58 2.58H4.58C3.16 20.73 2 19.57 2 18.15v-5.8M2 12.35C2 6.3 3.13 5.3 6.53 3.28M13.63 12.35h5.8c1.53 0 2.58 1.16 2.58 2.58v3.22c0 1.42-1.05 2.58-2.58 2.58h-3.22c-1.42 0-2.58-1.16-2.58-2.58v-5.8M13.63 12.35c0-6.05 1.13-7.05 4.53-9.07"
+                                    ></path>
+                                  </svg>
+                                </p>
+                              </div>
+                            </div>
+                          )}
                           {item?.description && (
                             <div className="absolute bottom-4 left-0 right-0  w-full flex items-center justify-center">
                               <p
@@ -233,6 +280,31 @@ const StoryModal = ({ show, currentUserStory, close }) => {
                               >
                                 {item?.description}
                               </p>
+                            </div>
+                          )}
+                          {item?.link && (
+                            <div className="absolute -bottom-24 left-0 right-0  w-full flex items-center justify-center">
+                              <a
+                                href={item.link}
+                                className=" w-10/12 mx-auto  bg-slate-500/20 max-h-[150px] text-center px-5 py-2.5  rounded-xl text-[#1677FF] backdrop-blur flex items-center gap-x-2 justify-center"
+                              >
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  strokeWidth={1.5}
+                                  stroke="currentColor"
+                                  className="w-4 h-4"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244"
+                                  />
+                                </svg>
+
+                                {item?.linkTitle ? item.linkTitle : item.link}
+                              </a>
                             </div>
                           )}
                         </div>
@@ -250,7 +322,7 @@ const StoryModal = ({ show, currentUserStory, close }) => {
                             ref={videoRef}
                             onLoadedMetadata={(e) => {
                               setDuration(e.target.duration)
-                              e.target.currentTime=0
+                              e.target.currentTime = 0
                             }}
                             // onTimeUpdate={(e) => {
                             //   setTime(
@@ -281,6 +353,19 @@ const StoryModal = ({ show, currentUserStory, close }) => {
                                 className=" w-fit min-w-[110px] bg-slate-700/40 max-h-[150px] text-center px-5 py-2.5 bg-slate-500/20 rounded-xl text-white backdrop-blur"
                               >
                                 {item?.description}
+                              </p>
+                            </div>
+                          )}
+                          {item?.link && (
+                            <div className="absolute bottom-4 left-0 right-0  w-full flex items-center justify-center">
+                              <p
+                                style={{
+                                  fontSize: item?.fontSize,
+                                  color: item?.color,
+                                }}
+                                className=" w-fit min-w-[110px] bg-slate-700/40 max-h-[150px] text-center px-5 py-2.5 bg-slate-500/20 rounded-xl text-white backdrop-blur"
+                              >
+                                {item?.linkTitle ? item.linkTitle : item.link}
                               </p>
                             </div>
                           )}
