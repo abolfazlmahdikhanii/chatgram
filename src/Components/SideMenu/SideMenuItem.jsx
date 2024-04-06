@@ -1,6 +1,6 @@
 import React from "react";
 
-const SideMenuItem = ({ name }) => {
+const SideMenuItem = ({ name,showSetting }) => {
   let icon = null;
   switch (name) {
     case "chat":
@@ -125,7 +125,7 @@ const SideMenuItem = ({ name }) => {
       break;
   }
   return (
-    <li className=" text-gray-400  cursor-pointer transition-all duration-200 hover:text-indigo-500 ">
+    <li className=" text-gray-400  cursor-pointer transition-all duration-200 hover:text-indigo-500 " onClick={()=>showSetting(prev=>!prev)}>
       <p>{icon}</p>
     </li>
   );
