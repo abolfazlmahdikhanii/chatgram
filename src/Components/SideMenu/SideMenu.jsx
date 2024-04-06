@@ -5,7 +5,7 @@ import ThemSwitch from "../UI/ThemSwitch/ThemSwitch";
 import ProfileImage from "../ProfileImage/ProfileImage";
 import { ChatContext } from "../../Context/ChatContext";
 
-const SideMenu = () => {
+const SideMenu = ({showSetting}) => {
 
   const {chat}=useContext(ChatContext)
   const [profileMe,setProfileMe]=useState()
@@ -43,7 +43,7 @@ const SideMenu = () => {
             </ul>
             <p className="side-menu--border"></p>
             <ul className="side-menu--list">
-            <SideMenuItem name="setting"/>
+            <SideMenuItem name="setting" showSetting={showSetting}/>
             </ul>
           </nav>
         </div>
