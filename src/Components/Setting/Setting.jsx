@@ -5,13 +5,14 @@ import Profile from '../Profile/Profile'
 import { useState } from 'react'
 import SettingItem from './SettingItem'
 import SettingContainer from './SettingContainer'
-const Setting = ({setShowEditProfile,close}) => {
-  const [profile, setProfile] = useState(null)
+const Setting = ({setShowEditProfile,close,profile,setProfile}) => {
+
   
   const { chat, message } = useContext(ChatContext)
   useEffect(() => {
-    setProfile(message)
-  }, [message])
+    setProfile(chat.find((item) => item.relation === 'me'))
+  
+  }, [])
   return (
     <>
       <SettingContainer title="Setting" onBack={close}>
