@@ -211,4 +211,9 @@
     .zoom-box{
         @apply absolute bottom-4 bg-base-200/70 left-1/2 z-10 flex items-center gap-5 backdrop-blur-xl px-6 py-3 h-16 rounded-xl w-[320px] mx-auto -translate-x-1/2 justify-between
     }
+
+    .lbl-focus{
+        @apply absolute top-0 mt-[15px] h-[24px] left-4 text-[#9e9e9e] peer-focus:text-primary-focus transition-all duration-200 peer-focus:px-[5px] peer-focus:[transform:translate(-.1875rem,calc(57px/-2+.0625rem))_scale(.75)] peer-focus:bg-base-100 select-none cursor-text
+    }
+    
 }
