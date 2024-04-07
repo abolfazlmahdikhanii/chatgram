@@ -16,7 +16,7 @@ import EditProfileSetting from '../Setting/EditProfileSetting'
 const Layout = () => {
   const [showSetting, setShowSetting] = useState(false)
   const [showEditProfile, setShowEditProfile] = useState(false)
-
+  const [profile, setProfile] = useState(null)
   const match = useParams()
 
   return (
@@ -30,8 +30,8 @@ const Layout = () => {
       >
         <SideMenu showSetting={setShowSetting} />
         {!showSetting&&!showEditProfile && <MessageList />}
-        {showSetting && <Setting setShowEditProfile={setShowEditProfile} close={()=>setShowSetting(false)} />}
-        {showEditProfile && <EditProfileSetting close={()=>{
+        {showSetting && <Setting profile={profile} setProfile={setProfile} setShowEditProfile={setShowEditProfile} close={()=>setShowSetting(false)} />}
+        {showEditProfile && <EditProfileSetting profile={profile}  close={()=>{
             setShowEditProfile(false)
             setShowSetting(true)
             }} />}
