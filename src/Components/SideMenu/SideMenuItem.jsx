@@ -125,7 +125,7 @@ const SideMenuItem = ({ name,showSetting }) => {
       break;
   }
   return (
-    <li className=" text-gray-400  cursor-pointer transition-all duration-200 hover:text-indigo-500 " onClick={()=>showSetting(prev=>!prev)}>
+    <li className=" text-gray-400  cursor-pointer transition-all duration-200 hover:text-indigo-500 " onClick={()=>showSetting()}>
       <p>{icon}</p>
     </li>
   );
