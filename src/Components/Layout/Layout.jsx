@@ -13,13 +13,15 @@ import Home from '../../Pages/Home/Home'
 import { ChatProvider } from '../../Context/ChatContext'
 import Setting from '../Setting/Setting'
 import EditProfileSetting from '../Setting/EditProfileSetting'
+import GeneralSetting from '../Setting/GeneralSetting'
 const Layout = () => {
   const [showSetting, setShowSetting] = useState(false)
   const [showEditProfile, setShowEditProfile] = useState(false)
+  const [showGeneralSetting, setShowGeneralSetting] = useState(false)
   const [profile, setProfile] = useState(null)
   const match = useParams()
-  const showSettingPanel=()=>{
-    setShowSetting(prev=>!prev)
+  const showSettingPanel = () => {
+    setShowSetting((prev) => !prev)
     setShowEditProfile(false)
   }
   return (
@@ -32,11 +34,31 @@ const Layout = () => {
         } h-screen grid  overflow-hidden`}
       >
         <SideMenu showSetting={showSettingPanel} />
-        {!showSetting&&!showEditProfile && <MessageList />}
-        {showSetting && <Setting profile={profile} setProfile={setProfile} setShowEditProfile={setShowEditProfile} close={()=>setShowSetting(false)} />}
-        {showEditProfile && <EditProfileSetting profile={profile}  close={()=>{
-            setShowEditProfile(false)
-            setShowSetting(true)
+        {!showSetting && !showEditProfile && !showGeneralSetting && (
+          <MessageList />
+        )}
+        {showSetting && (
+          <Setting
+            profile={profile}
+            setProfile={setProfile}
+            setShowEditProfile={setShowEditProfile}
+            close={() => setShowSetting(false)}
+            setShowGeneralSetting={setShowGeneralSetting}
+          />
+        )}
+        {showEditProfile && (
+          <EditProfileSetting
+            profile={profile}
+            close={() => {
+              setShowEditProfile(false)
+              setShowSetting(true)
+            }}
+          />
+        )}
+
+        {showGeneralSetting && <GeneralSetting close={() => {
+              setShowGeneralSetting(false)
+              setShowSetting(true)
             }} />}
 
         <Routes>
