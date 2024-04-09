@@ -4,7 +4,11 @@ import Profile from '../Profile/Profile'
 
 const EditProfileSetting = ({ close, profile }) => {
   const [imgUploaded, setImgUploaded] = useState('')
-  const [isEnterWord,setIsEnterWord]=useState(false)
+  const [isEnterWord, setIsEnterWord] = useState(false)
+  const [name, setName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [bio, setBio] = useState('')
+  const [username, setUsername] = useState('')
   return (
     <SettingContainer title="Edit Profile" onBack={close}>
       <form className="py-2 px-3 space-y-6 overflow-y-auto n-scroll relative w-full overflow-x-hidden">
@@ -58,36 +62,71 @@ const EditProfileSetting = ({ close, profile }) => {
         <div className="relative">
           <input
             type="text"
-            className="bg-transparent py-[13px] px-[15px] text-base  w-full rounded-[10px] border-2 focus:outline-0 border-gray-700 focus:border-primary-focus transition-all duration-200  peer"
+            className="  peer input-profile"
             id="name"
-            onKeyDown={(e)=>e.target.value!==''?setIsEnterWord(true):setIsEnterWord(false)}
+            onChange={(e) => {
+              setName(e.target.value)
+              e.target.value !== ''
+                ? setIsEnterWord(true)
+                : setIsEnterWord(false)
+            }}
           />
-          <label htmlFor="name" className="lbl-focus ">
+
+          <label
+            htmlFor="name"
+            className={` lbl-focus  ${
+              name !== '' ? 'lbl-shown' : ''
+            }`}
+          >
             Name
           </label>
         </div>
         <div className="relative">
           <input
             type="text"
-            className="bg-transparent py-[13px] px-[15px] text-base  w-full rounded-[10px] border-2 focus:outline-0 border-gray-700 focus:border-primary-focus transition-all duration-200  peer"
+            className=" peer input-profile"
             id="lastName"
-            onKeyDown={(e)=>e.target.value!==''?setIsEnterWord(true):setIsEnterWord(false)}
+            onChange={(e) => {
+              setLastName(e.target.value)
+              e.target.value !== ''
+                ? setIsEnterWord(true)
+                : setIsEnterWord(false)
+            }}
           />
-          <label htmlFor="lastName" className="lbl-focus ">
+
+          <label
+            htmlFor="lastName"
+            className={` lbl-focus ${
+              lastName !== '' ? 'lbl-shown' : ''
+            }`}
+          >
             Last Name
           </label>
         </div>
         <div className="relative">
           <input
             type="text"
-            className="bg-transparent py-[13px] px-[15px] text-base  w-full rounded-[10px] border-2 focus:outline-0 border-gray-700 focus:border-primary-focus transition-all duration-200  peer"
+            className="  peer input-profile"
             id="bio"
-            onKeyDown={(e)=>e.target.value!==''?setIsEnterWord(true):setIsEnterWord(false)}
+            onChange={(e) => {
+              setBio(e.target.value)
+              e.target.value !== ''
+                ? setIsEnterWord(true)
+                : setIsEnterWord(false)
+            }}
           />
-          <label htmlFor="bio" className="lbl-focus ">
-            Bio (optional)
+
+          <label
+            htmlFor="bio"
+            className={`lbl-focus  ${
+              bio !== '' ? 'lbl-shown' : ''
+            }`}
+          >
+               Bio (optional)
           </label>
         </div>
+
+     
 
         <div className=" text-[#aaa] -mx-5 pt-2 px-5 text-xs pb-5 font-medium leading-5 flex gap-3">
           <svg
@@ -109,16 +148,27 @@ const EditProfileSetting = ({ close, profile }) => {
           <br />
           Example: 23 y.o. designer from San Francisco
         </div>
-        <p className="text-primary-focus font-bold ">Username</p>
+        <p className="text-[#8774E1] font-bold ">Username</p>
         <div className="relative">
           <input
             type="text"
-            className="bg-transparent py-[13px] px-[15px] text-base  w-full rounded-[10px] border-2 focus:outline-0 border-gray-700 focus:border-primary-focus transition-all duration-200  peer"
+            className="  peer input-profile"
             id="username"
-            onKeyDown={(e)=>e.target.value!==''?setIsEnterWord(true):setIsEnterWord(false)}
+            onChange={(e) => {
+              setUsername(e.target.value)
+              e.target.value !== ''
+                ? setIsEnterWord(true)
+                : setIsEnterWord(false)
+            }}
           />
-          <label htmlFor="username" className="lbl-focus ">
-            Username (optional)
+
+          <label
+            htmlFor="username"
+            className={`lbl-focus  ${
+              username !== '' ? 'lbl-shown' : ''
+            }`}
+          >
+               Username (optional)
           </label>
         </div>
         <div className=" text-[#aaa]  pt-2 px-7 text-sm pb-5 font-medium leading-5 -mx-5 flex gap-3">
@@ -147,26 +197,26 @@ const EditProfileSetting = ({ close, profile }) => {
             is <b>5</b> characters
           </span>
         </div>
-        {isEnterWord&&
-        <div className='relative'>
-          <button className="btn btn-success mask mask-squircle fixed bottom-7 ml-[255px] text-white">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-6 h-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="m4.5 12.75 6 6 9-13.5"
-              />
-            </svg>
-          </button>
-        </div>
-}
+        {isEnterWord && (
+          <div className="relative">
+            <button className="btn btn-success mask mask-squircle fixed bottom-7 ml-[255px] text-white">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-6 h-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="m4.5 12.75 6 6 9-13.5"
+                />
+              </svg>
+            </button>
+          </div>
+        )}
       </form>
     </SettingContainer>
   )
