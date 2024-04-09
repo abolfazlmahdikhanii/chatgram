@@ -5,7 +5,7 @@ import Profile from '../Profile/Profile'
 import { useState } from 'react'
 import SettingItem from './SettingItem'
 import SettingContainer from './SettingContainer'
-const Setting = ({setShowEditProfile,close,profile,setProfile}) => {
+const Setting = ({setShowEditProfile,close,profile,setProfile, setShowGeneralSetting}) => {
 
   
   const { chat, message } = useContext(ChatContext)
@@ -45,7 +45,10 @@ const Setting = ({setShowEditProfile,close,profile,setProfile}) => {
               close()
             }}
           />
-          <SettingItem title="General Setting" icon="general" />
+          <SettingItem title="General Setting" icon="general" onSetting={() => {
+              setShowGeneralSetting(true)
+              close()
+            }} />
         </ul>
       </SettingContainer>
 
