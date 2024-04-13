@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { BsFillBookmarkFill } from 'react-icons/bs'
+import userNameSpliter from '../../Utility/userNameSpliter'
 const ProfileImage = ({
     size,
     src,
@@ -12,18 +13,7 @@ const ProfileImage = ({
     if (size === 'm') sizes = 22
     if (size === 'lg') sizes = 48
 
-    const userNameSpliter = (user) => {
-        let txt = ''
-        const words = user.split(' ')
-
-   
-        if (words.length > 0) {
-            words.forEach((item) => {
-                txt += `${item[0].toUpperCase()}`
-            })
-            return txt
-        }
-    }
+  
     return (
         <div className="avatar">
             <div
