@@ -29,8 +29,8 @@ const Layout = () => {
       <div
         className={`${
           match.id
-            ? 'grid-cols-[95px_360px_1fr_280px]'
-            : 'grid-cols-[95px_360px_1fr]'
+            ? 'grid-cols-[95px_340px_1fr_280px]'
+            : 'grid-cols-[95px_340px_1fr]'
         } h-screen grid  overflow-hidden`}
       >
         <SideMenu showSetting={showSettingPanel} />
