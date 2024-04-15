@@ -44,7 +44,9 @@ const Message = ({
         removeReactionEmojiHandler,
         checkMessage,
         contextmenuHandler,
-        setAudio
+        setAudio,
+        chatBg,
+        font
        
     } = useContext(ChatContext)
     let messageContent = null
@@ -88,6 +90,7 @@ const Message = ({
     } else {
         messageContent = (
             <div
+          
                 className={`text-white ${from?.relation !== 'me' && forward||contact?.userName!==to?'text-gray-700':'text-white'}`}
                 dir="auto"
                 dangerouslySetInnerHTML={{ __html: messageDis }}
@@ -99,7 +102,8 @@ const Message = ({
     let arr = checkMessage?.findIndex((item) => item.messageId === messageId)
     return (
         <div
-            className={`grid w-full  relative  px-6 py-3 ${
+       
+            className={`grid w-full  relative  px-6 py-3  ${
                 from?.relation === 'me'  && !forward ||contact?.userName===to
                     ? 'chat-end '
                     : 'chat-start '
@@ -112,6 +116,7 @@ const Message = ({
             <section className="flex justify-between w-full ">
                 {/* messageBody */}
                 <div
+                 style={{fontSize:`${font}px`}}
                     data-id={messageId}
                     className={`chat-bubble relative justify-self-end break-words px-2.5 group ${
                         reaction ? 'min-w-[140px]' : ''
@@ -264,7 +269,7 @@ const Message = ({
                         </ul>
                     )}
                     {messageDis&&messageDis[messageDis?.length - 1]?.caption && (
-                        <p className="text-sm px-2 my-1" dir="auto">
+                        <p className="text-sm px-2 my-1" dir="auto"   >
                             {messageDis[messageDis?.length - 1]?.caption}
                         </p>
                     )}
