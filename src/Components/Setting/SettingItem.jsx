@@ -1,6 +1,8 @@
-import React from 'react'
+import React, { useContext } from 'react'
+
 
 const SettingItem = ({ icon, title, onSetting }) => {
+ 
   let ico = null
   switch (icon) {
     case 'profile':
