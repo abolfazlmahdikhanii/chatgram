@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import SettingContainer from './SettingContainer'
+import { ChatContext } from '../../Context/ChatContext'
 
 const GeneralSetting = ({ close }) => {
-  const [fontSize, setFontSize] = useState(16)
+  const { font, setFont, setChatBg } = useContext(ChatContext)
   return (
     <SettingContainer title="General" onBack={close}>
       <div className="px-4 py-2">
@@ -10,45 +11,72 @@ const GeneralSetting = ({ close }) => {
         <div className="px-1 py-6">
           <div className="flex items-center justify-between">
             <p className="text-white  font-semibold">Message Text Size</p>
-            <p>{fontSize}</p>
+            <p>{font}</p>
           </div>
           <input
             type="range"
             step="1"
             min="12"
-            max="20"
-            value={fontSize}
+            max="22"
+            value={font}
             className="range range-xs my-5 range-primary"
-            onChange={(e) => setFontSize(e.target.value)}
+            onChange={(e) => setFont(e.target.value)}
           />
         </div>
-        <p className='border-[7px] border-base-200 w-[150%] -mx-[30px]'></p>
-        <p className="text-[#8774E1] text-[17px] font-semibold py-5">Chat Wallpaper</p>
-        <div className='grid grid-cols-3 gap-x-3 my-2 gap-y-4'>
-          <label  className='w-full h-[92px] transition-all duration-200 cursor-pointer'>
-          <input type="radio"  name='bg-check' className='peer hidden' />
-            <img src="../../../src/assets/images/chat-bg.jpg" className='w-full h-full object-cover rounded-lg peer-checked:border-2 peer-checked:border-indigo-700 ' defaultChecked alt="" />
-             
+        <p className="border-[7px] border-base-200 w-[150%] -mx-[30px]"></p>
+        <p className="text-[#8774E1] text-[17px] font-semibold py-5">
+          Chat Wallpaper
+        </p>
+        <div className="grid grid-cols-3 gap-x-3 my-2 gap-y-4">
+          <label className="w-full h-[92px] transition-all duration-200 cursor-pointer">
+            <input type="radio" name="bg-check" className="peer hidden" />
+            <img
+              src="../../../src/assets/images/chat-bg.jpg"
+              className="w-full h-full object-cover rounded-lg border-2 border-transparent peer-checked:border-indigo-700 "
+              defaultChecked
+              alt=""
+              onClick={(e) => setChatBg(e.target.src)}
+            />
           </label>
-          <label  className='w-full h-[92px] transition-all duration-200 cursor-pointer'>
-          <input type="radio"  name='bg-check' className='peer hidden' />
-            <img src="../../../src/assets/images/chat-bg.jpg" className='w-full h-full object-cover rounded-lg peer-checked:border-2 peer-checked:border-indigo-700 ' defaultChecked alt="" />
-             
+          <label className="w-full h-[92px] transition-all duration-200 cursor-pointer">
+            <input type="radio" name="bg-check" className="peer hidden" />
+            <img
+              src="../../../src/assets/images/chat-bg.jpg"
+              className="w-full h-full transition-all duration-300 object-cover rounded-lg border-2 border-transparent peer-checked:border-indigo-700 "
+              defaultChecked
+              alt=""
+              onClick={(e) => setChatBg(e.target.src)}
+            />
           </label>
-          <label  className='w-full h-[92px] transition-all duration-200 cursor-pointer'>
-          <input type="radio"  name='bg-check' className='peer hidden' />
-            <img src="../../../src/assets/images/chat-bg.jpg" className='w-full h-full object-cover rounded-lg peer-checked:border-2 peer-checked:border-indigo-700 ' defaultChecked alt="" />
-             
+          <label className="w-full h-[92px] transition-all duration-200 cursor-pointer">
+            <input type="radio" name="bg-check" className="peer hidden" />
+            <img
+              src="../../../src/assets/images/chat-bg.jpg"
+              className="w-full h-full transition-all duration-300 object-cover rounded-lg border-2 border-transparent peer-checked:border-indigo-700 "
+              defaultChecked
+              alt=""
+              onClick={(e) => setChatBg(e.target.src)}
+            />
           </label>
-          <label  className='w-full h-[92px] transition-all duration-200 cursor-pointer'>
-          <input type="radio"  name='bg-check' className='peer hidden' />
-            <img src="../../../src/assets/images/chat-bg.jpg" className='w-full h-full object-cover rounded-lg peer-checked:border-2 peer-checked:border-indigo-700 ' defaultChecked alt="" />
-             
+          <label className="w-full h-[92px] transition-all duration-200 cursor-pointer">
+            <input type="radio" name="bg-check" className="peer hidden" />
+            <img
+              src="../../../src/assets/images/chat-bg.jpg"
+              className="w-full h-full transition-all duration-300 object-cover rounded-lg border-2 border-transparent peer-checked:border-indigo-700 "
+              defaultChecked
+              alt=""
+              onClick={(e) => setChatBg(e.target.src)}
+            />
           </label>
-          <label  className='w-full h-[92px] transition-all duration-200 cursor-pointer'>
-          <input type="radio"  name='bg-check' className='peer hidden' />
-            <img src="../../../src/assets/images/chat-bg.jpg" className='w-full h-full object-cover rounded-lg peer-checked:border-2 peer-checked:border-indigo-700 ' defaultChecked alt="" />
-             
+          <label className="w-full h-[92px] transition-all duration-200 cursor-pointer">
+            <input type="radio" name="bg-check" className="peer hidden" />
+            <img
+              src="../../../src/assets/images/chat-bg.jpg"
+              className="w-full h-full transition-all duration-300 object-cover rounded-lg border-2 border-transparent peer-checked:border-indigo-700 "
+              defaultChecked
+              alt=""
+              onClick={(e) => setChatBg(e.target.src)}
+            />
           </label>
         </div>
       </div>
