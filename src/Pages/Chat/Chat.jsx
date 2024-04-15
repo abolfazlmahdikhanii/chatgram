@@ -46,6 +46,7 @@ const Chat = () => {
         setISChatInfo,
         isChatInfo,
         chatId,
+        chatBg
     } = useContext(ChatContext)
 
     useEffect(() => {
@@ -98,10 +99,11 @@ const Chat = () => {
             }`}
         >
             <div
-                className={`dark:bg-[url('../../../src/assets/images/bg-pattern.svg')] bg-[url('../../../src/assets/images/bg-pattern-light.svg')] ${
+                className={`${
                     showChatInfo ? 'bg-[size:35%] ' : ''
                 }  h-screen relative overflow-hidden  transition-all duration-200 ease-in-out`}
                 onContextMenu={(e) => e.preventDefault()}
+                style={{backgroundImage:`url(${chatBg?chatBg:'../../../src/assets/images/bg-pattern.svg'})`}}
             >
                 <ChatHeader
                     DeleteChat={deleteChat}
