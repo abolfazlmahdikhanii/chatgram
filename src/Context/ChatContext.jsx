@@ -109,6 +109,8 @@ export const ChatProvider = ({ children }) => {
     const [replyMessage, setReplyMessage] = useState(null)
     const [audio, setAudio] = useState()
     const [isChatInfo, setISChatInfo] = useState(false)
+    const [font,setFont]=useState(16)
+    const [chatBg,setChatBg]=useState('')
     const [showPreview, setShowPreview] = useState({
         show: false,
         type: null,
@@ -687,7 +689,10 @@ export const ChatProvider = ({ children }) => {
                 setShowCheckBox,
                 showCheckBox,
                 clearHistory,
-                
+                font,
+                setFont,
+                chatBg,
+                setChatBg
             }}
         >
             {children}
