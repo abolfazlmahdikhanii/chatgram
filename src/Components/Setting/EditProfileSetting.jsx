@@ -1,14 +1,35 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import SettingContainer from './SettingContainer'
 import Profile from '../Profile/Profile'
+import { ChatContext } from '../../Context/ChatContext'
 
 const EditProfileSetting = ({ close, profile }) => {
+  const { setChat, chat } = useContext(ChatContext)
   const [imgUploaded, setImgUploaded] = useState('')
   const [isEnterWord, setIsEnterWord] = useState(false)
   const [name, setName] = useState('')
   const [lastName, setLastName] = useState('')
   const [bio, setBio] = useState('')
   const [username, setUsername] = useState('')
+
+  console.log(profile)
+  const updateProfileHandler = (e) => {
+    e.preventDefault()
+    const newChat = [...chat]
+    // finded userChat
+    const findedChat = newChat.find((item) => item.id === profile.id)
+    // update Profile
+    findedChat.userName = username !== '' ? username : findedChat.userName
+    findedChat.name = name !== '' ? name : findedChat.name
+    findedChat.lastName = lastName !== '' ? lastName : findedChat.lastName
+    findedChat.bio = bio !== '' ? bio : findedChat?.bio
+    findedChat.profileImg =
+      imgUploaded !== '' ? imgUploaded : findedChat.profileImg
+    setChat([newChat, ...findedChat])
+    // close edit profile
+    close()
+  }
+
   return (
     <SettingContainer title="Edit Profile" onBack={close}>
       <form className="py-2 px-3 space-y-6 overflow-y-auto n-scroll relative w-full overflow-x-hidden">
@@ -64,6 +85,7 @@ const EditProfileSetting = ({ close, profile }) => {
             type="text"
             className="  peer input-profile"
             id="name"
+            dir="auto"
             onChange={(e) => {
               setName(e.target.value)
               e.target.value !== ''
@@ -74,9 +96,7 @@ const EditProfileSetting = ({ close, profile }) => {
 
           <label
             htmlFor="name"
-            className={` lbl-focus  ${
-              name !== '' ? 'lbl-shown' : ''
-            }`}
+            className={` lbl-focus  ${name !== '' ? 'lbl-shown' : ''}`}
           >
             Name
           </label>
@@ -86,6 +106,7 @@ const EditProfileSetting = ({ close, profile }) => {
             type="text"
             className=" peer input-profile"
             id="lastName"
+            dir="auto"
             onChange={(e) => {
               setLastName(e.target.value)
               e.target.value !== ''
@@ -96,9 +117,7 @@ const EditProfileSetting = ({ close, profile }) => {
 
           <label
             htmlFor="lastName"
-            className={` lbl-focus ${
-              lastName !== '' ? 'lbl-shown' : ''
-            }`}
+            className={` lbl-focus ${lastName !== '' ? 'lbl-shown' : ''}`}
           >
             Last Name
           </label>
@@ -108,6 +127,7 @@ const EditProfileSetting = ({ close, profile }) => {
             type="text"
             className="  peer input-profile"
             id="bio"
+            dir="auto"
             onChange={(e) => {
               setBio(e.target.value)
               e.target.value !== ''
@@ -118,15 +138,11 @@ const EditProfileSetting = ({ close, profile }) => {
 
           <label
             htmlFor="bio"
-            className={`lbl-focus  ${
-              bio !== '' ? 'lbl-shown' : ''
-            }`}
+            className={`lbl-focus  ${bio !== '' ? 'lbl-shown' : ''}`}
           >
-               Bio (optional)
+            Bio (optional)
           </label>
         </div>
-
-     
 
         <div className=" text-[#aaa] -mx-5 pt-2 px-5 text-xs pb-5 font-medium leading-5 flex gap-3">
           <svg
@@ -152,8 +168,9 @@ const EditProfileSetting = ({ close, profile }) => {
         <div className="relative">
           <input
             type="text"
-            className="  peer input-profile"
+            className="peer input-profile"
             id="username"
+            dir="auto"
             onChange={(e) => {
               setUsername(e.target.value)
               e.target.value !== ''
@@ -164,11 +181,9 @@ const EditProfileSetting = ({ close, profile }) => {
 
           <label
             htmlFor="username"
-            className={`lbl-focus  ${
-              username !== '' ? 'lbl-shown' : ''
-            }`}
+            className={`lbl-focus  ${username !== '' ? 'lbl-shown' : ''}`}
           >
-               Username (optional)
+            Username (optional)
           </label>
         </div>
         <div className=" text-[#aaa]  pt-2 px-7 text-sm pb-5 font-medium leading-5 -mx-5 flex gap-3">
@@ -199,7 +214,10 @@ const EditProfileSetting = ({ close, profile }) => {
         </div>
         {isEnterWord && (
           <div className="relative">
-            <button className="btn btn-success mask mask-squircle fixed bottom-7 ml-[255px] text-white">
+            <button
+              className="btn btn-success mask mask-squircle fixed bottom-7 ml-[255px] text-white"
+              onClick={updateProfileHandler}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
