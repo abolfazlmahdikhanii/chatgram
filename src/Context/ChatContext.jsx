@@ -111,6 +111,7 @@ export const ChatProvider = ({ children }) => {
     const [isChatInfo, setISChatInfo] = useState(false)
     const [font,setFont]=useState(16)
     const [chatBg,setChatBg]=useState('')
+    const [searchChat,setSearchChat]=useState('')
     const [showPreview, setShowPreview] = useState({
         show: false,
         type: null,
@@ -692,7 +693,9 @@ export const ChatProvider = ({ children }) => {
                 font,
                 setFont,
                 chatBg,
-                setChatBg
+                setChatBg,
+                searchChat,
+                setSearchChat
             }}
         >
             {children}
