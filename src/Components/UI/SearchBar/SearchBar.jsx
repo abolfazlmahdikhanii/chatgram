@@ -1,12 +1,18 @@
-import React from 'react'
+import React, { useContext } from 'react'
+import { ChatContext } from '../../../Context/ChatContext'
 
 const SearchBar = ({activeSearch,setActiveSearch}) => {
+
+  const {setSearchChat,searchChat}=useContext(ChatContext)
     return (
         <div className='flex items-center gap-x-2 w-full relative mb-5 mt-1'>
        
            <button
             className={`btn btn-ghost mask mask-squircle btn-sm transition-all duration-100  ${activeSearch?'static opacity-100  ':' opacity-0  absolute  '}`}
-            onClick={() => setActiveSearch(false)}
+            onClick={() => {
+              setActiveSearch(false)
+              setSearchChat('')
+            }}
           >
             <svg
               width={18}
@@ -39,6 +45,8 @@ const SearchBar = ({activeSearch,setActiveSearch}) => {
                 type="text"
                 className=" py-2.5 pl-4 w-full bg-transparent focus-visible:outline-none dark:text-white dark:placeholder:text-gray-500 placeholder:text-sm text-gray-800 placeholder:text-gray-600"
                 placeholder="Search..."
+                value={searchChat}
+                onChange={(e)=>setSearchChat(e.target.value.trim())}
             />
             <svg
                 xmlns="http://www.w3.org/2000/svg"
