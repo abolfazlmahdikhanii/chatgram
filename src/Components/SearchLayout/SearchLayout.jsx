@@ -39,7 +39,7 @@ const SearchLayout = ({ chatData }) => {
               key={data.id}
               {...data}
               isSave={data.relation === 'me' ? true : false}
-              isSearch={ arr}
+              messagesArr={ arr}
              
               // onContext={(e) => contextMenuHandler(e, data.id)}
             />
