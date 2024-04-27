@@ -8,8 +8,8 @@ import { Link } from "react-router-dom";
 import MessageItemContent from "../MessageItemContent/MessageItemContent";
 import { ChatContext } from "../../Context/ChatContext";
 
-const MessageItem = ({ id, userName, profileImg, messages ,bgProfile,relation,isSave,onContext,isSearch}) => {
-console.log(isSearch);
+const MessageItem = ({ id, userName, profileImg, messages ,bgProfile,relation,isSave,onContext,messagesArr}) => {
+console.log(messagesArr);
 const {searchChat}=useContext(ChatContext)
   const formatTime = (date) => {
     return new Intl.DateTimeFormat("tr", {
@@ -31,7 +31,7 @@ const {searchChat}=useContext(ChatContext)
 
   const showSearchMessage=()=>{
     let dis=null
-   isSearch.forEach((item)=>{
+    messagesArr.forEach((item)=>{
      dis=item?.messages[item.messages.findIndex(item=>item.messageDis.includes(searchChat))]
    })
    console.log(dis);
@@ -56,7 +56,7 @@ const {searchChat}=useContext(ChatContext)
           {
             messages.length>0?
             <div className="flex items-center justify-between w-full" >
-              <MessageItemContent message={isSearch?showSearchMessage():messages[messages.length - 1]}/>
+              <MessageItemContent message={messagesArr?.length&&showSearchMessage()?showSearchMessage():messages[messages.length - 1]}/>
           <p>{icon}</p>
             {/* <NotifyNumber /> */}
           </div>:
