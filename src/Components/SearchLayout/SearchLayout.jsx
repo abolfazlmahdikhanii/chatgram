@@ -7,6 +7,11 @@ import MessageItem from '../Messageitem/MessageItem'
 const SearchLayout = ({ chatData }) => {
   console.log(chatData)
   const { searchChat } = useContext(ChatContext)
+  const filterMessage=(messages)=>{
+    const indexMessage= messages.
+    console.log(indexMessage);
+    return indexMessage
+  }
   return (
     <div className=" w-full ">
       <Swiper
@@ -27,13 +32,15 @@ const SearchLayout = ({ chatData }) => {
           .filter(
             (item, i) =>
               item?.userName.toLowerCase().includes(searchChat.toLowerCase()) ||
-              item?.messages[i]?.messageDis.includes(searchChat)
+              item?.messages[item.messages.findIndex(item=>item.messageDis.includes(searchChat))]?.messageDis
           )
-          .map((data) => (
+          .map((data,i,arr) => (
             <MessageItem
               key={data.id}
               {...data}
               isSave={data.relation === 'me' ? true : false}
+              isSearch={ arr}
+             
               // onContext={(e) => contextMenuHandler(e, data.id)}
             />
           ))}
