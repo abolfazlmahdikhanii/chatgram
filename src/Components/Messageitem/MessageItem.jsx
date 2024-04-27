@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { PiChecksBold } from "react-icons/pi";
 
 import { PiCheck } from "react-icons/pi";
@@ -6,9 +6,11 @@ import Profile from "../Profile/Profile";
 import NotifyNumber from "../UI/NotifyNumber/NotifyNumber";
 import { Link } from "react-router-dom";
 import MessageItemContent from "../MessageItemContent/MessageItemContent";
+import { ChatContext } from "../../Context/ChatContext";
 
-const MessageItem = ({ id, userName, profileImg, messages ,bgProfile,relation,isSave,onContext}) => {
-
+const MessageItem = ({ id, userName, profileImg, messages ,bgProfile,relation,isSave,onContext,isSearch}) => {
+console.log(isSearch);
+const {searchChat}=useContext(ChatContext)
   const formatTime = (date) => {
     return new Intl.DateTimeFormat("tr", {
       hour: "2-digit",
@@ -27,6 +29,15 @@ const MessageItem = ({ id, userName, profileImg, messages ,bgProfile,relation,is
     }
   }
 
+  const showSearchMessage=()=>{
+    let dis=null
+   isSearch.forEach((item)=>{
+     dis=item?.messages[item.messages.findIndex(item=>item.messageDis.includes(searchChat))]
+   })
+   console.log(dis);
+   return dis
+  }
+  
   return (
     <Link to={`/chat/${id}`} className="message-item " onContextMenu={onContext}>
       <Profile size="m" path={profileImg} userName={userName} bgProfile={bgProfile} relation={relation} isSave={isSave}/>
@@ -45,7 +56,7 @@ const MessageItem = ({ id, userName, profileImg, messages ,bgProfile,relation,is
           {
             messages.length>0?
             <div className="flex items-center justify-between w-full" >
-              <MessageItemContent message={messages[messages.length - 1]}/>
+              <MessageItemContent message={isSearch?showSearchMessage():messages[messages.length - 1]}/>
           <p>{icon}</p>
             {/* <NotifyNumber /> */}
           </div>:
