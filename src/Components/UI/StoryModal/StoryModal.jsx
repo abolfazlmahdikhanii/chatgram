@@ -6,6 +6,7 @@ import { FaPlay } from 'react-icons/fa6'
 import { FaPause } from 'react-icons/fa6'
 import { IoIosArrowBack } from 'react-icons/io'
 import { IoIosArrowForward } from 'react-icons/io'
+import StoryImage from '../../StoryImage/StoryImage'
 
 const StoryModal = ({ show, currentUserStory, close }) => {
   const StoryData = chatData
@@ -18,6 +19,7 @@ const StoryModal = ({ show, currentUserStory, close }) => {
   const [currentTime, setCurrentTime] = useState(0)
   const videoRef = useRef(null)
 
+  const [storyLoading, setStoryLoading] = useState(false)
   useEffect(() => {
     let timerId
 
@@ -90,7 +92,7 @@ const StoryModal = ({ show, currentUserStory, close }) => {
       setCurrentUser((prev) => prev - 1)
       setCurrentSlide(0)
     }
-    if (currentUser === 0) {
+    if (currentUser === 0 || currentUser === 1) {
       if (currentSlide === 0) {
         setCurrentUser(0)
       }
@@ -212,17 +214,12 @@ const StoryModal = ({ show, currentUserStory, close }) => {
                       (item.type && item.type === 'img') ? (
                         <div
                           key={item.id}
-                          className={`relative ${item.isQuote?'h-full w-full':''} ${
-                            i === currentSlide ? 'block' : 'hidden'
-                          }`}
+                          className={`relative ${
+                            item.isQuote ? 'h-full w-full' : ''
+                          } ${i === currentSlide ? 'block' : 'hidden'}`}
                         >
                           {!item.isQuote ? (
-                            <img
-                              src={item?.src}
-                              // onLoad={handleOnLoad}
-                              alt=""
-                              className={`w-full h-auto object-cover aspect-video`}
-                            />
+                            <StoryImage src={item.src} />
                           ) : (
                             <div
                               data-color="orange"
@@ -324,6 +321,7 @@ const StoryModal = ({ show, currentUserStory, close }) => {
                               setDuration(e.target.duration)
                               e.target.currentTime = 0
                             }}
+                            onLoadStart={() => setStoryLoading(true)}
                             // onTimeUpdate={(e) => {
                             //   setTime(
                             //     Math.floor(
@@ -343,6 +341,9 @@ const StoryModal = ({ show, currentUserStory, close }) => {
                           >
                             <source src={item.src} />
                           </video>
+                          {!storyLoading && (
+                            <span className="loading loading-spinner loading-md absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></span>
+                          )}
                           {item?.description && (
                             <div className="absolute bottom-4 left-0 right-0  w-full flex items-center justify-center">
                               <p
@@ -382,6 +383,7 @@ const StoryModal = ({ show, currentUserStory, close }) => {
             <button
               className="btn btn-primary mask mask-squircle"
               onClick={backwardSliderHandler}
+              disabled={currentSlide === 0}
             >
               <IoIosArrowBack size={22} />
             </button>
