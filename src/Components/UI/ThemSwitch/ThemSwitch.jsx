@@ -5,7 +5,7 @@ import useChangeThem from "../../../CustomHooks/useChangeThem";
 
 const ThemSwitch = () => {
   const [dark,setDark]=useState(true)
-  const [them,setThem]=useChangeThem('dark')
+  const [them,setThem]=useChangeThem('')
   return (
     <label className={`switch dark:bg-gray-900 dark:text-white bg-slate-100 text-gray-600 `}>
       <input type="checkbox" className="hidden " onChange={()=>setThem((prev)=>prev==='dark'?'light':'dark')}/>
