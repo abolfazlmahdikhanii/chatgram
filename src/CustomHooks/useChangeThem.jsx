@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 const getThemFromStorage=()=>{
-    localStorage.getItem('them')?JSON.stringify(localStorage.getItem('them')):[]
+    return localStorage.getItem('them')?localStorage.getItem('them'):dark
 }
 
 const useChangeThem = () => {
