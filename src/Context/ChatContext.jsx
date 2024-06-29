@@ -4,6 +4,7 @@ import chatData from '../data'
 export const ChatContext = createContext({
     chat: [],
     chatId: '',
+    showPinAudio:false,
     message: null,
     audio: null,
     pageX: null,
@@ -86,6 +87,7 @@ export const ChatProvider = ({ children }) => {
     const [chat, setChat] = useState(chatData)
     const [chatId, setChatId] = useState('')
     const [message, setMessage] = useState(null)
+    const [showPinAudio,setShowPinAudio]=useState(false)
     const [pageX, setPageX] = useState(null)
     const [pageY, setPageY] = useState(null)
     const [messageID, setMessageID] = useState(null)
@@ -695,7 +697,9 @@ export const ChatProvider = ({ children }) => {
                 chatBg,
                 setChatBg,
                 searchChat,
-                setSearchChat
+                setSearchChat,
+                showPinAudio,
+                setShowPinAudio
             }}
         >
             {children}
