@@ -283,6 +283,8 @@ const StoryModal = ({ show, currentUserStory, close }) => {
                             <div className="absolute -bottom-24 left-0 right-0  w-full flex items-center justify-center">
                               <a
                                 href={item.link}
+                                rel="noreferrer"
+                                target='_blank'
                                 className=" w-10/12 mx-auto  bg-slate-500/20 max-h-[150px] text-center px-5 py-2.5  rounded-xl text-[#1677FF] backdrop-blur flex items-center gap-x-2 justify-center"
                               >
                                 <svg
