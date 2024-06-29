@@ -13,7 +13,7 @@ import UnpinBtn from '../../Components/UnpinBtn/UnpinBtn'
 import Modal from '../../Components/UI/Modal/Modal'
 import Dialog from '../../Components/UI/Dialog/Dialog'
 import PinAudio from '../../Components/PinAudio/PinAudio'
-import { MusicControlContext } from '../../Context/MusicContext'
+import { MusicControlContext, MusicControlProvider } from '../../Context/MusicContext'
 import ChatInfo from '../../Components/ChatInfo/ChatInfo'
 import ModalPreviewImg from '../../Components/UI/ModalPreviewImg/ModalPreviewImg'
 
@@ -46,7 +46,8 @@ const Chat = () => {
         setISChatInfo,
         isChatInfo,
         chatId,
-        chatBg
+        chatBg,
+        showPinAudio
     } = useContext(ChatContext)
 
     useEffect(() => {
@@ -54,7 +55,7 @@ const Chat = () => {
         findUserMessage(match?.id)
         displayCheckBoxHandler(checkMessage)
         groupMessageHandler(message?.messages)
-    }, [match, chat, pinMessage, message])
+    }, [match, pinMessage, message])
 
     const deleteChat = () => {
         DeleteChat()
@@ -93,6 +94,8 @@ const Chat = () => {
     }
     console.log(groupedMessages)
     return (
+        <MusicControlProvider>
+     
         <div
             className={`grid transition-all duration-200 ${
                 showChatInfo ? 'grid-cols-[1fr_30%]' : 'grid-cols-1'
@@ -115,7 +118,7 @@ const Chat = () => {
                     className="flex flex-col justify-between h-screen  overflow-hidden mb-5 relative "
                     ref={chatRef}
                 >
-                    {audio && <PinAudio path={audio} />}
+                     <PinAudio path={audio} />
                     {message?.messages?.filter(
                         (item) => item.pin && chatId == match.id
                     ).length > 0 ? (
@@ -211,6 +214,7 @@ const Chat = () => {
 
             <ModalPreviewImg />
         </div>
+        </MusicControlProvider>
     )
 }
 

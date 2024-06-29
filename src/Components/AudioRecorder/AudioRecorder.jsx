@@ -128,6 +128,7 @@ const AudioRecorders = ({ record = false, setRecord, setMessage }) => {
     setRecord(false)
     // send
     setMessage(audios);
+   
   };
 
   return (
