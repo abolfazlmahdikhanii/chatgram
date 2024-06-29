@@ -4,6 +4,7 @@ import {BiCheck} from "react-icons/bi"
 const BtnAction = ({ setRecord, isText, record, setText, isEdit,onEdit,forwardMessage }) => {
   const [recorder, setRecorder] = useState(record);
   const [content, setContent] = useState(isText);
+  console.log(isText);
   function hasImage(img) {
     const imageRegex = /<img\b[^>]*>/i;
 
@@ -12,7 +13,7 @@ const BtnAction = ({ setRecord, isText, record, setText, isEdit,onEdit,forwardMe
   return (
     <button
       className="h-full px-[16px] btn btn-primary rounded-xl flex items-center justify-center  overflow-hidden max-w-[60px] flex-nowrap self-start"
-      onClick={() => (isText.innerHTML === "" &&!isEdit&&!forwardMessage? setRecord(true) : null)}
+      onClick={() => (isText.innerHTML.length===0 &&!isEdit&&!forwardMessage? setRecord(true) : null)}
     >
       {!isEdit ? (
         <>
@@ -43,7 +44,7 @@ const BtnAction = ({ setRecord, isText, record, setText, isEdit,onEdit,forwardMe
 
           <div
             className={`grid place-items-center transition-all duration-300 ${
-              isText.innerHTML === "" && !hasImage(isText.innerHTML) &&!forwardMessage
+              isText.innerHTML=='' && !hasImage(isText.innerHTML) &&!forwardMessage
                 ? "-translate-x-[60%] opacity-100 scale-100"
                 : " opacity-0 scale-0"
             }`}
