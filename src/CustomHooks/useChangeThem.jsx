@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 const getThemFromStorage=()=>{
-    return localStorage.getItem('them')?localStorage.getItem('them'):dark
+    return localStorage.getItem('them')?localStorage.getItem('them'):"dark"
 }
 
 const useChangeThem = () => {
