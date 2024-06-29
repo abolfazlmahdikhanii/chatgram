@@ -4,10 +4,7 @@ import MessageList from '../MessageList/MessageList'
 import Chat from '../../Pages/Chat/Chat'
 import ChatInfo from '../ChatInfo/ChatInfo'
 import { Route, Routes, useParams } from 'react-router-dom'
-import {
-  MusicControlContext,
-  MusicControlProvider,
-} from '../../Context/MusicContext'
+
 import PinAudio from '../PinAudio/PinAudio'
 import Home from '../../Pages/Home/Home'
 import { ChatProvider } from '../../Context/ChatContext'
@@ -74,9 +71,9 @@ const Layout = () => {
               <Route
                 path="/chat/:id"
                 element={
-                  <MusicControlProvider>
+   
                     <Chat />
-                  </MusicControlProvider>
+        
                 }
               />
             </Routes>
