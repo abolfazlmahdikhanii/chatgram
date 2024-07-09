@@ -15,6 +15,9 @@ import TypeMessage from '../TypeMessage/TypeMessage'
 import messageType from '../../Utility/MessageType'
 import { useContext } from 'react'
 import { ChatContext } from '../../Context/ChatContext'
+import { supabase } from '../../superbase'
+import { UserContext } from '../../Context/UserContext'
+import { useParams } from 'react-router-dom'
 
 const ChatForm = () => {
   const [text, setText] = useState('')
@@ -26,10 +29,11 @@ const ChatForm = () => {
   const [imagesUpload, setImagesUpload] = useState([])
   const [filesUpload, setFilesUpload] = useState([])
   const [content, setContent] = useState('')
+  const { user } = useContext(UserContext)
+  const param = useParams()
 
   const inputRef = useRef(null)
   const {
-    sendMessageHandler,
     editContent,
     editHandler,
     showReply,
@@ -59,10 +63,8 @@ const ChatForm = () => {
       if (inputRef.current && !emoji) inputRef.current.innerHTML = ''
       // setReply(null)
       // setForwardSelfMessage(null)
-   
     }
-   
-  }, [inputRef, text, emoji,record])
+  }, [inputRef, text, emoji, record])
 
   // find chat with id and store  in the object in the place
   const submitFormHandler = (e) => {
@@ -90,6 +92,7 @@ const ChatForm = () => {
         }
 
         inputRef.current.innerHTML = ''
+        setText('')
       } else {
         if (forwardSelfMessage) {
           forwardSelfClickHandler(forwardSelfMessage.id)
@@ -98,6 +101,19 @@ const ChatForm = () => {
         }
       }
     }
+  }
+  const sendMessageHandler = async (content) => {
+    const { data, error } = await supabase
+      .from('messages')
+      .insert([
+        {
+          senderid: user.userid,
+          recipientid: param.id,
+          content: content,
+          status: 'send',
+        },
+      ])
+    if (error) console.log(error)
   }
   const editContentHandler = (e) => {
     e.preventDefault()
