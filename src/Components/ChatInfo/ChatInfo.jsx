@@ -14,19 +14,21 @@ import VoiceBox from './VoiceBox'
 import CoustomToast from '../UI/CoustomToast/CoustomToast'
 import MessageMenu from '../UI/MessageMenu/MessageMenu'
 import { ChatContext } from '../../Context/ChatContext'
+import { UserContext } from '../../Context/UserContext'
 
 const ChatInfo = ({
     setChatInfo,
     setClose,
     show, 
 }) => {
-    const {message,messageID,chat,setAudio,pageX,pageY,ForwardHandler,setShowAlert,clickRemoveHandler,contextmenuInfoHandler,isChatInfo,setShowContextMenu}=useContext(ChatContext)
+    const {profileInfo,messageID,chat,setAudio,pageX,pageY,ForwardHandler,setShowAlert,clickRemoveHandler,contextmenuInfoHandler,isChatInfo,setShowContextMenu}=useContext(ChatContext)
+    const {user}=useContext(UserContext)
     const [tab, setTab] = useState('Media')
     const [type, setType] = useState()
     const [link, setLink] = useState([])
     const [voice, setVoice] = useState()
     const [isCall, setIsCall] = useState(false)
-
+const [message,setMessage]=useState([])
     const navigate = useNavigate()
 
     const toastOptions = {
@@ -43,19 +45,19 @@ const ChatInfo = ({
             'px-5 py-2.5 bg-slate-500/20 rounded-xl text-white backdrop-blur',
     }
 
-    useEffect(() => {
-        if (message) {
-            if(tab==="Media")filterSharedMedia('img', 'video')
-            if(tab==="File")filterSharedMedia('file')
-            if(tab==="Voice")filterSharedVoice()
-            if(tab==="Link")filterSharedLink()
-        }
-        return()=>{
-            setTab("Media")
-            setLink([])
-        }
+    // useEffect(() => {
+    //     if (message) {
+    //         if(tab==="Media")filterSharedMedia('img', 'video')
+    //         if(tab==="File")filterSharedMedia('file')
+    //         if(tab==="Voice")filterSharedVoice()
+    //         if(tab==="Link")filterSharedLink()
+    //     }
+    //     return()=>{
+    //         setTab("Media")
+    //         setLink([])
+    //     }
        
-    }, [message, chat, setChatInfo])
+    // }, [message, chat, setChatInfo])
 
 
     const filterSharedMedia = (type, type1 = null) => {
@@ -162,17 +164,17 @@ const ChatInfo = ({
                 <div className="mt-14  flex flex-col gap-5 items-center justify-center ">
                     <div className=" flex items-center justify-center">
                         <Profile
-                            path={message?.profileImg}
-                            userName={message?.userName}
-                            bgProfile={message?.bgProfile}
-                            relation={message?.relation}
-                            isSave={message?.relation === 'me' ? true : false}
+                                path={profileInfo?.avatar_url}
+                                userName={profileInfo?.username||profileInfo?.email.split('@')[0]}
+                                bgProfile={profileInfo?.bgProfile}
+                                relation={profileInfo?.relation}
+                                isSave={profileInfo?.userid===user.userid}
                             size="lg"
                         />
                     </div>
                     <div className="space-y-1.5">
-                        <p className="text-3xl text-gray-900 dark:text-gray-50 font-semibold truncate">
-                            {message?.userName}
+                        <p className="text-2xl text-gray-900 dark:text-gray-50 font-semibold truncate">
+                            {profileInfo?.username||profileInfo?.email.split('@')[0]}
                         </p>
                         <p className="text-center text-sm text-indigo-400">
                             Online
@@ -224,19 +226,20 @@ const ChatInfo = ({
                     {/* item-1 */}
                     <InfoBox
                         title="Email"
-                        des="ab@example.com"
+                        des={profileInfo?.email}
                         onCopy={copyEmailHandler}
+                        style='truncate max-w-[220px]'
                     />
                     {/* item-2 */}
                     <InfoBox
                         title="Username"
-                        des={message?.userName}
+                        des={profileInfo?.username||'no content'}
                         onCopy={copyUsernameHandler}
                     />
                     {/* item-3 */}
                     <InfoBox
                         title="Bio"
-                        des="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+                        des={profileInfo.bio||'no content'}
                         style="line-clamp-2"
                         onCopy={copyBioHandler}
                     />
@@ -258,7 +261,7 @@ const ChatInfo = ({
                             }`}
                             onClick={(e) => {
                                 setTab(e.target.textContent)
-                                filterSharedMedia('img', 'video')
+                                // filterSharedMedia('img', 'video')
                             }}
                         >
                             Media
@@ -270,7 +273,7 @@ const ChatInfo = ({
                             }`}
                             onClick={(e) => {
                                 setTab(e.target.textContent)
-                                filterSharedMedia('file')
+                                // filterSharedMedia('file')
                             }}
                         >
                             Files
@@ -282,7 +285,7 @@ const ChatInfo = ({
                             }`}
                             onClick={(e) => {
                                 setTab(e.target.textContent)
-                                filterSharedLink('links')
+                                // filterSharedLink('links')
                             }}
                         >
                             Links
@@ -294,7 +297,7 @@ const ChatInfo = ({
                             }`}
                             onClick={(e) => {
                                 setTab(e.target.textContent)
-                                filterSharedVoice()
+                                // filterSharedVoice()
                             }}
                         >
                             Voice
