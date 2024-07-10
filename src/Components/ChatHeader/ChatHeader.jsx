@@ -6,11 +6,12 @@ import { AiOutlineArrowLeft } from 'react-icons/ai'
 import { TbSquareRoundedCheck } from 'react-icons/tb'
 import { ChatContext } from '../../Context/ChatContext'
 import { MdOutlineAccessTime } from 'react-icons/md'
+import { UserContext } from '../../Context/UserContext'
 
 const ChatHeader = ({ setShowChatInfo, DeleteChat }) => {
     const [showMenu, setShowMenu] = useState(false)
     const {
-        message,
+        profileInfo,
         showCheckBox,
         ForwardContactHandler,
         pinMessage,
@@ -26,7 +27,7 @@ const ChatHeader = ({ setShowChatInfo, DeleteChat }) => {
         <Box>
             {!showPin ? (
                 <HeaderMessage
-                    info={message}
+                    info={profileInfo}
                     setShowChatInfo={setShowChatInfo}
                     showMenu={showMenu}
                     setShowMenu={setShowMenu}
@@ -60,19 +61,21 @@ const HeaderMessage = ({
     userId,
     clearHistory
 }) => {
+    const {user}=useContext(UserContext)
+
     return (
         <section className="px-5 flex items-center justify-between relative">
             <div className="flex gap-4">
                 <Profile
-                    path={info?.profileImg}
-                    userName={info?.userName}
+                    path={info?.avatar_url}
+                    userName={info?.username||info?.email.split('@')[0]}
                     bgProfile={info?.bgProfile}
                     relation={info?.relation}
-                    isSave={info?.relation === 'me' ? true : false}
+                    isSave={info?.userid===user.userid}
                 />
                 <div className="w-full flex-col   flex">
                     <p className="font-semibold  dark:text-white capitalize text-[17px] text-gray-900">
-                        {info?.userName}
+                        {user.userid!==info.userid?info?.username||info?.email.split('@')[0]:'Saved Messages'}
                     </p>
                     <p className="dark:text-indigo-300 text-[11px] capitalize text-indigo-600">
                         Online

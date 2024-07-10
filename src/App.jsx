@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
+import { TailSpin } from 'react-loader-spinner'
 
 import Layout from './Components/Layout/Layout'
 import useChangeThem from './CustomHooks/useChangeThem'
@@ -9,26 +10,37 @@ import { UserContext, UserProvider } from './Context/UserContext'
 const App = () => {
   const [them, setThem] = useChangeThem('light')
   const [session, setSession] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
   let element = null
   useEffect(() => {
     setThem(localStorage.getItem('them'))
+    setIsLoading(true)
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-    
+      if (session) {
+        setSession(session)
+       
+        setTimeout(()=>{
+          setIsLoading(false)
+        },1000)
+      }
     })
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
-      if(session)getProfile(session.user.id)
+      if (session) {
+        setSession(session)
+        getProfile(session.user.id)
+        setTimeout(()=>{
+          setIsLoading(false)
+        },1000)
+      }
     })
 
     return () => subscription.unsubscribe()
-  }, [])
+  }, [setSession])
   const getProfile = async (id) => {
     try {
-      
       // Get user info
       const { data, error: profileError } = await supabase
         .from('users')
@@ -38,7 +50,6 @@ const App = () => {
       if (profileError) {
         throw profileError
       } else {
-    
         localStorage.setItem('profile', JSON.stringify(data))
       }
     } catch (error) {
@@ -46,7 +57,22 @@ const App = () => {
     }
   }
 
-  element = !session ? <Auth /> : <Layout />
+  if (isLoading) {
+
+      element = (
+        <TailSpin
+          visible={true}
+          height="80"
+          width="80"
+          color="#4fa94d"
+          ariaLabel="tail-spin-loading"
+          radius="1"
+          wrapperStyle={{}}
+          wrapperClass="fixed top-1/2 left-1/2"
+        />
+      )
+    }  else if(!isLoading&&!session) element = <Auth />
+ else  element = <Layout />
 
   return <UserProvider>{element}</UserProvider>
 }
