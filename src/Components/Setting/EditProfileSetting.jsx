@@ -1,45 +1,82 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import SettingContainer from './SettingContainer'
 import Profile from '../Profile/Profile'
 import { ChatContext } from '../../Context/ChatContext'
+import { UserContext } from '../../Context/UserContext'
+import { supabase } from '../../superbase'
 
 const EditProfileSetting = ({ close, profile }) => {
   const { setChat, chat } = useContext(ChatContext)
+  const { user, setUser } = useContext(UserContext)
   const [imgUploaded, setImgUploaded] = useState('')
   const [isEnterWord, setIsEnterWord] = useState(false)
   const [name, setName] = useState('')
   const [lastName, setLastName] = useState('')
   const [bio, setBio] = useState('')
   const [username, setUsername] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [errorContent, setErrorContent] = useState({})
+  useEffect(() => {
+    setUsername(user.username)
+    setBio(user.bio)
+    setName(user.name)
+    setLastName(user.lastName)
+  }, [])
 
-  console.log(profile)
-  const updateProfileHandler = (e) => {
+  const updateProfileHandler = async (e) => {
     e.preventDefault()
-    const newChat = [...chat]
-    // finded userChat
-    const findedChat = newChat.find((item) => item.id === profile.id)
-    // update Profile
-    findedChat.userName = username !== '' ? username : findedChat.userName
-    findedChat.name = name !== '' ? name : findedChat.name
-    findedChat.lastName = lastName !== '' ? lastName : findedChat.lastName
-    findedChat.bio = bio !== '' ? bio : findedChat?.bio
-    findedChat.profileImg =
-      imgUploaded !== '' ? imgUploaded : findedChat.profileImg
-    setChat([newChat, ...findedChat])
+    setIsLoading(true)
+    console.log(username);
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .update({username:username, name: name, lastName: lastName, bio: bio })
+        .eq('userid', user.userid)
+        .select()
+      if (error) throw error
+      setUser(data[0])
+      console.log(data)
+      // close()
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setIsLoading(false)
+    }
     // close edit profile
-    close()
   }
+  
+  const userNameValidator=async(e)=>{
+    if(e.target.value.length>=5){
 
+      let { data: users, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('username',e.target.value) 
+      if(users.length){
+        setErrorContent({msg:'This username is already occupied',type:'error'})
+        return false
+      }  
+     
+        setErrorContent({msg:'This username is available',type:'success'}) 
+        return true
+      
+   
+    }
+    else{
+      setErrorContent({msg:'This username is too short',type:'error'})
+      return false
+    }
+   
+  }
   return (
     <SettingContainer title="Edit Profile" onBack={close}>
       <form className="py-2 px-3 space-y-6 overflow-y-auto n-scroll relative w-full overflow-x-hidden">
         {/* Profile */}
         <div className="flex items-center justify-center mt-4 mb-7 relative">
           <Profile
-            path={imgUploaded ? imgUploaded : profile?.profileImg}
-            userName={profile?.userName}
-            bgProfile={profile?.bgProfile}
-            relation={profile?.relation}
+            path={imgUploaded ? imgUploaded : user?.avatar_url}
+            userName={user?.username || user.email.split('@')[0]}
+            bgProfile={user?.bgProfile}
             isSave={false}
             size="lg"
           />
@@ -86,6 +123,7 @@ const EditProfileSetting = ({ close, profile }) => {
             className="  peer input-profile"
             id="name"
             dir="auto"
+            value={name}
             onChange={(e) => {
               setName(e.target.value)
               e.target.value !== ''
@@ -106,6 +144,7 @@ const EditProfileSetting = ({ close, profile }) => {
             type="text"
             className=" peer input-profile"
             id="lastName"
+            value={lastName}
             dir="auto"
             onChange={(e) => {
               setLastName(e.target.value)
@@ -128,6 +167,7 @@ const EditProfileSetting = ({ close, profile }) => {
             className="  peer input-profile"
             id="bio"
             dir="auto"
+            value={bio}
             onChange={(e) => {
               setBio(e.target.value)
               e.target.value !== ''
@@ -140,7 +180,7 @@ const EditProfileSetting = ({ close, profile }) => {
             htmlFor="bio"
             className={`lbl-focus  ${bio !== '' ? 'lbl-shown' : ''}`}
           >
-            Bio (optional)
+             Bio (optional)
           </label>
         </div>
 
@@ -171,8 +211,9 @@ const EditProfileSetting = ({ close, profile }) => {
             className="peer input-profile"
             id="username"
             dir="auto"
+            value={username}
             onChange={(e) => {
-              setUsername(e.target.value)
+              userNameValidator(e)?setUsername(e.target.value):setUsername('')
               e.target.value !== ''
                 ? setIsEnterWord(true)
                 : setIsEnterWord(false)
@@ -181,10 +222,11 @@ const EditProfileSetting = ({ close, profile }) => {
 
           <label
             htmlFor="username"
-            className={`lbl-focus  ${username !== '' ? 'lbl-shown' : ''}`}
+            className={`lbl-focus  ${isEnterWord||username!=='' ? 'lbl-shown' : ''}`}
           >
             Username (optional)
           </label>
+          {errorContent.msg!==''&&<span className={`mt-2.5 inline-block px-2.5 text-xs ${errorContent.type==='error'?'text-red-500':'text-sky-500'}`}>{errorContent.msg}</span>}
         </div>
         <div className=" text-[#aaa]  pt-2 px-7 text-sm pb-5 font-medium leading-5 -mx-5 flex gap-3">
           <svg
@@ -203,7 +245,7 @@ const EditProfileSetting = ({ close, profile }) => {
             ></path>
           </svg>
           <span className="w-[80%]">
-            You can choose a username on <b>Telegram</b>. If you do, people will
+            You can choose a username on <b>Chatgram</b>. If you do, people will
             be able to find you by this username and contact you without needing
             your phone number.
             <br />
@@ -215,23 +257,28 @@ const EditProfileSetting = ({ close, profile }) => {
         {isEnterWord && (
           <div className="relative">
             <button
-              className="btn btn-success mask mask-squircle fixed bottom-7 ml-[255px] text-white"
+              className="btn btn-success mask mask-squircle fixed bottom-7 ml-[245px] text-white "
               onClick={updateProfileHandler}
+              disabled={isLoading}
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-6 h-6"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="m4.5 12.75 6 6 9-13.5"
-                />
-              </svg>
+              {!isLoading ? (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-6 h-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="m4.5 12.75 6 6 9-13.5"
+                  />
+                </svg>
+              ) : (
+                <span className="loading loading-spinner w-[2rem] absolute right-4"></span>
+              )}
             </button>
           </div>
         )}
