@@ -4,7 +4,7 @@ import {BiCheck} from "react-icons/bi"
 const BtnAction = ({ setRecord, isText, record, setText, isEdit,onEdit,forwardMessage }) => {
   const [recorder, setRecorder] = useState(record);
   const [content, setContent] = useState(isText);
-  console.log(isText);
+
   function hasImage(img) {
     const imageRegex = /<img\b[^>]*>/i;
 

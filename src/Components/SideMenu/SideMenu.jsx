@@ -1,22 +1,19 @@
-import React, { useContext, useEffect, useState } from "react";
-import Box from "../UI/Box/Box";
-import SideMenuItem from "./SideMenuItem";
-import ThemSwitch from "../UI/ThemSwitch/ThemSwitch";
-import ProfileImage from "../ProfileImage/ProfileImage";
-import { ChatContext } from "../../Context/ChatContext";
+import React, { useContext, useEffect, useState } from 'react'
+import Box from '../UI/Box/Box'
+import SideMenuItem from './SideMenuItem'
+import ThemSwitch from '../UI/ThemSwitch/ThemSwitch'
+import ProfileImage from '../ProfileImage/ProfileImage'
+import { ChatContext } from '../../Context/ChatContext'
+import { UserContext } from '../../Context/UserContext'
 
-const SideMenu = ({showSetting}) => {
 
-  const {chat}=useContext(ChatContext)
-  const [profileMe,setProfileMe]=useState()
-  useEffect(()=>{
-   findProfileMe()
-  },[profileMe])
-  const findProfileMe=()=>{
-    const findChat=chat?.find((item)=>item.relation==="me")
-    setProfileMe(findChat)
-  }
-  
+const SideMenu = ({ showSetting }) => {
+  const { chat } = useContext(ChatContext)
+  const { user } = useContext(UserContext)
+
+
+ 
+
   return (
     <Box>
       <section className="side-menu ">
@@ -33,28 +30,28 @@ const SideMenu = ({showSetting}) => {
           {/* menu */}
           <nav className="flex flex-col items-center justify-center mt-1.5">
             <ul className="side-menu--list ">
-             <SideMenuItem name="chat"/>
-             <SideMenuItem name="save"/>
+              <SideMenuItem name="chat" />
+              <SideMenuItem name="save" />
             </ul>
             <p className="side-menu--border"></p>
             <ul className="side-menu--list">
-            <SideMenuItem name="chanel"/>
-             <SideMenuItem name="profile"/>
+              <SideMenuItem name="chanel" />
+              <SideMenuItem name="profile" />
             </ul>
             <p className="side-menu--border"></p>
             <ul className="side-menu--list">
-            <SideMenuItem name="setting" showSetting={showSetting}/>
+              <SideMenuItem name="setting" showSetting={showSetting} />
             </ul>
           </nav>
         </div>
         {/* footer */}
         <div className="flex flex-col gap-y-4 items-center mt-3 mb-9">
-          <ThemSwitch/>
-          <ProfileImage {...profileMe} src={profileMe?.profileImg}/>
+          <ThemSwitch />
+          <ProfileImage {...user} src={user?.avatar_url} userName={user?.username||user?.email?.split('@')[0]} />
         </div>
       </section>
     </Box>
-  );
-};
+  )
+}
 
-export default SideMenu;
+export default SideMenu
