@@ -75,7 +75,7 @@ const HeaderMessage = ({
                 />
                 <div className="w-full flex-col   flex">
                     <p className="font-semibold  dark:text-white capitalize text-[17px] text-gray-900">
-                        {user.userid!==info.userid?info?.username||info?.email.split('@')[0]:'Saved Messages'}
+                        {user?.userid!==info?.userid?info?.username||info?.email.split('@')[0]:'Saved Messages'}
                     </p>
                     <p className="dark:text-indigo-300 text-[11px] capitalize text-indigo-600">
                         Online
