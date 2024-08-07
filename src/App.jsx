@@ -16,28 +16,37 @@ const App = () => {
     setThem(localStorage.getItem('them'))
     setIsLoading(true)
     supabase.auth.getSession().then(({ data: { session } }) => {
+ 
+    
       if (session) {
         setSession(session)
        
-        setTimeout(()=>{
-          setIsLoading(false)
-        },1000)
+     
       }
+      setTimeout(()=>{
+        setIsLoading(false)
+      },1000)
     })
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
+      // setIsLoading(true)
+
       if (session) {
         setSession(session)
-        getProfile(session.user.id)
-        setTimeout(()=>{
-          setIsLoading(false)
-        },1000)
+        getProfile(session?.user?.id)
+      
       }
+      setTimeout(()=>{
+        setIsLoading(false)
+      },1000)
     })
 
-    return () => subscription.unsubscribe()
+    return () => {
+      subscription.unsubscribe()
+     
+    }
   }, [setSession])
   const getProfile = async (id) => {
     try {
@@ -51,6 +60,7 @@ const App = () => {
         throw profileError
       } else {
         localStorage.setItem('profile', JSON.stringify(data))
+        console.log(data);
       }
     } catch (error) {
       console.log(error)
@@ -71,7 +81,10 @@ const App = () => {
           wrapperClass="fixed top-1/2 left-1/2"
         />
       )
-    }  else if(!isLoading&&!session) element = <Auth />
+    }  else if(!session) {
+
+      element =( <Auth />)
+    }
  else  element = <Layout />
 
   return <UserProvider>{element}</UserProvider>
