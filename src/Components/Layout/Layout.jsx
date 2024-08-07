@@ -65,7 +65,7 @@ const Layout = () => {
           )}
 
           <Routes>
-            <Route path="/chat" element={<Home />} replace />
+            <Route path="/" element={<Home />} replace />
             <Route path="/chat/:id" element={<Chat />} />
           </Routes>
         </div>
