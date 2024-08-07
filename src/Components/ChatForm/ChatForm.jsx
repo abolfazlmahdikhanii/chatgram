@@ -103,14 +103,17 @@ const ChatForm = () => {
     }
   }
   const sendMessageHandler = async (content) => {
+    
     const { data, error } = await supabase
       .from('messages')
       .insert([
         {
           senderid: user.userid,
-          recipientid: param.id,
-          content: content,
+          recipientid:crypto.randomUUID(),
+          content: typeof content!=='string'?content[0].src:content,
+          messageType:typeof content!=='string'?content[0].type:'text',
           status: 'send',
+          chatID:param.id
         },
       ])
     if (error) console.log(error)
