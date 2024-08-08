@@ -1,28 +1,31 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FcDocument } from "react-icons/fc";
+import decodeMessage from "../../Utility/decodeMessage";
+import { supabase } from "../../superbase";
 const MessageItemContent = ({ message }) => {
-  const isArrMessage = typeof message?.messageDis instanceof Array;
+  console.log(message);
+  const isArrMessage = typeof message?.content instanceof Array;
   const content = isArrMessage
-    ? message?.messageDis[messageDis.length - 1]
-    : message?.messageDis;
+    ? message?.content[content.length - 1]
+    : message?.content;
   const newMessage = content ? content[content?.length - 1] : content;
   let messageContent = null;
-  if (newMessage?.type === "img") {
-    messageContent = <ImgContent img={newMessage} />;
-  } else if (newMessage?.type === "video") {
-    messageContent = <VideoContent video={newMessage} />;
-  } else if(newMessage?.type === "file") {
-    messageContent = <FileContent file={newMessage}  />;
+  if (message?.messageType === "img") {
+    messageContent = <ImgContent img={decodeMessage(message.content)} />;
+  } else if (message?.messageType === "video") {
+    messageContent = <VideoContent video={decodeMessage(newMessage)} />;
+  } else if(message?.messageType === "file") {
+    messageContent = <FileContent file={decodeMessage(newMessage)}  />;
   }
-  else if(newMessage?.type === "mp3") {
+  else if(message?.messageType === "mp3") {
       if(newMessage?.name!=="")messageContent = <FileContent file={newMessage}  />;
       else messageContent = <FileContent file={newMessage} title={"Audio"} />;
   }
 
   return (
     <>
-      {typeof message?.messageDis === "string" || !message?.messageDis ? (
-        <TextContent txt={message?.messageDis} />
+      {message?.messageType === "text" || !decodeMessage(message?.content) ? (
+        <TextContent txt={decodeMessage(message?.content)} />
       ) : (
         <div className="flex items-center gap-2" dir="auto">{messageContent}</div>
       )}
@@ -41,9 +44,29 @@ const TextContent = ({ txt }) => {
 };
 
 const ImgContent = ({ img }) => {
+  const [url,setUrl]=useState('')
+
+  useEffect(() => {
+    if (img) downloadImage(img)
+  }, [img])
+
+  const downloadImage = async (path) => {
+    try {
+      const { data, error } =await supabase.storage
+        .from('uploads')
+        .createSignedUrl(path,120)
+      if (error) throw error
+console.log(data);
+      
+      setUrl(data.signedUrl)
+      
+    } catch (error) {
+      console.log(error.message)
+    }
+  }
   return (
     <>
-      <img className="w-4 h-4 rounded object-cover" src={img?.src} alt="" />
+      <img className="w-4 h-4 rounded object-cover" src={url} alt="" />
       <p className="text-sm">Album</p>
     </>
   );
