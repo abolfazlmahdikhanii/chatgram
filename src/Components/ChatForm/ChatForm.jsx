@@ -22,6 +22,9 @@ import { useParams } from 'react-router-dom'
 const ChatForm = () => {
   const [text, setText] = useState('')
   const [emoji, setEmoji] = useState([])
+  const [selectedFile, setSelectedFile] = useState(null)
+  const [uploadProgress, setUploadProgress] = useState(0)
+  const [uploadError, setUploadError] = useState(null)
   const [showEmoji, setShowEmoji] = useState(false)
   const [showUploader, setShowUploader] = useState(false)
   const [record, setRecord] = useState(false)
@@ -46,6 +49,7 @@ const ChatForm = () => {
     setForwardSelfMessage,
     setShowReply,
     setReplyMessage,
+    chatId,
   } = useContext(ChatContext)
 
   useEffect(() => {
@@ -65,6 +69,27 @@ const ChatForm = () => {
       // setForwardSelfMessage(null)
     }
   }, [inputRef, text, emoji, record])
+
+  const handleUpload = async (file) => {
+    const { data: signedUrlData, error: urlError } = await supabase.storage
+      .from('uploads')
+      .upload(`chats/${chatId}/${Date.now()}_${file.name}`, selectedFile)
+
+    if (urlError) {
+      return false
+    }
+    return signedUrlData.path
+  }
+  const handleAudioUpload = async (file) => {
+    const { data: signedUrlData, error: urlError } = await supabase.storage
+      .from('uploads')
+      .upload(`audio/${chatId}/${Date.now()}_${crypto.randomUUID()}.wav`, file)
+
+    if (urlError) {
+      return false
+    }
+    return signedUrlData.path
+  }
 
   // find chat with id and store  in the object in the place
   const submitFormHandler = (e) => {
@@ -103,19 +128,22 @@ const ChatForm = () => {
     }
   }
   const sendMessageHandler = async (content) => {
+    let fileUrl = ''
+    if (typeof content !== 'string'){
     
-    const { data, error } = await supabase
-      .from('messages')
-      .insert([
-        {
-          senderid: user.userid,
-          recipientid:crypto.randomUUID(),
-          content: typeof content!=='string'?content[0].src:content,
-          messageType:typeof content!=='string'?content[0].type:'text',
-          status: 'send',
-          chatID:param.id
-        },
-      ])
+      fileUrl = await handleAudioUpload(content[0])
+    }
+    if(typeof content !== 'string'&&!fileUrl) return
+    const { data, error } = await supabase.from('messages').insert([
+      {
+        senderid: user.userid,
+        recipientid: crypto.randomUUID(),
+        content: typeof content !== 'string' ? fileUrl : content,
+        messageType: typeof content !== 'string' ? content[0].type : 'text',
+        status: 'send',
+        chatID: param.id,
+      },
+    ])
     if (error) console.log(error)
   }
   const editContentHandler = (e) => {
@@ -134,12 +162,28 @@ const ChatForm = () => {
       sendMessageHandler(newFileUpload)
     }
   }
-  const uploadImageHandler = (txt) => {
+  const uploadImageHandler = async (txt) => {
+    let fileUrl = ''
     if (imagesUpload) {
-      const newImageUpload = imagesUpload.map((item) => {
-        return { ...item, caption: txt }
-      })
-      sendMessageHandler(newImageUpload)
+      fileUrl = await handleUpload(selectedFile)
+      if (fileUrl) {
+        const { data, error } = await supabase.from('messages').insert([
+          {
+            senderid: user.userid,
+            recipientid: crypto.randomUUID(),
+            content: fileUrl,
+            messageType: 'img',
+            status: 'send',
+            chatID: param.id,
+            caption: txt,
+          },
+        ])
+        if (error) console.log(error)
+      }
+      // const newImageUpload = imagesUpload.map((item) => {
+      //   return { ...item, caption: txt }
+      // })
+      // sendMessageHandler(newImageUpload)
     }
   }
   const closeEmojiPicker = () => {
@@ -301,6 +345,7 @@ const ChatForm = () => {
         setFilesUpload={setFilesUpload}
         onUploadImage={uploadImageHandler}
         onUploadFile={uploadFileHandler}
+        setSelectedFile={setSelectedFile}
       />
     </form>
   )
