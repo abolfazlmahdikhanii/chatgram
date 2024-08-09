@@ -50,7 +50,7 @@ const AudioFile = ({
     const option = formWaveSurferOptions(waveFormRef.current, isColor)
       wavesurfRef.current = WaveSurfer.create(option)
 
-      wavesurfRef.current.load(audioRef.current.src)
+      wavesurfRef.current.load(path)
     if (waveFormRef.current) {
       
 
@@ -85,7 +85,7 @@ const AudioFile = ({
     }
 
     return () => wavesurfRef.current.destroy()
-  }, [])
+  }, [path])
 
   const handleLoadedMetadata = (e) => {
     console.log(audioRef.current?.metadata?.artist)
