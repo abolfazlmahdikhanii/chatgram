@@ -31,10 +31,10 @@ const FileType = ({
   const [url,setUrl]=useState('')
 
   useEffect(() => {
-    if (src) downloadImage(src)
+    if (src) download(src)
   }, [src])
 
-  const downloadImage = async (path) => {
+  const download = async (path) => {
     try {
       const { data, error } =await supabase.storage
         .from('uploads')
@@ -65,10 +65,10 @@ const FileType = ({
         caption={caption}
       />
     )
-  } else if (type == 'mp3') {
+  } else if (type == 'mp3'||type=='audio/webm') {
     file = (
       <AudioFile
-        path={src}
+        path={url}
         size={size}
         name={name}
         onRemove={() => removeMessages(messageId, idType)}
