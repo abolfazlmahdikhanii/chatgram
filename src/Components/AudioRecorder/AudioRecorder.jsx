@@ -123,8 +123,8 @@ const AudioRecorders = ({ record = false, setRecord, setMessage }) => {
       name: "",
       type: "mp3",
     };
-    audios.push(audioMessage);
-    console.log(audioMessage);
+    audios.push(url);
+    console.log(url);
     setRecord(false)
     // send
     setMessage(audios);
