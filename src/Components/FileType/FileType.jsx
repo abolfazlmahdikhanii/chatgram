@@ -15,6 +15,7 @@ const FileType = ({
   progress,
   id,
   from,
+  
   idType,
   messageId,
   isColor,
@@ -26,19 +27,20 @@ const FileType = ({
   contextMenu,
 }) => {
   const { removeMessages, setShowPreview, setAudio ,setFileUrl} = useContext(ChatContext)
-
+console.log(type);
   let file = null
   const [url,setUrl]=useState('')
 
   useEffect(() => {
     if (src) download(src)
+      
   }, [src])
 
   const download = async (path) => {
     try {
       const { data, error } =await supabase.storage
         .from('uploads')
-        .createSignedUrl(path,120)
+        .createSignedUrl(path,60)
       if (error) throw error
 
       
@@ -97,7 +99,7 @@ const FileType = ({
               show: true,
               type: 'img',
               from,
-              url,
+              src:url,
               messageId,
               caption,
             })
@@ -109,7 +111,7 @@ const FileType = ({
     file = (
       <div>
         <FileIcon
-          type={name?.split('.').pop()}
+          type={type}
           path={src ? src : ''}
           message={true}
           from={from}
@@ -123,7 +125,7 @@ const FileType = ({
     file = (
       <FileItem
         name={name}
-        type={name?.split('.').pop()}
+        type={type}
         src={src}
         size={size}
         message={true}
@@ -134,7 +136,12 @@ const FileType = ({
       />
     )
   }
-  return <>{file}</>
+  return <>
+  {file}
+  {caption&&
+  <p className='mt-2.5  px-2.5 text-gray-200' dir='auto'>{caption}</p>
+  }
+  </>
 }
 
 export default FileType
