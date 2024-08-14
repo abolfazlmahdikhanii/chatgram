@@ -3,11 +3,11 @@ import { BiCheckDouble } from "react-icons/bi";
 import { BiCheck } from "react-icons/bi";
 import { BsFillPinAngleFill } from "react-icons/bs";
 import { Watch } from "react-loader-spinner";
-const FooterMessage = ({message,date,read,send,edited,pin,reaction}) => {
+const FooterMessage = ({message,date,status,edited,pin,reaction}) => {
   let icon = null;
-  if (read) {
+  if (status==='read') {
     icon = <BiCheckDouble size={14} color="" />;
-  } else if (send) {
+  } else if (status==='send') {
     icon = <BiCheck size={14} color="" />;
   } else {
     icon = (
