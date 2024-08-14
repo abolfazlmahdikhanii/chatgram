@@ -68,9 +68,11 @@ const Chat = () => {
   //     displayCheckBoxHandler(checkMessage)
   //     groupMessageHandler(message?.messages)
   // }, [match, pinMessage, message])
+
   useEffect(() => {
     fetchMessages()
-    if(!friendID)navigate('/')
+
+    if (!friendID) navigate('/')
   }, [match.id])
   useEffect(() => {
     getFriendinfo(friendID)
@@ -120,7 +122,6 @@ const Chat = () => {
 
     setLastMessage(lastMessage)
     groupMessageHandler(messages)
-
   }
   const fetchSavedMessages = async () => {
     let { data: messages, error } = await supabase
@@ -152,14 +153,15 @@ const Chat = () => {
     navigate('/', { replace: true })
   }
   const groupMessageHandler = (message) => {
-    const messageGroup = []
+    console.log(message)
+    const messageGroup = [...groupedMessages]
     let currentDate = null
 
-    message?.forEach((messages) => {
+    message?.forEach((messages,i) => {
       const messageDate = new Date(messages.sentat).toDateString()
-
+  
       // If the message belongs to a new day, create a new group
-      if (messageDate !== currentDate) {
+      if (messageDate !== currentDate&&messageGroup[i]?.date!==messageDate) {
         messageGroup.push({
           date: messageDate,
           messages: [messages],
@@ -169,11 +171,9 @@ const Chat = () => {
         // If the message belongs to the current day, add it to the last group
         messageGroup[messageGroup.length - 1].messages.push(messages)
       }
-
     })
 
     setGroupedMessages(messageGroup)
-    console.log(messages);
   }
   const closePinBox = () => {
     const pinArr = message?.messages?.filter(
@@ -227,6 +227,7 @@ const Chat = () => {
               {messages?.content !== '' &&
                 groupedMessages?.map((group, i) => (
                   // console.log(grouped[item])
+
                   <div key={group.date}>
                     <div
                       className={`bg-gray-500/20 backdrop-blur-lg px-4 py-1 w-fit text-sm rounded-full mx-auto mt-2 mb-1 sticky top-2`}
@@ -240,6 +241,10 @@ const Chat = () => {
                         forward={item?.forward}
                         forwardSelf={item?.forwardSelf}
                         contact={item?.contact}
+                        src={item.src}
+                        messageType={
+                          item.messageType ? item.messageType : item.type
+                        }
                         {...item}
                       />
                     ))}
@@ -266,7 +271,7 @@ const Chat = () => {
             {/* FORM */}
             {!showPin ? (
               !checkMessage?.length && !showCheckBox ? (
-                <ChatForm />
+                <ChatForm setMessage={groupMessageHandler} />
               ) : (
                 <CheckMessageBox />
               )
