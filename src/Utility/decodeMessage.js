@@ -1,5 +1,5 @@
+const decodeMessage = (content,src) => {
 
-const decodeMessage = (content) => {
   // Extract hexadecimal values using regular expression
   // Remove the leading '\\x' and split the string into pairs of hexadecimal values
   const hexPairs = content.slice(2).match(/.{1,2}/g) || []
@@ -9,7 +9,6 @@ const decodeMessage = (content) => {
     .map((hex) => String.fromCharCode(parseInt(hex, 16)))
     .join('')
 
-  
   return text
 }
 export default decodeMessage
