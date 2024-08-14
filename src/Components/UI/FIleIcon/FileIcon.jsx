@@ -1,7 +1,8 @@
-import React, { useState,useRef } from "react";
+import React, { useState,useRef, useContext } from "react";
+import { UserContext } from "../../../Context/UserContext";
 
 const FileIcon = ({ type,path=null,message=false,from,isColor,isFile,onContext }) => {
-
+const {user}=useContext(UserContext)
 
   let color = null;
   let fileColor=null;
@@ -31,10 +32,10 @@ const FileIcon = ({ type,path=null,message=false,from,isColor,isFile,onContext }
       color = "bg-indigo-500";
       break;
   }
-  if(message&&from==="user"||isColor){
+  if(from===user.userid||isColor){
   fileColor="file-icon--2"
   }
-  else if(message&&from==="client"){
+  else if(from!==user.userid){
     fileColor="file-icon--3"
   }
   else{
