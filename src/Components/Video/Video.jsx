@@ -58,7 +58,7 @@ const Video = ({
                 ref={videoRef}
                 className="w-full h-full object-cover max-w-full max-h-[370px]"
                 // autoPlay={!autoPlay || currentTime >= 50 ? false : true}
-                playsInline
+                
                 muted
                 onLoadedMetadata={handleLoadedMetadata}
                 onTimeUpdate={() =>
@@ -68,9 +68,11 @@ const Video = ({
                     setShowPreview({ show: true, type: 'video',from, src,messageId,caption })
                     console.log(caption)
                 }}
+                src={src}
             >
-                <source src={src} />
+                {/* <source src={src} /> */}
             </video>
+         
         </li>
     )
 }
