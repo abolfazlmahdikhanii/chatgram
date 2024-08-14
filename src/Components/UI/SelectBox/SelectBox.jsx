@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from "react";
-import Uploader from "../../Uploader/Uploader";
+import React, { useContext, useEffect, useState } from 'react'
+import Uploader from '../../Uploader/Uploader'
+import { useParams } from 'react-router-dom'
+import { UserContext } from '../../../Context/UserContext'
 
 const SelectBox = ({
   show,
@@ -10,27 +12,25 @@ const SelectBox = ({
   images,
   onUploadImage,
   onUploadFile,
-
+  setSelectedFile,
 }) => {
-  const [showUploader, setShowUploader] = useState(false);
-  const [showImageUploader, setShowImageUploader] = useState(false);
-
-
-
+  const [showUploader, setShowUploader] = useState(false)
+  const [showImageUploader, setShowImageUploader] = useState(false)
+  const {user}=useContext(UserContext)
   const checkIsimageOrIsVideo = (type) => {
-    if (type === "video/mp4" || type === "video/webm") {
-      return "video";
+    if (type === 'video/mp4' || type === 'video/webm') {
+      return 'video'
     } else if (
-      type === "image/png" ||
-      type === "image/jpeg" ||
-      type === "image/gif"
+      type === 'image/png' ||
+      type === 'image/jpeg' ||
+      type === 'image/gif'
     ) {
-      return "img";
+      return 'img'
     }
-  };
+  }
   // uploader image
   const uploadImageHandler = (e) => {
-    let images = [];
+    let images = []
 
     for (let i = 0; i < e?.target.files?.length; i++) {
       images.push({
@@ -39,20 +39,20 @@ const SelectBox = ({
         size: e.target.files[i].size,
         type: checkIsimageOrIsVideo(e.target.files[i]?.type),
         progress: e.target.duration,
-     
-      });
+        sentat: new Date().getTime(),
+        senderid:user.userid
+      })
     }
-    setImages(images);
+    setSelectedFile(e.target.files)
+    setImages(images)
 
     if (e.target.files?.length > 0) {
-      setShowImageUploader(true);
+      setShowImageUploader(true)
     }
-
-  };
+  }
   // upload file
   const uploadFileHandler = (e) => {
-    let files = [];
-    console.log(e)
+    let files = []
 
     for (let i = 0; i < e.target.files.length; i++) {
       files.push({
@@ -60,30 +60,28 @@ const SelectBox = ({
         src: URL.createObjectURL(e.target.files[i]),
         size: e.target.files[i].size,
         name: e.target.files[i].name,
-        type: e.target.files[i]?.type.startsWith("audio/") ? "mp3" : "file",
-
-      });
+        type: e.target.files[i]?.type.startsWith('audio/') ? 'mp3' : 'file',
+      })
     }
-    setFilesUpload(files);
+    setSelectedFile(e.target.files)
+    setFilesUpload(files)
 
     if (e.target.files?.length > 0) {
-      setShowUploader(true);
+      setShowUploader(true)
     }
-
-
-  };
+  }
 
   // remove file
   const removeFileHandler = (id) => {
-    const filterdFile = filesUpload.filter((file) => file.id !== id);
-    setFilesUpload(filterdFile);
-    if (!filterdFile.length) setShowUploader(false);
-  };
+    const filterdFile = filesUpload.filter((file) => file.id !== id)
+    setFilesUpload(filterdFile)
+    if (!filterdFile.length) setShowUploader(false)
+  }
   return (
     <>
       <div
         className={`select-box ${
-          show ? "scale-100 opacity-100 " : "scale-0 opacity-0 "
+          show ? 'scale-100 opacity-100 ' : 'scale-0 opacity-0 '
         }`}
         onMouseLeave={close}
       >
@@ -172,10 +170,9 @@ const SelectBox = ({
         remove={removeFileHandler}
         onUploadFile={onUploadFile}
         onUploadImage={onUploadImage}
-  
       />
     </>
-  );
-};
+  )
+}
 
-export default SelectBox;
+export default SelectBox
