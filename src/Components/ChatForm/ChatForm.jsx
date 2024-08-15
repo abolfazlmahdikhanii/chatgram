@@ -18,8 +18,9 @@ import { ChatContext } from '../../Context/ChatContext'
 import { supabase } from '../../superbase'
 import { UserContext } from '../../Context/UserContext'
 import { useParams } from 'react-router-dom'
+import { strToByte } from '../../Utility/helper'
 
-const ChatForm = () => {
+const ChatForm = ({ setMessage }) => {
   const [text, setText] = useState('')
   const [emoji, setEmoji] = useState([])
   const [selectedFile, setSelectedFile] = useState(null)
@@ -50,6 +51,7 @@ const ChatForm = () => {
     setShowReply,
     setReplyMessage,
     chatId,
+    friendID
   } = useContext(ChatContext)
 
   useEffect(() => {
@@ -70,20 +72,51 @@ const ChatForm = () => {
     }
   }, [inputRef, text, emoji, record])
 
-  const handleUpload = async (file) => {
-    const { data: signedUrlData, error: urlError } = await supabase.storage
-      .from('uploads')
-      .upload(`chats/${chatId}/${Date.now()}_${file.name}`, selectedFile)
+  const handleUpload = async (files) => {
+    const uploadFile = []
+    for (const file of files) {
+      const { data: signedUrlData, error: urlError } = await supabase.storage
+        .from('uploads')
+        .upload(`chats/${param.id}/${Date.now()}_${file.name}`, file)
 
-    if (urlError) {
-      return false
+      if (urlError) {
+        return false
+      } else {
+        uploadFile.push(signedUrlData.path)
+      }
     }
-    return signedUrlData.path
+    return uploadFile
+  }
+  const handleUploadFile = async (files) => {
+    // Replace with your actual file data
+    const uploadFile = []
+
+    for (const file of files) {
+      const { data: signedUrlData, error: urlError } = await supabase.storage
+        .from('uploads')
+        .upload(
+          `chats/${param.id}/${crypto.randomUUID()}.${file?.name
+            .split('.')
+            .pop()}`,
+          file
+        )
+
+      if (urlError) {
+        return false
+      } else {
+        uploadFile.push(signedUrlData.path)
+      }
+    }
+
+    return uploadFile
   }
   const handleAudioUpload = async (file) => {
     const { data: signedUrlData, error: urlError } = await supabase.storage
       .from('uploads')
-      .upload(`audio/${chatId}/${Date.now()}_${crypto.randomUUID()}.wav`, file)
+      .upload(
+        `audio/${param.id}/${Date.now()}_${crypto.randomUUID()}.wav`,
+        file
+      )
 
     if (urlError) {
       return false
@@ -129,15 +162,24 @@ const ChatForm = () => {
   }
   const sendMessageHandler = async (content) => {
     let fileUrl = ''
-    if (typeof content !== 'string'){
-    
+    setMessage([{
+      sentat: new Date().getTime(),
+        senderid:user.userid,
+        content:strToByte(content),
+        messageType:'text'
+
+    }],true)
+
+    if (typeof content !== 'string') {
       fileUrl = await handleAudioUpload(content[0])
+      setMessage(content[0],true)
+
     }
-    if(typeof content !== 'string'&&!fileUrl) return
+    if (typeof content !== 'string' && !fileUrl) return
     const { data, error } = await supabase.from('messages').insert([
       {
         senderid: user.userid,
-        recipientid: crypto.randomUUID(),
+        recipientid: friendID,
         content: typeof content !== 'string' ? fileUrl : content,
         messageType: typeof content !== 'string' ? content[0].type : 'text',
         status: 'send',
@@ -154,36 +196,58 @@ const ChatForm = () => {
       setText('')
     }
   }
-  const uploadFileHandler = (txt) => {
+  const uploadFileHandler = async (txt) => {
+    console.log(filesUpload)
+    let fileUrl = ''
     if (filesUpload) {
-      const newFileUpload = filesUpload.map((item) => {
-        return { ...item, caption: txt }
-      })
-      sendMessageHandler(newFileUpload)
+      fileUrl = await handleUploadFile(selectedFile)
+      if (fileUrl) {
+        for (let i = 0; i < fileUrl.length; i++) {
+          const { data, error } = await supabase.from('messages').insert([
+            {
+              senderid: user.userid,
+              recipientid: friendID,
+              content: fileUrl[i],
+              messageType: filesUpload[i]?.name.split('.').pop(),
+              status: 'send',
+              chatID: param.id,
+              name: filesUpload[i]?.name,
+            },
+          ])
+          if (error) console.log(error)
+        }
+      }
+
+      // const newFileUpload = filesUpload.map((item) => {
+      //   return { ...item, caption: txt }
+      // })
+      // sendMessageHandler(newFileUpload)
     }
   }
   const uploadImageHandler = async (txt) => {
     let fileUrl = ''
     if (imagesUpload) {
+      const newImageUpload = imagesUpload.map((item) => {
+        return { ...item, caption: txt }
+      })
+      setMessage(newImageUpload,true)
       fileUrl = await handleUpload(selectedFile)
       if (fileUrl) {
-        const { data, error } = await supabase.from('messages').insert([
-          {
-            senderid: user.userid,
-            recipientid: crypto.randomUUID(),
-            content: fileUrl,
-            messageType: 'img',
-            status: 'send',
-            chatID: param.id,
-            caption: txt,
-          },
-        ])
-        if (error) console.log(error)
+        for (let i = 0; i < fileUrl.length; i++) {
+          const { data, error } = await supabase.from('messages').insert([
+            {
+              senderid: user.userid,
+              recipientid: friendID,
+              content: fileUrl[i],
+              messageType: imagesUpload[i]?.type,
+              status: 'send',
+              chatID: param.id,
+              caption: txt,
+            },
+          ])
+          if (error) console.log(error)
+        }
       }
-      // const newImageUpload = imagesUpload.map((item) => {
-      //   return { ...item, caption: txt }
-      // })
-      // sendMessageHandler(newImageUpload)
     }
   }
   const closeEmojiPicker = () => {
