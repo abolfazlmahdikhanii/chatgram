@@ -72,6 +72,7 @@ const Chat = () => {
   useEffect(() => {
     fetchMessages()
 
+    updateMessageStatus()
     if (!friendID) navigate('/')
   }, [match.id])
   useEffect(() => {
@@ -79,13 +80,14 @@ const Chat = () => {
   }, [friendID])
   useEffect(() => {
     fetchMessages()
+    updateMessageStatus()
 
     // Subscribe to real-time messages
     const subscription = supabase
       .channel('public:messages')
       .on(
         'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'messages' },
+        { event: '*', schema: 'public', table: 'messages' },
         (payload) => {
           const newMsg = payload.new
 
@@ -96,7 +98,7 @@ const Chat = () => {
             setLastMessage(payload.new)
             // console.log(payload.new);
             fetchMessages()
-
+            updateMessageStatus()
             // groupMessageHandler(messages)
           }
         }
@@ -135,6 +137,23 @@ const Chat = () => {
 
     groupMessageHandler(messages)
   }
+
+  const updateMessageStatus = async () => {
+    try {
+      let { data, error } = await supabase
+        .from('messages')
+        .update({ status: 'read' })
+        .eq('senderid', friendID)
+        .eq('chatID', match?.id)
+        .eq('status', 'send')
+        .select()
+
+      if (error) throw error
+      setMessages(data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
   const getFriendinfo = async (id) => {
     try {
       let { data: users, error } = await supabase
@@ -152,16 +171,23 @@ const Chat = () => {
     DeleteChat()
     navigate('/', { replace: true })
   }
-  const groupMessageHandler = (message) => {
-    console.log(message)
-    const messageGroup = [...groupedMessages]
+  const groupMessageHandler = (message, isSend) => {
+    let messageGroup = []
+    if (isSend) {
+      messageGroup = [...groupedMessages]
+    } else {
+      messageGroup = []
+    }
     let currentDate = null
 
-    message?.forEach((messages,i) => {
+    message?.forEach((messages, i) => {
       const messageDate = new Date(messages.sentat).toDateString()
-  
+
       // If the message belongs to a new day, create a new group
-      if (messageDate !== currentDate&&messageGroup[i]?.date!==messageDate) {
+      if (
+        messageDate !== currentDate &&
+        messageGroup[i]?.date !== messageDate
+      ) {
         messageGroup.push({
           date: messageDate,
           messages: [messages],
