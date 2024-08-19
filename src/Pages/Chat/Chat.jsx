@@ -71,8 +71,6 @@ const Chat = () => {
 
   useEffect(() => {
     fetchMessages()
-
-    updateMessageStatus()
     if (!friendID) navigate('/')
   }, [match.id])
   useEffect(() => {
@@ -232,6 +230,7 @@ const Chat = () => {
             DeleteChat={deleteChat}
             setShowChatInfo={setShowChatInfo}
             deleteChat={deleteChat}
+            getInfo={getFriendinfo}
           />
 
           <main
@@ -254,12 +253,14 @@ const Chat = () => {
                 groupedMessages?.map((group, i) => (
                   // console.log(grouped[item])
 
-                  <div key={group.date}>
-                    <div
-                      className={`bg-gray-500/20 backdrop-blur-lg px-4 py-1 w-fit text-sm rounded-full mx-auto mt-2 mb-1 sticky top-2`}
-                    >
-                      {group.date}
-                    </div>
+                  <div key={crypto.randomUUID()}>
+                    {group.date === group.date && (
+                      <div
+                        className={`bg-gray-500/20 backdrop-blur-lg px-4 py-1 w-fit text-sm rounded-full mx-auto mt-2 mb-1 sticky top-2`}
+                      >
+                        {group.date}
+                      </div>
+                    )}
 
                     {group.messages.map((item) => (
                       <Message
