@@ -41,9 +41,11 @@
     }
 
     .chat__input {
-        @apply appearance-none px-3 py-2 placeholder:text-xs w-full dark:text-gray-50 bg-transparent focus-visible:outline-0 break-all transition-all duration-300 text-gray-800;
+        @apply appearance-none px-3 py-2 placeholder:text-xs w-full dark:text-gray-50 bg-transparent focus-visible:outline-0 break-all transition-all duration-300 text-gray-800 focus-visible:outline-none;
     }
-
+    .chat__input>br{
+        @apply hidden
+    }
     .message {
         @apply rounded-2xl whitespace-pre-wrap break-words  text-white text-sm max-w-full  leading-relaxed w-auto min-w-[80px];
     }
@@ -224,6 +226,9 @@
     }
     .lbl-shown{
         @apply text-[#9e9e9e] transition-all duration-200 px-[5px] [transform:translate(-.1875rem,calc(57px/-2+.0625rem))_scale(.75)] bg-base-100 select-none cursor-text
+    }
+    .typing-loader{
+        @apply dark:fill-indigo-300 fill-indigo-600
     }
     
 }
