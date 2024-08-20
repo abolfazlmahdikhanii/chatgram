@@ -23,10 +23,11 @@ const MessageList = () => {
   const navigate = useNavigate()
 
   const contextMenuHandler = (e, id) => {
+    setShowMenu(false)
     e.preventDefault()
-    setShowMenu((prev) => !prev)
     setPageX(e.pageX)
     setPageY(e.pageY)
+    setShowMenu(true)
     setChatId(id)
   }
   useEffect(() => {
