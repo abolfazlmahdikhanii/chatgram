@@ -1,18 +1,19 @@
 import { createContext, useState } from 'react'
 import chatData from '../data'
+import { supabase } from '../superbase'
 
 export const ChatContext = createContext({
   chat: [],
   chatInfo: [],
   chatId: '',
-  lastMessage:[],
+  lastMessage: [],
   showPinAudio: false,
   profileInfo: null,
   audio: null,
   pageX: null,
   pageY: null,
   isPin: false,
-  friendID:null,
+  friendID: null,
   isRemove: false,
   showContextMenu: false,
   messageID: null,
@@ -31,12 +32,13 @@ export const ChatContext = createContext({
   replyMessage: null,
   forwardSelfMessage: null,
   userMessage: null,
+  fileProgress: 0,
   showPreview: {
     show: false,
     type: null,
     src: null,
   },
-  fileUrl:'',
+  fileUrl: '',
   findUserMessage: () => {},
   filterChat: () => {},
   sendMessageHandler: () => {},
@@ -68,6 +70,7 @@ export const ChatContext = createContext({
   setFileUrl: () => {},
   setEditContent: () => {},
   setShowReply: () => {},
+  setFileProgress: () => {},
   setShowSelfForward: () => {},
   setReplyMessage: () => {},
   setCheckMessage: () => {},
@@ -89,13 +92,15 @@ export const ChatContext = createContext({
   setShowCheckBox: () => {},
   setProfileInfo: () => {},
   clearHistory: () => {},
-  setLastMessage:()=>{}
+  setLastMessage: () => {},
+  deleteMessage: () => {},
 })
 
 export const ChatProvider = ({ children }) => {
   const [chat, setChat] = useState([])
   const [chatInfo, setChatInfo] = useState([])
   const [lastMessage, setLastMessage] = useState([])
+  const [fileProgress, setFileProgress] = useState(0)
 
   const [chatId, setChatId] = useState('')
   const [profileInfo, setProfileInfo] = useState(null)
@@ -135,12 +140,11 @@ export const ChatProvider = ({ children }) => {
   })
 
   const filterChat = (id) => {
-    let findChat = chatInfo.map(
-      (item) => item.senderid.userid !== id ? item.recipientid: item.senderid
+    let findChat = chatInfo.map((item) =>
+      item.senderid.userid !== id ? item.recipientid : item.senderid
     )
     setChatId(id)
     setProfileInfo(findChat[0])
-    
   }
   const findUserMessage = (id) => {
     const findedMessage = chat?.find((user) => user.id == id)
@@ -257,6 +261,19 @@ export const ChatProvider = ({ children }) => {
 
     findedChat.messages.messageDis = findMessage
     setChat(chat)
+  }
+  const deleteMessage = async (id, chatId) => {
+  try {
+    const { error } = await supabase
+    .from('messages')
+    .delete()
+    .eq('messageid', id)
+    .eq('chatID', chatId)
+    .select()
+  if (error) throw error
+  } catch (error) {
+    console.log(error);
+  }
   }
   const forwardSelfMessageHandler = (id) => {
     const newMessage = [...message?.messages]
@@ -412,9 +429,10 @@ export const ChatProvider = ({ children }) => {
   const contextmenuHandler = (e, id, idFile = null) => {
     e.preventDefault()
     e.stopPropagation()
+    setShowContextMenu(false)
 
     setISChatInfo(false)
-    setShowContextMenu((prev) => !prev)
+    setShowContextMenu(true)
     setPageX(e.pageX)
     setPageY(e.pageY)
 
@@ -700,7 +718,10 @@ export const ChatProvider = ({ children }) => {
         friendID,
         setFriendID,
         fileUrl,
-        setFileUrl
+        setFileUrl,
+        fileProgress,
+        setFileProgress,
+        deleteMessage
       }}
     >
       {children}
