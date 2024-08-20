@@ -5,10 +5,10 @@ import Profile from '../../Profile/Profile'
 import { ChatContext } from '../../../Context/ChatContext'
 
 
-const Dialog = () => {
+const Dialog = ({chatId}) => {
    
 
-    const {showAlert,setShowAlert,removeMessages,pinMessageHandler,messageID,message,isPin,pinMessage,isRemove}=useContext(ChatContext)
+    const {showAlert,setShowAlert,deleteMessage,pinMessageHandler,messageID,message,isPin,pinMessage,isRemove}=useContext(ChatContext)
     
     console.log(messageID)
 
@@ -66,7 +66,7 @@ const Dialog = () => {
 
                         {!isPin&&isRemove ? (
                             <button className="btn bg-transparent border-none text-[#ff595a] text-lg px-5 hover:bg-[rgba(255,89,90,0.08)] " onClick={()=>{
-                                removeMessages(messageID)
+                                deleteMessage(messageID,chatId)
                                 setShowAlert(false)
                                 }}>
                                 Delete
