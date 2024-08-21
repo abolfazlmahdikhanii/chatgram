@@ -1,20 +1,21 @@
 import React from 'react'
 import { FcDocument } from 'react-icons/fc'
+import decodeMessage from '../../Utility/decodeMessage'
 
-const TypeMessage = ({ dis, w }) => {
+const TypeMessage = ({ dis,type,name, w }) => {
     let element = null
     if (dis) {
-        if (typeof dis === 'string') {
+        if (type==='text') {
             element = (
                 <p
                 dir='auto'
                     dangerouslySetInnerHTML={{
-                        __html: dis,
+                        __html: decodeMessage(dis),
                     }}
                 ></p>
             )
         }
-        if (dis[0]?.type === 'img') {
+        if (type === 'img') {
             element = (
                 <div>
                     <div
@@ -23,7 +24,7 @@ const TypeMessage = ({ dis, w }) => {
                         } h-full mask mask-squircle `}
                     >
                         <img
-                            src={dis[0]?.src}
+                            src={decodeMessage(dis)}
                             alt=""
                             className="w-full h-full object-cover"
                         />
@@ -31,7 +32,7 @@ const TypeMessage = ({ dis, w }) => {
                 </div>
             )
         }
-        if (dis[0]?.type === 'video') {
+        if (type === 'video') {
             element = (
                 <div>
                     <div
@@ -40,7 +41,7 @@ const TypeMessage = ({ dis, w }) => {
                         } h-full mask mask-squircle`}
                     >
                         <video
-                            src={dis[0]?.src}
+                            src={decodeMessage(dis)}
                             alt=""
                             className="w-full h-full object-cover"
                         />
@@ -48,24 +49,24 @@ const TypeMessage = ({ dis, w }) => {
                 </div>
             )
         }
-        if (dis[0]?.type === 'file') {
+        if (type === 'file') {
             element = (
                 <div className='flex gap-1.5 items-center w-full'>
                     <p>
                         <FcDocument />
                     </p>
                     <p className="text-[14px] truncate w-[40%]">
-                        {dis[0]?.name}
+                        {name}
                     </p>
                 </div>
             )
         }
-        if (dis[0]?.type === 'mp3' && dis[0]?.name !== '') {
+        if (type == 'mp3' || type == 'audio/webm' && name !== '') {
             element = (
-                <p className="text-[14px] truncate w-[50%]">{dis[0]?.name}</p>
+                <p className="text-[14px] truncate w-[50%]">{name}</p>
             )
         }
-        if (dis[0]?.type === 'mp3' && dis[0]?.name === '') {
+        if (type == 'mp3' || type == 'audio/webm'  && name === '') {
             element = <p className="text-[14px] ">Voice Message</p>
         }
     }
