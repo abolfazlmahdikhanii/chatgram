@@ -3,7 +3,7 @@ import { BiCheckDouble } from "react-icons/bi";
 import { BiCheck } from "react-icons/bi";
 import { BsFillPinAngleFill } from "react-icons/bs";
 import { Watch } from "react-loader-spinner";
-const FooterMessage = ({message,date,status,edited,pin,reaction}) => {
+const FooterMessage = ({message,date,status,edited,pin,reaction,messageType,caption}) => {
   let icon = null;
   if (status==='read') {
     icon = <BiCheckDouble size={14} color="" />;
@@ -26,7 +26,7 @@ const FooterMessage = ({message,date,status,edited,pin,reaction}) => {
 
   return (
     <>
-      {message?.type === "file"||message?.type === "mp3" || typeof message === "string"||reaction||message?.caption ? (
+      {messageType === "file"||messageType === "mp3"|| messageType == 'audio/webm' || messageType === "text"||reaction||caption ? (
         <div className=" flex items-center gap-1 mt-1 px-3 justify-end chat-footer -mr-4">
           <p className="dark:text-gray-500 text-gray-400 text-[12px] mr-1.5">{pin?<BsFillPinAngleFill size={12}/>:''}</p>
           <p className="dark:text-gray-400 text-gray-300 text-[12px] mr-0.5 italic">{edited?'edited':''}</p>
