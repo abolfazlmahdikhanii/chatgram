@@ -3,14 +3,14 @@ import Backdrop from '../Backdrop/Backdrop'
 import { AiOutlineClose } from 'react-icons/ai'
 import Profile from '../../Profile/Profile'
 import { ChatContext } from '../../../Context/ChatContext'
+import { UserContext } from '../../../Context/UserContext'
 
 
 const Dialog = ({chatId}) => {
    
 
     const {showAlert,setShowAlert,deleteMessage,pinMessageHandler,messageID,message,isPin,pinMessage,isRemove}=useContext(ChatContext)
-    
-    console.log(messageID)
+    const {user}=useContext(UserContext)
 
     let title=""
     let dis=""
@@ -48,7 +48,7 @@ const Dialog = ({chatId}) => {
                 }`}
             >
                 <div className="flex items-center gap-5 px-6 pt-4 w-full pb-3 mt-2">
-                    <Profile {...message} path={message?.profileImg} isSave={message?.relation==="me"?true:false}/>
+                    <Profile {...user} src={user?.avatar_url} userName={user?.username||user?.email?.split('@')[0]} isSave={user?.userid===chatId?true:false}/>
                     <p className="text-[24px] font-semibold dark:text-white text-gray-800">
                        {title}
                     </p>
