@@ -5,6 +5,7 @@ import data from '@emoji-mart/data/sets/14/apple.json'
 import { MdOutlineEdit } from 'react-icons/md'
 import { IoMdClose } from 'react-icons/io'
 import { TiArrowForwardOutline } from 'react-icons/ti'
+import { Upload, DefaultHttpStack, defaultOptions } from 'tus-js-client'
 
 import BtnAction from '../UI/BtnAction/BtnAction'
 import BtnUploader from '../BtnUploader/BtnUploader'
@@ -15,10 +16,11 @@ import TypeMessage from '../TypeMessage/TypeMessage'
 import messageType from '../../Utility/MessageType'
 import { useContext } from 'react'
 import { ChatContext } from '../../Context/ChatContext'
-import { supabase } from '../../superbase'
+import { supabase, supabaseAnonKey, supabaseUrl } from '../../superbase'
 import { UserContext } from '../../Context/UserContext'
 import { useParams } from 'react-router-dom'
 import { strToByte } from '../../Utility/helper'
+import decodeMessage from '../../Utility/decodeMessage'
 
 const ChatForm = ({ setMessage }) => {
   const [text, setText] = useState('')
@@ -32,6 +34,7 @@ const ChatForm = ({ setMessage }) => {
   const [isEnterPressed, setIsEnterPressed] = useState(false)
   const [imagesUpload, setImagesUpload] = useState([])
   const [filesUpload, setFilesUpload] = useState([])
+  const [uploadUrl, setUploadUrl] = useState([])
   const [content, setContent] = useState('')
   const { user } = useContext(UserContext)
   const param = useParams()
@@ -51,7 +54,9 @@ const ChatForm = ({ setMessage }) => {
     setShowReply,
     setReplyMessage,
     chatId,
-    friendID
+    friendID,
+    setFileProgress,
+    messageID
   } = useContext(ChatContext)
 
   useEffect(() => {
@@ -71,22 +76,86 @@ const ChatForm = ({ setMessage }) => {
       // setForwardSelfMessage(null)
     }
   }, [inputRef, text, emoji, record])
+  useEffect(() => {
+    inputRef.current.innerHTML = ''
+    updateTypingStatus(false)
+  }, [param.id])
 
   const handleUpload = async (files) => {
+    setFileProgress(0)
     const uploadFile = []
     for (const file of files) {
       const { data: signedUrlData, error: urlError } = await supabase.storage
         .from('uploads')
-        .upload(`chats/${param.id}/${Date.now()}_${file.name}`, file)
+        .upload(`chats/${param.id}/${Date.now()}_${file.name}`, file,{
+          onUploadProgress: (event) => {
+            const percent = Math.round((event.loaded * 100) / event.total);
+            setUploadProgress(percent);
+          },
+        })
 
       if (urlError) {
         return false
-      } else {
-        uploadFile.push(signedUrlData.path)
       }
+
+      uploadFile.push(signedUrlData.path)
+
     }
+    setFileProgress(100)
     return uploadFile
   }
+  // const handleUpload = async (files) => {
+  //   console.log(defaultOptions)
+  //   setFileProgress(0)
+  //   const uploadFile = []
+  //   const {
+  //     data: { session },
+  //     error,
+  //   } = await supabase.auth.getSession()
+  //   console.log(session)
+  //   for (const file of files) {
+  //     // supabase.storage
+  //     //   .from('uploads')
+  //     //   .createSignedUploadUrl(
+  //     //     `chats/${param.id}/${Date.now()}_${file.name}`,
+  //     //     60
+  //     //   )
+  //     //   .then((data) => {
+  //       const uploadEndpoint = `${supabase.storage.from('uploads').getPublicUrl('').publicURL}`;
+
+      
+  //         const upload = new Upload(file, {
+  //           endpoint: uploadEndpoint,
+  //           retryDelays: [0, 1000, 3000, 5000],
+  //           headers: {
+  //             authorization: `Bearer ${session?.access_token}`,
+  //           },
+  //           metadata: {
+  //             filename: file.name,
+  //             filetype: file.type,
+  //             cacheControl: 3600,
+  //           },
+  //           overridePatchMethod: true,
+  //           onProgress: (bytesUploaded, bytesTotal) => {
+  //             setFileProgress(Math.round((bytesUploaded / bytesTotal) * 100))
+  //             console.log(Math.round((bytesUploaded / bytesTotal) * 100))
+  //           },
+  //           onSuccess: () => {
+  //             // setFileProgress(100)
+
+  //             // uploadFile.push(signedUrlData.path)
+  //           },
+  //           onError: (err) => {
+  //             console.log(err)
+  //           },
+  //         })
+  //         upload.start()
+  //       }
+     
+    
+  //   // return uploadFile
+  // }
+
   const handleUploadFile = async (files) => {
     // Replace with your actual file data
     const uploadFile = []
@@ -123,7 +192,31 @@ const ChatForm = ({ setMessage }) => {
     }
     return signedUrlData.path
   }
+  const handleInputChange = (e) => {
+    setContent(inputRef.current.innerHTML)
+    console.log(e.target)
+    if (e.target.innerText !== '') {
+      updateTypingStatus(true)
+    } else {
+      updateTypingStatus(false)
+    }
+  }
 
+  const updateTypingStatus = async (isTyping) => {
+    await supabase
+      .from('typing_status')
+      .upsert(
+        {
+          chat_id: param.id,
+          user_id: user.userid,
+          is_typing: isTyping,
+          updated_at: new Date(),
+        },
+        { onConflict: 'user_id' }
+      )
+      .eq('chat_id', param.id)
+      .eq('user_id', user.userid)
+  }
   // find chat with id and store  in the object in the place
   const submitFormHandler = (e) => {
     e.preventDefault()
@@ -151,6 +244,7 @@ const ChatForm = ({ setMessage }) => {
 
         inputRef.current.innerHTML = ''
         setText('')
+        updateTypingStatus(false)
       } else {
         if (forwardSelfMessage) {
           forwardSelfClickHandler(forwardSelfMessage.id)
@@ -162,18 +256,23 @@ const ChatForm = ({ setMessage }) => {
   }
   const sendMessageHandler = async (content) => {
     let fileUrl = ''
-    setMessage([{
-      sentat: new Date().getTime(),
-        senderid:user.userid,
-        content:strToByte(content),
-        messageType:'text'
-
-    }],true)
+  
+    if(!content||content==='&nbsp;')return
+    setMessage(
+      [
+        {
+          senderid: user.userid,
+          content: strToByte(content),
+          messageType: 'text',
+          sentat: new Date(),
+        },
+      ],
+      true
+    )
 
     if (typeof content !== 'string') {
       fileUrl = await handleAudioUpload(content[0])
-      setMessage(content[0],true)
-
+      setMessage(content[0], true)
     }
     if (typeof content !== 'string' && !fileUrl) return
     const { data, error } = await supabase.from('messages').insert([
@@ -187,13 +286,15 @@ const ChatForm = ({ setMessage }) => {
       },
     ])
     if (error) console.log(error)
+    updateTypingStatus(false)
   }
   const editContentHandler = (e) => {
     e.preventDefault()
-    if (inputRef.current) {
-      editHandler(inputRef.current.innerHTML)
+    if (inputRef.current.innerHTML!=='') {
+      editHandler(inputRef.current.innerHTML,messageID,param.id)
       inputRef.current ? (inputRef.current.innerHTML = '') : null
       setText('')
+      setEditContent(null)
     }
   }
   const uploadFileHandler = async (txt) => {
@@ -230,7 +331,7 @@ const ChatForm = ({ setMessage }) => {
       const newImageUpload = imagesUpload.map((item) => {
         return { ...item, caption: txt }
       })
-      setMessage(newImageUpload,true)
+      setMessage(newImageUpload, true)
       fileUrl = await handleUpload(selectedFile)
       if (fileUrl) {
         for (let i = 0; i < fileUrl.length; i++) {
@@ -326,7 +427,7 @@ const ChatForm = ({ setMessage }) => {
                   className="chat__input overflow-hidden  z-10"
                   dir="auto"
                   ref={inputRef}
-                  onInput={(e) => setContent(inputRef.current.innerHTML)}
+                  onInput={(e) => handleInputChange(e)}
                   autoFocus
                   contentEditable
                   placeholder="message"
@@ -418,6 +519,7 @@ const ChatForm = ({ setMessage }) => {
 export default ChatForm
 
 const EditBox = ({ edit, setEdit, input }) => {
+  console.log(edit);
   return (
     <div
       className={`form-box rounded-b-none  transition-all duration-300 absolute top-0 ${
@@ -434,7 +536,7 @@ const EditBox = ({ edit, setEdit, input }) => {
         <div className="flex flex-col gap-0.5 border-l-2 border-l-indigo-700 px-4 ml-5 w-[470px]">
           <p className="text-[15px] text-indigo-400 font-medium">Editing</p>
           <p className="text-[14px] truncate w-[80%]" dir="auto">
-            <TypeMessage dis={edit} />
+            <TypeMessage dis={edit?.content} type={edit?.messageType} name={edit?.name} />
           </p>
         </div>
       </div>
