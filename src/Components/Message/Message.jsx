@@ -2,40 +2,53 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import ProfileImage from '../ProfileImage/ProfileImage'
 import FileType from '../FileType/FileType'
 import FooterMessage from '../FooterMessage/FooterMessage'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { HashLink } from 'react-router-hash-link'
 import { BsArrowRightShort } from 'react-icons/bs'
 import TypeMessage from '../TypeMessage/TypeMessage'
-import messageType from '../../Utility/MessageType'
+import messageTypeChecker from '../../Utility/messageTypeChecker'
 import ReactionBox from '../UI/ReactionBox/ReactionBox'
 
 import LinkPreview from '../LinkPerview/LinkPreview'
 import Profile from '../Profile/Profile'
 import { Link } from 'react-router-dom'
 import { ChatContext } from '../../Context/ChatContext'
+import decodeMessage from '../../Utility/decodeMessage'
+import { UserContext } from '../../Context/UserContext'
+import { supabase } from '../../superbase'
 
 const Message = ({
-  from,
-  messageDis,
+  recipientid,
+  content,
   date,
   read,
   edited,
   pin,
   send,
-  messageId,
+  messageid,
   contact,
   reaction,
   forward,
   forwardSelf,
   onContext,
-  replyData,
-  to,
+  replayData,
+  senderid,
+  messageType,
+  caption,
+  name,
+  status,
+  src,
+  sentat,
+  isDeleted,
+  isEdited,
 }) => {
   const location = useLocation()
   const navigate = useNavigate()
   const hashId = location.hash.substring(1)
   const [style, setStyle] = useState('')
   const [url, setUrl] = useState('')
+  // const [replayData, setReplayData] = useState(null)
+  const param = useParams()
 
   const {
     checkMessageHandler,
@@ -47,10 +60,11 @@ const Message = ({
     chatBg,
     font,
   } = useContext(ChatContext)
+  const { user } = useContext(UserContext)
   let messageContent = null
 
   useEffect(() => {
-    if (hashId === messageId) {
+    if (hashId === messageid) {
       setStyle('bg-indigo-300/10')
 
       setTimeout(() => {
@@ -62,73 +76,106 @@ const Message = ({
     return () => {
       setStyle('')
     }
-  }, [location, forward])
+  }, [location])
+  // useEffect(() => {
+  //   if (replayId) getReplayMessageInfo(replayId)
+  // }, [])
 
   const formatTime = (date) => {
-    return new Intl.DateTimeFormat('tr', {
+    const messageDate = new Date(sentat)
+    // console.log(messageDate.toLocaleString());
+    return new Intl.DateTimeFormat('en', {
       hour: '2-digit',
       minute: '2-digit',
-    }).format(date)
+    }).format(messageDate)
   }
+
+  // const getReplayMessageInfo = async (id) => {
+  //   try {
+  //     let { data, error } = await supabase
+  //       .from('messages')
+  //       .select('messageid,content,messageType,name,senderid')
+  //       .eq('chatID', param.id)
+  //       .eq('messageid', id)
+  //       .single()
+  //       if(error) throw error
+  //       setReplayData(data)
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }
 
   const checkHandler = (id, check) => {
     checkMessageHandler(id, check)
   }
   if (
-    (!messageDis?.includes(
-      '<img src=https://cdn.jsdelivr.net/npm/emoji-datasource-apple@14.0.0/img/apple/64/'
-    ) &&
-      !messageDis?.includes('<img src=') &&
-      messageDis?.includes('http://')) ||
-    messageDis?.includes('https://') ||
-    messageDis?.includes('www.')
+    (content &&
+      !decodeMessage(content)?.includes(
+        '<img src=https://cdn.jsdelivr.net/npm/emoji-datasource-apple@14.0.0/img/apple/64/'
+      ) &&
+      content &&
+      !decodeMessage(content)?.includes('<img src=') &&
+      messageType === 'text' &&
+      content &&
+      decodeMessage(content)?.includes('http://')) ||
+    (content && decodeMessage(content)?.includes('https://')) ||
+    (content && decodeMessage(content)?.includes('www.'))
   ) {
-    messageContent = <LinkPreview text={messageDis} />
+    messageContent = <LinkPreview text={decodeMessage(content)} />
   } else {
     messageContent = (
       <div
         className={`text-white ${
-          (from?.relation !== 'me' && forward) || contact?.userName !== to
+          (senderid !== user.userid && forward) ||
+          contact?.username !== recipientid
             ? 'text-gray-700'
             : 'text-white'
         }`}
         dir="auto"
-        dangerouslySetInnerHTML={{ __html: messageDis }}
+        dangerouslySetInnerHTML={{ __html: content && decodeMessage(content) }}
       ></div>
     )
     if (contact) messageContent = ''
   }
 
-  let arr = checkMessage?.findIndex((item) => item.messageId === messageId)
+  let arr = checkMessage?.findIndex((item) => item.messageId === messageid)
   return (
     <div
-      className={`grid w-full  relative  px-6 py-3  ${
-        (from?.relation === 'me' && !forward) || contact?.userName === to
+      className={`grid w-full  relative  px-6 py-3   ${
+        senderid === user.userid && user.userid !== recipientid
           ? 'chat-end '
           : 'chat-start '
       } 
       ${
         checkMessage[arr]?.check ? 'bg-indigo-300/10' : ''
       }  ${style}  transition-all duration-200`}
-      onContextMenu={(e) => contextmenuHandler(e, messageId)}
+      onContextMenu={(e) =>
+        contextmenuHandler(e, messageid, senderid, messageType, content, name)
+      }
     >
       <section className="flex justify-between w-full ">
         {/* messageBody */}
         <div
           style={{ fontSize: `${font}px` }}
-          data-id={messageId}
-          className={`chat-bubble relative justify-self-end break-words px-2.5 group ${
-            reaction ? 'min-w-[140px]' : ''
-          } ${
-            (from?.relation === 'me' && !forward) || contact?.userName === to
-              ? 'chat-bubble-primary order-1 justify-self-end  '
-              : 'chat-bubble order-0 dark:bg-gray-700 bg-gray-50 '
-          }  ${
-            (messageDis && messageDis[0]?.type === 'file') ||
-            typeof messageDis === 'string'
-              ? 'max-w-[345px]'
-              : 'max-w-[420px] px-1.5 py-1.5'
-          } `}
+          id={messageid}
+          className={`chat-bubble relative break-words px-2.5 group 
+            ${
+              isDeleted
+                ? 'animate-fade-out-down [animation-iteration-count:1_!important]'
+                : ''
+            } ${reaction ? 'min-w-[140px]' : ''} ${
+              senderid === user.userid && user.userid !== recipientid
+                ? 'chat-bubble-primary order-1 justify-self-end  '
+                : 'chat-bubble order-0 dark:bg-gray-700 bg-gray-50 '
+            }  ${
+              (content &&
+                content &&
+                decodeMessage(content) &&
+                messageType === 'file') ||
+              (content && typeof decodeMessage(content) === 'string')
+                ? 'max-w-[345px]'
+                : 'max-w-[420px] px-1.5 py-1.5'
+            } `}
         >
           {forwardSelf && (
             <p className="text-xs pr-4 pb-1 pt-0.5 pl-0.5 text-gray-300">
@@ -142,7 +189,7 @@ const Message = ({
                 className={`text-xs   mb-1.5 block mt-0.5`}
                 dir="auto"
               >
-                {from.userName}
+                {user.username}
               </span>
 
               <button className="absolute bottom-2 -right-11 btn btn-circle btn-sm text-white bg-opacity-70 -translate-x-5 opacity-0 group-hover:opacity-100 group-hover:translate-x-0">
@@ -152,27 +199,31 @@ const Message = ({
           )}
           {/* box for reply Message */}
 
-          {replyData && (
+          {replayData && (
             <HashLink
-              to={`#${replyData.messageId}`}
+              
+              to={`#${replayData?.messageid}`}
               scroll={(el) =>
                 el.scrollIntoView({
                   behavior: 'smooth',
-                  // block: 'end',
+
+                  block: 'end',
                 })
               }
               className={`  mx-0 py-1 px-2 mb-2 w-32 rounded-lg flex gap-2.5 cursor-pointer transition-all duration-200  ${
-                from?.relation === 'me' && !forward
+                // user?.userid === replayData?.senderid && !forward
+                user?.userid === replayData?.senderid
                   ? 'bg-indigo-400/30 hover:bg-indigo-400/60 '
                   : 'bg-gray-600/30'
               }`}
             >
               <p className="w-[2px] bg-gray-300 rounded-full "></p>
 
-              {replyData.messageDis[0]?.type === 'img' ||
-              replyData.messageDis[0]?.type === 'video' ? (
+              {replayData?.messageType === 'img' ||
+              replayData?.messageType === 'video' ? (
                 <TypeMessage
-                  dis={replyData.messageDis}
+                  dis={replayData?.content}
+                  type={replayData?.messageType}
                   w={'w-9 aspect-square'}
                 />
               ) : null}
@@ -180,7 +231,8 @@ const Message = ({
               <div className="flex flex-col gap-0.5 ">
                 <p
                   className={`font-semibold  text-sm ${
-                    from?.relation === 'me' && !forward
+                    // from?.relation === 'me' && !forward
+                    user?.userid === replayData?.senderid
                       ? 'text-white'
                       : 'text-indigo-500'
                   }`}
@@ -188,15 +240,18 @@ const Message = ({
                 >
                   Abolfazl
                 </p>
-                <p className="text-[14px] truncate ">
-                  {replyData.messageDis &&
-                  replyData.messageDis[0]?.type !== 'img' &&
-                  replyData.messageDis[0]?.type !== 'video' ? (
-                    <TypeMessage dis={replyData.messageDis} />
+                <p className="text-[12px] truncate text-gray-300">
+                  {replayData?.content &&
+                  replayData?.messageType !== 'img' &&
+                  replayData?.messageType !== 'video' ? (
+                    <TypeMessage
+                      dis={replayData?.content}
+                      type={replayData?.messageType}
+                    />
                   ) : (
-                    messageType(
-                      replyData.messageDis[0]?.type,
-                      replyData.messageDis[0]?.name
+                    messageTypeChecker(
+                      replayData?.messageType,
+                      replayData?.name
                     )
                   )}
                 </p>
@@ -227,38 +282,36 @@ const Message = ({
           )}
 
           {/* message for Text */}
-          {typeof messageDis === 'string' ? (
+          {messageType === 'text' ? (
             messageContent
           ) : (
-            <ul
-              className={`${
-                messageDis && messageDis[0]?.type === 'file'
-                  ? 'grid-2'
-                  : 'grid-1'
-              }  `}
-            >
-              {messageDis?.map((content, i, arr) => (
-                <>
-                  <FileType
-                    key={content.id}
-                    {...content}
-                    from={from}
-                    idType={content.id}
-                    contextMenu={contextmenuHandler}
-                    isChatInfo={false}
-                    messageId={messageId}
-                    setAudio={content.type === 'mp3' && setAudio}
-                    isColor={from.relation === 'me' && !forward ? true : false}
-                  />
-                </>
-              ))}
+            <ul className={`${messageType !== 'text' ? 'grid-2' : 'grid-1'}  `}>
+              <>
+                <FileType
+                  key={messageid}
+                  src={content && decodeMessage(content)}
+                  path={src}
+                  type={messageType}
+                  from={senderid}
+                  idType={messageid}
+                  contextMenu={contextmenuHandler}
+                  isChatInfo={false}
+                  messageId={messageid}
+                  setAudio={messageType === 'mp3' && setAudio}
+                  isColor={senderid !== user.userid && !forward ? true : false}
+                  caption={caption}
+                  name={name}
+                />
+              </>
             </ul>
           )}
-          {messageDis && messageDis[messageDis?.length - 1]?.caption && (
-            <p className="text-sm px-2 my-1" dir="auto">
-              {messageDis[messageDis?.length - 1]?.caption}
-            </p>
-          )}
+          {content &&
+            decodeMessage(content) &&
+            decodeMessage(content)[content?.length - 1]?.caption && (
+              <p className="text-sm px-2 my-1" dir="auto">
+                {content[content?.length - 1]?.caption}
+              </p>
+            )}
           {reaction && (
             <ReactionBox
               reaction={reaction}
@@ -266,11 +319,14 @@ const Message = ({
             />
           )}
           <FooterMessage
-            message={messageDis && messageDis[0]}
-            date={formatTime(date)}
-            read={read}
-            send={send}
-            edited={edited}
+            message={
+              content && decodeMessage(content) && decodeMessage(content)[0]
+            }
+            date={sentat && formatTime(sentat)}
+            status={status}
+            edited={isEdited}
+            messageType={messageType}
+            caption={caption}
             pin={pin}
             reaction={reaction}
           />
@@ -283,7 +339,7 @@ const Message = ({
               ? 'opacity-100'
               : 'opacity-0'
           } ${
-            (from?.relation === 'me' && !forward) || contact?.userName === to
+            senderid === user.userid && user.userid !== recipientid
               ? 'order-0 mr-16 self-end'
               : 'order-1 ml-16'
           }`}
