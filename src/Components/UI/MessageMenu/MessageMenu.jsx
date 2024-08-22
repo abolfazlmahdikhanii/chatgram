@@ -6,9 +6,11 @@ import { MdDeleteOutline } from "react-icons/md";
 import { TbSquareRoundedCheck } from "react-icons/tb";
 import ReactionEmoji from "../ReactionEmoji/ReactionEmoji";
 import { ChatContext } from "../../../Context/ChatContext";
+import { UserContext } from "../../../Context/UserContext";
 
 const MessageMenu = ({onShowMessage,show,isChatInfo=false}) => {
-const {pageX,pageY,messageID,checkMessageHandler,selectEditTextMessageHandler,replyMessageHandler,ForwardHandler,reactionEmojiHandler,clickRemoveHandler,pinMessage,setShowContextMenu,setShowAlert,setIsPin,setISChatInfo}=useContext(ChatContext)
+const {pageX,pageY,messageID,checkMessageHandler,selectEditTextMessageHandler,replyMessageHandler,ForwardHandler,reactionEmojiHandler,clickRemoveHandler,pinMessage,setShowContextMenu,setShowAlert,setIsPin,setISChatInfo,deleteMessage,senderID,messageType,messageContent,messageName}=useContext(ChatContext)
+const {user}=useContext(UserContext)
 
 
   const [emoji, setEmoji] = useState([
@@ -72,7 +74,7 @@ const {pageX,pageY,messageID,checkMessageHandler,selectEditTextMessageHandler,re
     </svg>
       ,
       title: "Reply",
-      event:()=>replyMessageHandler(messageID),
+      event:()=>replyMessageHandler(messageID,messageContent,messageType,messageName,senderID),
       style:isChatInfo?"hidden":"flex",
     },
     {
@@ -96,8 +98,8 @@ const {pageX,pageY,messageID,checkMessageHandler,selectEditTextMessageHandler,re
     </svg>
       ,
       title: "Edit",
-      event:()=>selectEditTextMessageHandler(messageID),
-      style:isChatInfo?"hidden":"flex",
+      event:()=>selectEditTextMessageHandler(messageID,messageContent,messageType,messageName),
+      style:isChatInfo||senderID!==user.userid||messageType!=='text'?"hidden":"flex",
     },
     {
       id: crypto.randomUUID(),
