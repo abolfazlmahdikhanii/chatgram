@@ -13,7 +13,7 @@ import ContentWrapper from '../ContentWrapper/ContentWrapper'
 import SelectBox from '../UI/SelectBox/SelectBox'
 import AudioRecorders from '../AudioRecorder/AudioRecorder'
 import TypeMessage from '../TypeMessage/TypeMessage'
-import messageType from '../../Utility/MessageType'
+import messageType from '../../Utility/messageTypeChecker'
 import { useContext } from 'react'
 import { ChatContext } from '../../Context/ChatContext'
 import { supabase, supabaseAnonKey, supabaseUrl } from '../../superbase'
@@ -55,8 +55,9 @@ const ChatForm = ({ setMessage }) => {
     setReplyMessage,
     chatId,
     friendID,
+    profileInfo,
     setFileProgress,
-    messageID
+    messageID,
   } = useContext(ChatContext)
 
   useEffect(() => {
@@ -87,10 +88,10 @@ const ChatForm = ({ setMessage }) => {
     for (const file of files) {
       const { data: signedUrlData, error: urlError } = await supabase.storage
         .from('uploads')
-        .upload(`chats/${param.id}/${Date.now()}_${file.name}`, file,{
+        .upload(`chats/${param.id}/${Date.now()}_${file.name}`, file, {
           onUploadProgress: (event) => {
-            const percent = Math.round((event.loaded * 100) / event.total);
-            setUploadProgress(percent);
+            const percent = Math.round((event.loaded * 100) / event.total)
+            setUploadProgress(percent)
           },
         })
 
@@ -99,7 +100,6 @@ const ChatForm = ({ setMessage }) => {
       }
 
       uploadFile.push(signedUrlData.path)
-
     }
     setFileProgress(100)
     return uploadFile
@@ -123,7 +123,6 @@ const ChatForm = ({ setMessage }) => {
   //     //   .then((data) => {
   //       const uploadEndpoint = `${supabase.storage.from('uploads').getPublicUrl('').publicURL}`;
 
-      
   //         const upload = new Upload(file, {
   //           endpoint: uploadEndpoint,
   //           retryDelays: [0, 1000, 3000, 5000],
@@ -151,8 +150,7 @@ const ChatForm = ({ setMessage }) => {
   //         })
   //         upload.start()
   //       }
-     
-    
+
   //   // return uploadFile
   // }
 
@@ -226,7 +224,7 @@ const ChatForm = ({ setMessage }) => {
     if (inputRef.current) {
       if (inputRef.current.innerHTML !== '') {
         if (replyMessage) {
-          sendMessageHandler(text.innerHTML, replyMessage)
+          sendMessageHandler(text.innerHTML, replyMessage?.messageid)
           setShowReply(false)
           setReplyMessage(null)
           // if(isEnterPressed)set(null)
@@ -254,10 +252,10 @@ const ChatForm = ({ setMessage }) => {
       }
     }
   }
-  const sendMessageHandler = async (content) => {
+  const sendMessageHandler = async (content, replay = null) => {
     let fileUrl = ''
-  
-    if(!content||content==='&nbsp;')return
+
+    if (!content || content === '&nbsp;') return
     setMessage(
       [
         {
@@ -283,6 +281,7 @@ const ChatForm = ({ setMessage }) => {
         messageType: typeof content !== 'string' ? content[0].type : 'text',
         status: 'send',
         chatID: param.id,
+        replayId: replay,
       },
     ])
     if (error) console.log(error)
@@ -290,8 +289,8 @@ const ChatForm = ({ setMessage }) => {
   }
   const editContentHandler = (e) => {
     e.preventDefault()
-    if (inputRef.current.innerHTML!=='') {
-      editHandler(inputRef.current.innerHTML,messageID,param.id)
+    if (inputRef.current.innerHTML !== '') {
+      editHandler(inputRef.current.innerHTML, editContent?.messageid, param.id)
       inputRef.current ? (inputRef.current.innerHTML = '') : null
       setText('')
       setEditContent(null)
@@ -325,6 +324,7 @@ const ChatForm = ({ setMessage }) => {
       // sendMessageHandler(newFileUpload)
     }
   }
+
   const uploadImageHandler = async (txt) => {
     let fileUrl = ''
     if (imagesUpload) {
@@ -381,6 +381,8 @@ const ChatForm = ({ setMessage }) => {
               setShowReply={setShowReply}
               replyMessage={replyMessage}
               input={inputRef}
+              user={user}
+              info={profileInfo}
             />
             <ForwardBox
               forwardSelf={showSelfForward}
@@ -519,7 +521,7 @@ const ChatForm = ({ setMessage }) => {
 export default ChatForm
 
 const EditBox = ({ edit, setEdit, input }) => {
-  console.log(edit);
+  console.log(edit)
   return (
     <div
       className={`form-box rounded-b-none  transition-all duration-300 absolute top-0 ${
@@ -536,7 +538,11 @@ const EditBox = ({ edit, setEdit, input }) => {
         <div className="flex flex-col gap-0.5 border-l-2 border-l-indigo-700 px-4 ml-5 w-[470px]">
           <p className="text-[15px] text-indigo-400 font-medium">Editing</p>
           <p className="text-[14px] truncate w-[80%]" dir="auto">
-            <TypeMessage dis={edit?.content} type={edit?.messageType} name={edit?.name} />
+            <TypeMessage
+              dis={edit?.content}
+              type={edit?.messageType}
+              name={edit?.name}
+            />
           </p>
         </div>
       </div>
@@ -554,7 +560,7 @@ const EditBox = ({ edit, setEdit, input }) => {
   )
 }
 
-const ReplyBox = ({ reply, setShowReply, replyMessage, input }) => {
+const ReplyBox = ({ reply, setShowReply, replyMessage, input, user, info }) => {
   return (
     <div
       className={`form-box rounded-b-none  transition-all duration-300 absolute top-0 ${
@@ -568,8 +574,8 @@ const ReplyBox = ({ reply, setShowReply, replyMessage, input }) => {
         <p className="px-1 text-[rgb(129,140,248)]">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            width={19}
-            height={19}
+            width={22}
+            height={22}
             fill="none"
             viewBox="0 0 24 24"
           >
@@ -593,22 +599,21 @@ const ReplyBox = ({ reply, setShowReply, replyMessage, input }) => {
             />
           ) : null} */}
 
-          <div className="flex flex-col  gap-0.5  px-4 w-[95%]">
+          <div className="flex flex-col  gap-0.5  px-4 w-[100%]">
             <p className="text-[15px] text-indigo-400 font-medium" dir="auto">
-              {replyMessage?.user}
+              Replay to {''}
+              <span>
+                {replyMessage?.senderid === user?.userid
+                  ? user?.username || user?.email?.split('@')[0]
+                  : info?.username || info?.email?.split('@')[0]}
+              </span>
             </p>
-            <p className="text-[14px] truncate " dir="auto">
-              {(replyMessage?.messageDis &&
-                replyMessage?.messageDis[0]?.type !== 'img' &&
-                replyMessage?.messageDis[0]?.type !== 'video') ||
-              replyMessage?.messageDis[0]?.type !== 'mp3' ? (
-                <TypeMessage dis={replyMessage?.messageDis} />
-              ) : (
-                messageType(
-                  replyMessage?.messageDis[0]?.type,
-                  replyMessage?.messageDis[0]?.name
-                )
-              )}
+            <p className="text-[14px] truncate text-gray-200" dir="auto">
+              <TypeMessage
+                dis={replyMessage?.content}
+                type={replyMessage?.messageType}
+                name={replyMessage?.name}
+              />
             </p>
           </div>
         </div>
