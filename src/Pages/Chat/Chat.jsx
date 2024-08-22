@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useId, useRef, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useId, useRef, useState } from 'react'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import ChatHeader from '../../Components/ChatHeader/ChatHeader'
@@ -88,11 +88,11 @@ const Chat = () => {
         { event: '*', schema: 'public', table: 'messages' },
         (payload) => {
           const newMsg = payload.new
-
-          if (newMsg.chatID == match?.id) {
+         
+          if (newMsg.chatID == match?.id||!newMsg.length) {
             setMessages((prevMessages) => [...prevMessages, payload.new])
             lastMessage[match.id] = payload.new
-
+            console.log(message);
             setLastMessage(payload.new)
             // console.log(payload.new);
             fetchMessages()
@@ -108,12 +108,12 @@ const Chat = () => {
       // supabase.removeSubscription(subscription)
     }
   }, [match.id])
-  const fetchMessages = async () => {
+  const fetchMessages =async () => {
     let { data: messages, error } = await supabase
       .from('messages')
-      .select('*')
+      .select('*,replayId(messageid,messageType,content,name,senderid)')
       .eq('chatID', match.id)
-
+      .eq('isDeleted',false)
       .order('sentat', { ascending: true })
 
     if (error) console.error('Error fetching messages:', error)
@@ -269,6 +269,7 @@ const Chat = () => {
                         forwardSelf={item?.forwardSelf}
                         contact={item?.contact}
                         src={item.src}
+                        replayData={item?.replayId}
                         messageType={
                           item.messageType ? item.messageType : item.type
                         }
@@ -314,7 +315,7 @@ const Chat = () => {
             <Modal userID={match?.id} />
             <ToastContainer />
           </main>
-          {showAlert && <Dialog />}
+          {showAlert && <Dialog chatId={match.id}/>}
         </div>
 
         {showChatInfo && (
