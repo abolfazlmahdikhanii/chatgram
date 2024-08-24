@@ -59,6 +59,7 @@ const Chat = () => {
     showPinAudio,
     setProfileInfo,
     friendID,
+    setPinMessage
   } = useContext(ChatContext)
   const { user } = useContext(UserContext)
   let lastMessage = []
@@ -111,7 +112,7 @@ const Chat = () => {
   const fetchMessages =async () => {
     let { data: messages, error } = await supabase
       .from('messages')
-      .select('*,replayId(messageid,messageType,content,name,senderid)')
+      .select('*,replayId(messageid,messageType,content,name,senderid,isDeleted),forward_from(email,bgProfile,username,userid)')
       .eq('chatID', match.id)
       .eq('isDeleted',false)
       .order('sentat', { ascending: true })
@@ -119,9 +120,9 @@ const Chat = () => {
     if (error) console.error('Error fetching messages:', error)
     setMessages(messages)
     lastMessage[match.id] = messages
-
     setLastMessage(lastMessage)
     groupMessageHandler(messages)
+    getPinMessage(messages)
   }
   const fetchSavedMessages = async () => {
     let { data: messages, error } = await supabase
@@ -199,6 +200,11 @@ const Chat = () => {
 
     setGroupedMessages(messageGroup)
   }
+  const getPinMessage=(arr)=>{
+    const filteredPin=arr.filter(message=>message?.isPin)
+    console.log(filteredPin);
+    setPinMessage(filteredPin)
+  }
   const closePinBox = () => {
     const pinArr = message?.messages?.filter(
       (item) => item.pin && chatId == match.id
@@ -238,8 +244,7 @@ const Chat = () => {
             ref={chatRef}
           >
             <PinAudio path={audio} />
-            {message?.messages?.filter((item) => item.pin && chatId == match.id)
-              .length > 0 ? (
+            {pinMessage?.length>0 ? (
               <PinBox close={closePinBox} />
             ) : null}
 
@@ -265,7 +270,7 @@ const Chat = () => {
                     {group.messages.map((item) => (
                       <Message
                         key={item.id}
-                        forward={item?.forward}
+                        forwardInfo={item?.forward_from}
                         forwardSelf={item?.forwardSelf}
                         contact={item?.contact}
                         src={item.src}
