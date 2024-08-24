@@ -36,6 +36,33 @@
     animation: fade-out-downs .6s cubic-bezier(0.4, 0, 0.6, 1) once;
     -webkit-animation: fade-out-downs .6s cubic-bezier(0.4, 0, 0.6, 1) once;
 }
+.microlink_card {
+    background-color: rgba(255, 255, 255, 0.3) !important;
+    color: #fff !important;
+    border: none !important;
+    padding: 10px !important;
+    border-left: 5px solid #fff !important;
+
+}
+.microlink_card__content_title{
+    font-family: inherit !important;
+    font-family: 600 !important;
+    font-size: 14px !important;
+}
+.microlink_card__content_description{
+    font-family: inherit !important;
+    font-family: 600 !important;
+    font-size: 12px !important;
+    line-height: 1.8 !important;
+    text-align: justify !important;
+}
+.microlink_card__media_image{
+    border-radius: 6px !important;
+    -webkit-border-radius: 6px !important;
+    -moz-border-radius: 6px !important;
+    -ms-border-radius: 6px !important;
+    -o-border-radius: 6px !important;
+}
 @layer base {
     ::-webkit-scrollbar {
         @apply w-[9px];
@@ -156,7 +183,7 @@
     }
 
     [data-text-color='violet'] {
-      @apply bg-gradient-to-r from-violet-600 to-indigo-600 text-transparent bg-clip-text
+      @apply bg-gradient-to-r from-gray-600 to-indigo-600  text-transparent bg-clip-text
     }
     [data-text-color='green'] {
       @apply  bg-gradient-to-br from-green-500 via-green-600 to-green-800 text-transparent bg-clip-text
@@ -165,19 +192,19 @@
       @apply  bg-gradient-to-r from-indigo-700 to-indigo-500 text-transparent bg-clip-text
     }
     [data-text-color='yellow'] {
-      @apply  bg-gradient-to-r from-amber-500 to-amber-300 text-transparent bg-clip-text
+      @apply  bg-gradient-to-r from-amber-500 to-amber-300 text-transparent bg-clip-text font-bold
     }
     [data-text-color='red'] {
-      @apply  bg-gradient-to-r from-red-600 to-red-500 text-transparent bg-clip-text
+      @apply  bg-gradient-to-r from-red-600 to-red-500 text-transparent bg-clip-text font-bold
     }
     [data-text-color='orange'] {
-      @apply bg-gradient-to-b from-orange-500 to-yellow-300 text-transparent bg-clip-text
+      @apply bg-gradient-to-b from-orange-500 to-yellow-300 text-transparent bg-clip-text font-bold
     }
     [data-text-color='purple'] {
-      @apply bg-gradient-to-tr from-purple-900 to-indigo-500 text-transparent bg-clip-text
+      @apply bg-gradient-to-tr from-purple-400 to-indigo-400 text-transparent bg-clip-text font-bold
     }
     [data-text-color='rose'] {
-      @apply  bg-gradient-to-br from-rose-400 via-rose-400 to-rose-600 text-transparent bg-clip-text
+      @apply  bg-gradient-to-br from-rose-400 via-rose-400 to-rose-600 text-transparent bg-clip-text font-bold
     }
 
     [data-color='violet'] {
