@@ -1,25 +1,49 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import Profile from '../Profile/Profile'
+import { UserContext } from '../../Context/UserContext'
 
-const UserProfile = ({userName,relation,bgProfile,profileImg,activeStatus,onForward,id}) => {
+const UserProfile = ({
+  id,
+  chatID,
+  chats,
+  activeStatus,
+  onForward,
+  saveChat,
+  fromChatID
+  
+}) => {
+  
+    const {user}=useContext(UserContext)
+    
+    console.log(chatID);
+    let profile=null
+    if(chats)profile=chats
+    if(saveChat)profile=saveChat
+  return (
+    <li
+      className="user-profile dark:hover:bg-gray-700/20"
+      onClick={() => {onForward(chatID,user?.userid,profile.userid,'normal',fromChatID)}}
+    >
+      <Profile
+        size="m"
+        path={profile?.avatar_url}
+        userName={profile?.username || profile?.email?.split('@')[0]}
+        bgProfile={profile?.bgProfile}
+        isSave={user?.userid == profile?.userid}
+      />
 
-    return (
-        <li className='user-profile dark:hover:bg-gray-700/20' onClick={()=>onForward(id)}>
-           <Profile size="m" path={profileImg} userName={userName} bgProfile={bgProfile} relation={relation} isSave={relation==="me"?true:false}/>     
+      <div className="w-full flex-col gap-0.5 flex">
+        {/* top */}
 
-            <div className="w-full flex-col gap-0.5 flex">
-                {/* top */}
-          
-                    <p className="  dark:text-white capitalize text-[18px] text-gray-700 font-semibold dark:font-medium">
-                        {userName}
-                    </p>
-                    <p className="text-[15px] dark:text-gray-400 text-gray-600">
-                        {relation!=="me"?activeStatus:"forward here to save"}
-                    </p>
-                
-            </div>
-        </li>
-    )
+        <p className="  dark:text-white capitalize text-[18px] text-gray-700 font-semibold dark:font-medium">
+        {profile?.username || profile?.email?.split('@')[0]}
+        </p>
+        <p className="text-[15px] dark:text-gray-400 text-gray-600">
+          {user?.userid === profile?.userid ? activeStatus : 'forward here to save'}
+        </p>
+      </div>
+    </li>
+  )
 }
 
 export default UserProfile
