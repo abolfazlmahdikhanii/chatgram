@@ -1,6 +1,7 @@
 import { createContext, useState } from 'react'
 import chatData from '../data'
 import { supabase } from '../superbase'
+import messageType from '../Utility/messageTypeChecker'
 
 export const ChatContext = createContext({
   chat: [],
@@ -32,6 +33,7 @@ export const ChatContext = createContext({
   replyMessage: null,
   forwardSelfMessage: null,
   userMessage: null,
+  forwardList: [],
   fileProgress: 0,
   showPreview: {
     show: false,
@@ -39,6 +41,14 @@ export const ChatContext = createContext({
     src: null,
   },
   fileUrl: '',
+  messageType: '',
+  senderID: '',
+  messageContent: '',
+  messageName: '',
+  setMessageType: () => {},
+  setMessageName: () => {},
+  setMessageContent: () => {},
+  setSenderID: () => {},
   findUserMessage: () => {},
   filterChat: () => {},
   sendMessageHandler: () => {},
@@ -94,12 +104,14 @@ export const ChatContext = createContext({
   clearHistory: () => {},
   setLastMessage: () => {},
   deleteMessage: () => {},
+  setForwardList: () => {},
 })
 
 export const ChatProvider = ({ children }) => {
   const [chat, setChat] = useState([])
   const [chatInfo, setChatInfo] = useState([])
   const [lastMessage, setLastMessage] = useState([])
+  const [forwardList, setForwardList] = useState([])
   const [fileProgress, setFileProgress] = useState(0)
 
   const [chatId, setChatId] = useState('')
@@ -117,12 +129,14 @@ export const ChatProvider = ({ children }) => {
   const [userMessage, setUserMessage] = useState()
   const [checkForward, setCheckForward] = useState(false)
   const [forwardContact, setForwardContact] = useState(false)
-  const [isPin, setIsPin] = useState(false)
+  const [isPin, setIsPin] = useState({})
   const [pinMessage, setPinMessage] = useState([])
   const [forwardSelfMessage, setForwardSelfMessage] = useState(null)
   const [showSelfForward, setShowSelfForward] = useState(false)
   const [showFrowardModal, setShowForwardModal] = useState(false)
   const [editContent, setEditContent] = useState('')
+  const [messageContent, setMessageContent] = useState('')
+  const [messageName, setMessageName] = useState('')
   const [showAlert, setShowAlert] = useState(false)
   const [isRemove, setIsRemove] = useState(false)
   const [showReply, setShowReply] = useState(false)
@@ -132,6 +146,8 @@ export const ChatProvider = ({ children }) => {
   const [font, setFont] = useState(16)
   const [chatBg, setChatBg] = useState('')
   const [searchChat, setSearchChat] = useState('')
+  const [messageType, setMessageType] = useState('')
+  const [senderID, setSenderID] = useState('')
   const [fileUrl, setFileUrl] = useState('')
   const [showPreview, setShowPreview] = useState({
     show: false,
@@ -243,37 +259,44 @@ export const ChatProvider = ({ children }) => {
 
     setChat(newChat)
   }
-  const removeMessageText = (id, chat, findedChat, newMessage) => {
-    const findMessage = newMessage?.find(
-      (item) => item.messageId === id && item?.messageDis
-    )
-    findMessage.messageDis = ''
-    findMessage.pin = false
+  // const removeMessageText = (id, chat, findedChat, newMessage) => {
+  //   const findMessage = newMessage?.find(
+  //     (item) => item.messageId === id && item?.messageDis
+  //   )
+  //   findMessage.messageDis = ''
+  //   findMessage.pin = false
 
-    const filterPin = pinMessage.filter(
-      (item) => item.pin && item?.messageDis !== ''
-    )
+  //   const filterPin = pinMessage.filter(
+  //     (item) => item.pin && item?.messageDis !== ''
+  //   )
 
-    setPinMessage(filterPin)
-    findedChat.messages = newMessage.filter(
-      (item) => item.messageDis !== '' || item.messageDis.length < 0
-    )
+  //   setPinMessage(filterPin)
+  //   findedChat.messages = newMessage.filter(
+  //     (item) => item.messageDis !== '' || item.messageDis.length < 0
+  //   )
 
-    findedChat.messages.messageDis = findMessage
-    setChat(chat)
-  }
+  //   findedChat.messages.messageDis = findMessage
+  //   setChat(chat)
+  // }
   const deleteMessage = async (id, chatId) => {
-  try {
-    const { error } = await supabase
-    .from('messages')
-    .delete()
-    .eq('messageid', id)
-    .eq('chatID', chatId)
-    .select()
-  if (error) throw error
-  } catch (error) {
-    console.log(error);
-  }
+    const { data, error } = await supabase
+      .from('messages')
+      .update({ isDeleted: true })
+      .eq('messageid', id)
+      .eq('chatID', chatId)
+      .select()
+    if (error) console.log(error)
+
+    setTimeout(async () => {
+      const { error: deleteError } = await supabase
+        .from('messages')
+        .delete()
+        .eq('isDeleted', true)
+        // .or('messageid', id)
+        .eq('chatID', chatId)
+        .select()
+      if (deleteError) console.log(deleteError)
+    }, 300)
   }
   const forwardSelfMessageHandler = (id) => {
     const newMessage = [...message?.messages]
@@ -350,26 +373,106 @@ export const ChatProvider = ({ children }) => {
       })
     }
   }
-  const forwardClickHandler = (userId) => {
-    const newChat = [...chat]
+  // const forwardClickHandler = (userId) => {
+  //   const newChat = [...chat]
 
-    setCheckMessage([])
-    let findChat = null
-    const newMessages = [...userMessage.messages]
-    if (!checkForward) {
-      findChat = newMessages.find((item) => item?.messageId === messageID)
+  //   setCheckMessage([])
+  //   let findChat = null
+  //   const newMessages = [...userMessage.messages]
+  //   if (!checkForward) {
+  //     findChat = newMessages.find((item) => item?.messageId === messageID)
 
-      if (userId == chatId) forwardSelfMessageHandler(findChat.messageId)
-      else {
-        notCheckForward(newChat, findChat, userId)
-      }
-    } else {
-      findChat = newMessages.filter((item) => item?.check)
-      isCheckForward(newChat, findChat, userId)
+  //     if (userId == chatId) forwardSelfMessageHandler(findChat.messageId)
+  //     else {
+  //       notCheckForward(newChat, findChat, userId)
+  //     }
+  //   } else {
+  //     findChat = newMessages.filter((item) => item?.check)
+  //     isCheckForward(newChat, findChat, userId)
+  //   }
+
+  //   setChat(newChat)
+  //   setShowForwardModal(false)
+  // }
+  const forwardClickHandler = async (
+    chatId,
+    userId,
+    recipientId,
+    forwardType,
+    forwardFormChat
+  ) => {
+    try {
+      const { data, error } = await supabase
+        .from('messages')
+        .insert([
+          {
+            senderid: userId,
+            recipientid: recipientId,
+            chatID: chatId,
+            content: messageContent,
+            name: messageName,
+            messageType: messageType,
+            forward_type: forwardType,
+            isForward: true,
+            forward_from: senderID,
+            status: 'send',
+            forwardFormChat,
+            forwardMessageID: messageID,
+          },
+        ])
+        .select()
+      if (error) throw error
+
+      setShowForwardModal(false)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  const multiForwardClickHandler = async (
+    chatId,
+    userId,
+    recipientId,
+    forwardType,
+    forwardFormChat
+  ) => {
+    // console.log(chatId);
+    const messagesData = []
+    for (const checked of checkMessage) {
+      let { data: message, error: err } = await supabase
+        .from('messages')
+        .select('*')
+        .eq('messageid', checked)
+      if (!message.length) return
+
+      messagesData.push(...message)
     }
 
-    setChat(newChat)
+    for (const message of messagesData) {
+  
+        const { data, error } = await supabase
+          .from('messages')
+          .insert([
+            {
+              senderid: userId,
+              recipientid: message?.recipientid,
+              chatID: chatId,
+              content: message?.content,
+              name: message?.name,
+              messageType: message?.messageType,
+              forward_type: forwardType,
+              isForward: true,
+              forward_from: message?.senderid,
+              status: 'send',
+              forwardFormChat,
+              forwardMessageID: message.messageid,
+            },
+          ])
+          .select()
+        if (error) console.log(error)
+      
+    }
     setShowForwardModal(false)
+    setCheckMessage([])
   }
   // forward
   const forwardSelfClickHandler = (userId) => {
@@ -426,7 +529,15 @@ export const ChatProvider = ({ children }) => {
     setShowForwardModal(false)
   }
 
-  const contextmenuHandler = (e, id, idFile = null) => {
+  const contextmenuHandler = (
+    e,
+    id,
+    senderid,
+    messageType,
+    content,
+    name,
+    isPin
+  ) => {
     e.preventDefault()
     e.stopPropagation()
     setShowContextMenu(false)
@@ -437,23 +548,50 @@ export const ChatProvider = ({ children }) => {
     setPageY(e.pageY)
 
     setMessageID(id)
-    setMessageIDFile(idFile)
+    console.log(id)
+    // setMessageIDFile(idFile)
+    setMessageContent(content)
+    setSenderID(senderid)
+    setMessageType(messageType)
+    setMessageName(name)
+    setIsPin({ mID: id, isPin })
   }
-  const pinMessageHandler = (id, isPin) => {
-    const newMessage = [...message?.messages]
-    const findPin = newMessage.find((item) => item.messageId === id)
+  // const pinMessageHandler = (id, isPin) => {
+  //   const newMessage = [...message?.messages]
+  //   const findPin = newMessage.find((item) => item.messageId === id)
 
-    console.log(findPin)
-    if (!findPin.pin && pinMessage.length <= 4) {
+  //   console.log(findPin)
+  //   if (!findPin.pin && pinMessage.length <= 4) {
+  //     setIsPin(true)
+  //     findPin.pin = true
+  //     setPinMessage((prev) => [...prev, findPin])
+  //   } else {
+  //     setIsPin(false)
+  //     findPin.pin = false
+  //     const filterPin = pinMessage.filter((item) => item.pin)
+
+  //     setPinMessage(filterPin)
+  //   }
+  // }
+  const pinMessageHandler = async (id, chatId, pin) => {
+    if (pin.mID === id && !pin.isPin && pinMessage.length <= 4) {
+      const { data: pin, error: pinError } = await supabase
+        .from('messages')
+        .update({ isPin: true })
+        .eq('messageid', id)
+        .eq('chatID', chatId)
+        .select()
+      if (pinError) console.log(pinError)
       setIsPin(true)
-      findPin.pin = true
-      setPinMessage((prev) => [...prev, findPin])
     } else {
+      const { data: pin, error: pinError } = await supabase
+        .from('messages')
+        .update({ isPin: false })
+        .eq('messageid', id)
+        .eq('chatID', chatId)
+        .select()
+      if (pinError) console.log(pinError)
       setIsPin(false)
-      findPin.pin = false
-      const filterPin = pinMessage.filter((item) => item.pin)
-
-      setPinMessage(filterPin)
     }
   }
   const unpinHandler = () => {
@@ -463,46 +601,59 @@ export const ChatProvider = ({ children }) => {
     setPinMessage([])
     setShowPin(false)
   }
-  const replyMessageHandler = (id) => {
-    const newMessage = [...message?.messages]
+  const replyMessageHandler = (id, content, type, name, senderid) => {
+    // const newMessage = [...message?.messages]
 
-    const findReplyMessage = newMessage.find((item) => item.messageId === id)
-    const user = 'Abolfazl'
-    setReplyMessage({ ...findReplyMessage, user })
-
+    // const findReplyMessage = newMessage.find((item) => item.messageId === id)
+    // const user = 'Abolfazl'
+    // setReplyMessage({ ...findReplyMessage, user })
+    setReplyMessage({
+      messageid: id,
+      content,
+      messageType: type,
+      name,
+      senderid,
+    })
     setShowReply(true)
   }
 
   // select message and unselect
-  const checkMessageHandler = (id, check) => {
-    const newMessage = [...message?.messages]
-    const findCheck = newMessage.find((item) => item.messageId === id)
+  // const checkMessageHandler = (id, check) => {
+  //   const newMessage = [...message?.messages]
+  //   const findCheck = newMessage.find((item) => item.messageId === id)
 
-    if (!findCheck.check) {
-      findCheck.check = true
-      setCheckMessage((prev) => [...prev, findCheck])
-    } else {
-      findCheck.check = false
-      const filterCheck = checkMessage.filter((item) => item.check)
+  //   if (!findCheck.check) {
+  //     findCheck.check = true
+  //     setCheckMessage((prev) => [...prev, findCheck])
+  //   } else {
+  //     findCheck.check = false
+  //     const filterCheck = checkMessage.filter((item) => item.check)
 
-      setCheckMessage(filterCheck)
-    }
+  //     setCheckMessage(filterCheck)
+  //   }
+  // }
+  const checkMessageHandler = (id) => {
+    setCheckMessage((prevSelected) =>
+      prevSelected.includes(id)
+        ? prevSelected.filter((messageId) => messageId !== id)
+        : [...prevSelected, id]
+    )
   }
   const displayCheckBoxHandler = (arr) => {
     const isCheck = arr.some((item) => item.check)
     setShowCheckBox(isCheck)
   }
 
-  const removeCheckMessage = () => {
-    const newChat = [...chat]
-    const findedChat = newChat.find((item) => item.id == chatId)
-    const newMessage = findedChat.messages.filter((message) => !message.check)
-    console.log(findedChat.messages)
-    findedChat.messages = newMessage
+  const removeCheckMessage = async (chatId) => {
+    for (const checked of checkMessage) {
+      const { error } = await supabase
+        .from('messages')
+        .delete()
+        .eq('chatID', chatId)
+        .eq('messageid', checked)
+      if (error) console.log(error)
+    }
     setCheckMessage([])
-
-    setMessage(newMessage)
-    setChat(newChat)
   }
 
   const reactionEmojiHandler = (emojiId) => {
@@ -558,15 +709,19 @@ export const ChatProvider = ({ children }) => {
     }
   }
   // edit message type===text
-  const selectEditTextMessageHandler = (id) => {
-    const newMessageDis = [...message?.messages]
+  const selectEditTextMessageHandler = (id, content, type, name) => {
+    setEditContent({ messageid: id, content, messageType: type, name })
+    // try {
+    //   let { data: messages, error } = await supabase
+    //     .from('messages')
+    //     .select('*')
+    //     .eq('messageid', id)
+    //     .single()
+    //   if (error) throw error
 
-    const findMessage = newMessageDis.find(
-      (message) =>
-        message.messageId === id && typeof message.messageDis === 'string'
-    )
-
-    setEditContent(findMessage?.messageDis)
+    // } catch (error) {
+    //   console.log(error)
+    // }
   }
   const clickRemoveHandler = () => {
     setShowAlert(true)
@@ -575,25 +730,39 @@ export const ChatProvider = ({ children }) => {
     setIsPin(false)
   }
   // edit handler
-  const editHandler = (txt, input) => {
-    const newMessageDis = [...message?.messages]
+  // const editHandler = (txt, messageID,chatID) => {
+  //   const newMessageDis = [...message?.messages]
 
-    const findMessage = newMessageDis.find(
-      (message) => message.messageId === messageID
-    )
+  //   const findMessage = newMessageDis.find(
+  //     (message) => message.messageId === messageID
+  //   )
 
-    findMessage.messageDis = txt
-    findMessage.edited = true
-    findMessage.date = new Date()
-    setMessage(newMessageDis)
-    setEditContent('')
+  //   findMessage.messageDis = txt
+  //   findMessage.edited = true
+  //   findMessage.date = new Date()
+  //   setMessage(newMessageDis)
+  //   setEditContent('')
 
-    // edit from everyWhere
-    const newChat = [...chat]
+  //   // edit from everyWhere
+  //   const newChat = [...chat]
 
-    const findedChat = findChat(newChat, chatId)
-    findedChat.messages = newMessageDis
-    setChat(newChat)
+  //   const findedChat = findChat(newChat, chatId)
+  //   findedChat.messages = newMessageDis
+  //   setChat(newChat)
+  // }
+  const editHandler = async (txt, mId, chatID) => {
+    try {
+      console.log(messageID)
+      const { data, error } = await supabase
+        .from('messages')
+        .update({ content: txt, isEdited: true })
+        .eq('messageid', mId)
+        .eq('chatID', chatID)
+        .select()
+      if (error) throw error
+    } catch (error) {
+      console.log(error)
+    }
   }
   const showCheckBoxHandler = () => {
     setShowCheckBox((prev) => !prev)
@@ -721,7 +890,13 @@ export const ChatProvider = ({ children }) => {
         setFileUrl,
         fileProgress,
         setFileProgress,
-        deleteMessage
+        deleteMessage,
+        senderID,
+        messageType,
+        messageContent,
+        forwardList,
+        setForwardList,
+        multiForwardClickHandler,
       }}
     >
       {children}
