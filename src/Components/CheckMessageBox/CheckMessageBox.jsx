@@ -4,8 +4,8 @@ import {TiArrowForwardOutline} from "react-icons/ti"
 import {MdOutlineDeleteOutline} from "react-icons/md"
 import { ChatContext } from '../../Context/ChatContext'
 
-const CheckMessageBox = () => {
-  const {checkMessage,setCheckMessage,removeCheckMessage,ForwardHandler,setShowCheckBox}=useContext(ChatContext)
+const CheckMessageBox = ({chatId}) => {
+  const {checkMessage,setCheckMessage,removeCheckMessage,ForwardHandler,setShowCheckBox,}=useContext(ChatContext)
   
   const cancelSelectHandler=()=>{
     setCheckMessage([])
@@ -33,7 +33,7 @@ const CheckMessageBox = () => {
     <p className=' font-semibold capitalize text-base '>Forward</p>
 </button>
 {/* remove */}
-<button className='  hover:bg-red-500/10  check-message--btn' onClick={removeCheckMessage}>
+<button className='  hover:bg-red-500/10  check-message--btn' onClick={()=>removeCheckMessage(chatId)}>
     <MdOutlineDeleteOutline size={26} color='rgb(239,68,68)'/>
     <p className='text-red-500 font-semibold capitalize text-base'>Delete</p>
 </button>
