@@ -59,7 +59,8 @@ const Chat = () => {
     showPinAudio,
     setProfileInfo,
     friendID,
-    setPinMessage
+    setPinMessage,
+    checkMessageHandler
   } = useContext(ChatContext)
   const { user } = useContext(UserContext)
   let lastMessage = []
@@ -112,7 +113,7 @@ const Chat = () => {
   const fetchMessages =async () => {
     let { data: messages, error } = await supabase
       .from('messages')
-      .select('*,replayId(messageid,messageType,content,name,senderid,isDeleted),forward_from(email,bgProfile,username,userid)')
+      .select('*,replayId(messageid,messageType,content,name,senderid,isDeleted),forward_from(email,bgProfile,username,userid),contact(email,username,bgProfile,avatar_url)')
       .eq('chatID', match.id)
       .eq('isDeleted',false)
       .order('sentat', { ascending: true })
@@ -275,6 +276,8 @@ const Chat = () => {
                         contact={item?.contact}
                         src={item.src}
                         replayData={item?.replayId}
+                        isSelected={checkMessage.includes(item.messageid)}
+                       
                         messageType={
                           item.messageType ? item.messageType : item.type
                         }
@@ -306,7 +309,7 @@ const Chat = () => {
               !checkMessage?.length && !showCheckBox ? (
                 <ChatForm setMessage={groupMessageHandler} />
               ) : (
-                <CheckMessageBox />
+                <CheckMessageBox chatId={match.id}/>
               )
             ) : (
               <UnpinBtn />
