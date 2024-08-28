@@ -409,15 +409,16 @@ export const ChatProvider = ({ children }) => {
             senderid: userId,
             recipientid: recipientId,
             chatID: chatId,
-            content: messageContent,
+            content: !forwardContact ? messageContent : 'Contact',
             name: messageName,
-            messageType: messageType,
+            messageType: !forwardContact?messageType:'text',
             forward_type: forwardType,
             isForward: true,
-            forward_from: senderID,
+            forward_from: !forwardContact ?senderID:friendID,
             status: 'send',
             forwardFormChat,
-            forwardMessageID: messageID,
+            forwardMessageID:!forwardContact ? messageID:null,
+            contact: forwardContact ? friendID : null,
           },
         ])
         .select()
@@ -448,31 +449,30 @@ export const ChatProvider = ({ children }) => {
     }
 
     for (const message of messagesData) {
-  
-        const { data, error } = await supabase
-          .from('messages')
-          .insert([
-            {
-              senderid: userId,
-              recipientid: message?.recipientid,
-              chatID: chatId,
-              content: message?.content,
-              name: message?.name,
-              messageType: message?.messageType,
-              forward_type: forwardType,
-              isForward: true,
-              forward_from: message?.senderid,
-              status: 'send',
-              forwardFormChat,
-              forwardMessageID: message.messageid,
-            },
-          ])
-          .select()
-        if (error) console.log(error)
-      
+      const { data, error } = await supabase
+        .from('messages')
+        .insert([
+          {
+            senderid: userId,
+            recipientid: message?.recipientid,
+            chatID: chatId,
+            content: message?.content,
+            name: message?.name,
+            messageType: message?.messageType,
+            forward_type: forwardType,
+            isForward: true,
+            forward_from: message?.senderid,
+            status: 'send',
+            forwardFormChat,
+            forwardMessageID: message.messageid,
+          },
+        ])
+        .select()
+      if (error) console.log(error)
     }
     setShowForwardModal(false)
     setCheckMessage([])
+    setShowCheckBox(false)
   }
   // forward
   const forwardSelfClickHandler = (userId) => {
@@ -499,34 +499,33 @@ export const ChatProvider = ({ children }) => {
     setChat(newChat)
   }
   // forwardContact
-  const forwardContactClickHandler = (userId) => {
-    console.log(userId)
+  const forwardContactClickHandler = async (userId) => {
+    try {
+      const { data, error } = await supabase
+        .from('messages')
+        .insert([
+          {
+            senderid: userId,
+            recipientid: recipientId,
+            chatID: chatId,
+            content: messageContent,
+            name: messageName,
+            messageType: messageType,
+            forward_type: 'Contact',
+            isForward: true,
+            forward_from: senderID,
+            status: 'send',
+            forwardFormChat,
+            forwardMessageID: messageID,
+          },
+        ])
+        .select()
+      if (error) throw error
 
-    const newChat = [...chat]
-
-    // find user for forward message
-    const findUserForward = findChat(newChat, userId)
-    console.log(forward(userMessage))
-    const { userName, bgProfile, id, profileImg, relation, messages } =
-      newChat[0]
-    const message = {
-      messageId: crypto.randomUUID(),
-      messageDis: 'Contact',
-      contact: forward(userMessage),
-      from: { userName },
-      reaction: null,
-      to: findUserForward.userName,
-      date: new Date(),
-      read: false,
-      send: true,
-      check: false,
-      edited: false,
-      pin: false,
-      replyData: null,
+      setShowForwardModal(false)
+    } catch (error) {
+      console.log(error)
     }
-    findUserForward.messages.push(message)
-    setChat(newChat)
-    setShowForwardModal(false)
   }
 
   const contextmenuHandler = (
@@ -617,21 +616,6 @@ export const ChatProvider = ({ children }) => {
     setShowReply(true)
   }
 
-  // select message and unselect
-  // const checkMessageHandler = (id, check) => {
-  //   const newMessage = [...message?.messages]
-  //   const findCheck = newMessage.find((item) => item.messageId === id)
-
-  //   if (!findCheck.check) {
-  //     findCheck.check = true
-  //     setCheckMessage((prev) => [...prev, findCheck])
-  //   } else {
-  //     findCheck.check = false
-  //     const filterCheck = checkMessage.filter((item) => item.check)
-
-  //     setCheckMessage(filterCheck)
-  //   }
-  // }
   const checkMessageHandler = (id) => {
     setCheckMessage((prevSelected) =>
       prevSelected.includes(id)
@@ -654,6 +638,7 @@ export const ChatProvider = ({ children }) => {
       if (error) console.log(error)
     }
     setCheckMessage([])
+    setShowCheckBox(false)
   }
 
   const reactionEmojiHandler = (emojiId) => {
@@ -729,27 +714,7 @@ export const ChatProvider = ({ children }) => {
     setShowContextMenu(false)
     setIsPin(false)
   }
-  // edit handler
-  // const editHandler = (txt, messageID,chatID) => {
-  //   const newMessageDis = [...message?.messages]
 
-  //   const findMessage = newMessageDis.find(
-  //     (message) => message.messageId === messageID
-  //   )
-
-  //   findMessage.messageDis = txt
-  //   findMessage.edited = true
-  //   findMessage.date = new Date()
-  //   setMessage(newMessageDis)
-  //   setEditContent('')
-
-  //   // edit from everyWhere
-  //   const newChat = [...chat]
-
-  //   const findedChat = findChat(newChat, chatId)
-  //   findedChat.messages = newMessageDis
-  //   setChat(newChat)
-  // }
   const editHandler = async (txt, mId, chatID) => {
     try {
       console.log(messageID)
