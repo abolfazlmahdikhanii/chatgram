@@ -12,7 +12,7 @@ const PinBox = ({close}) => {
 
     useEffect(() => {
         setIndexPin(pinMessage.length - 1)
-    }, [message,pinMessage])
+    }, [pinMessage])
 
     const goToPage = (pageNumber) => {
         setCurrentPage(pageNumber)
@@ -25,9 +25,9 @@ const PinBox = ({close}) => {
                 {/* dot */}
 
                 <div className="h-full flex flex-col gap-[3px] mr-2">
-                    {message?.messages.filter(item=>item.pin).map((pin, i) => (
+                    {pinMessage.map((pin, i) => (
                         <div
-                            key={pin?.messageId}
+                            key={pin?.messageid}
                             className={`w-[2.1px] ${
                                 i === indexPin
                                     ? 'bg-indigo-600'
@@ -39,16 +39,18 @@ const PinBox = ({close}) => {
                 </div>
                 {/* message */}
                 <ul className="flex flex-col">
-                    {message?.messages.filter(item=>item.pin).map(
+                    {pinMessage.map(
                         (pin, i, arr) =>
                             indexPin === i && (
-                                <li key={pin.messageId}>
+                                <li key={pin.messageid}>
                                     <PinMessage
-                                        title={pin?.messageDis}
+                                        title={pin?.content}
+                                        type={pin?.messageType}
+                                        name={pin?.name}
                                         show={indexPin}
                                         index={i}
                                         arr={arr}
-                                        id={pin?.messageId}
+                                        id={pin?.messageid}
                                     />
                                 </li>
                             )
