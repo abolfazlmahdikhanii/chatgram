@@ -5,71 +5,81 @@ import Backdrop from '../Backdrop/Backdrop'
 import ForwardList from '../../ForwardList/ForwardList'
 import { ChatContext } from '../../../Context/ChatContext'
 import UserProfile from '../../userProfile/userProfile'
+import { UserContext } from '../../../Context/UserContext'
 const Modal = ({ userID }) => {
-    const {
-        showFrowardModal,
-        chat,
-        forwardClickHandler,
-        forwardContactClickHandler,
-        forwardContact,
-        messageID,
-        setShowForwardModal,
-        setChat,
-        setForwardContact,
-    } = useContext(ChatContext)
-    const [chatFilter, setChatFilter] = useState("")
-    return (
-        <>
-            <Backdrop show={showFrowardModal} />
-            <dialog
-                id="my_modal_1"
-                className={`modal modal-box modal-bottom sm:modal-middle  justify-items-start [overflow-y:hidden] px-0 max-h-[700px] -translate-x-1/2 left-1/2 pt-0 mt-0 h-fit top-1/2 -translate-y-1/2 overflow-x-hidden ${
-                    showFrowardModal
-                        ? 'pointer-events-auto visible opacity-100'
-                        : ''
-                }`}
-            >
-                <div className="flex items-center gap-5 px-6 py-4 w-full">
-                    <button
-                        className="btn btn-sm btn-square   grid place-items-center"
-                        onClick={() => setShowForwardModal(false)}
-                    >
-                        <AiOutlineClose size={16} />
-                    </button>
-                    <input
-                        type="text"
-                        className="input focus-visible:outline-0 text-xl font-normal dark:text-white w-full text-gray-700"
-                        value={chatFilter}
-                        onChange={(e) => setChatFilter(e.target.value.trim())}
-                        placeholder="Forward to ..."
-                    />
-                </div>
+  const {
+    showFrowardModal,
+    chat,
+    forwardClickHandler,
+    forwardContactClickHandler,
+    forwardContact,
+    messageID,
+    setShowForwardModal,
+    setChat,
+    setForwardContact,
+    forwardList,
+    checkMessage,
+    multiForwardClickHandler,
 
-                <div className="modal-body max-h-[350px] h-full min-h-[230px]">
-                    {/* body */}
+  } = useContext(ChatContext)
+  const {user}=useContext(UserContext)
+  const [chatFilter, setChatFilter] = useState('')
+  const forwardUserLiat=[{meID:user},...forwardList]
+  console.log(forwardUserLiat);
+  return (
+    <>
+      <Backdrop show={showFrowardModal} />
+      <dialog
+        id="my_modal_1"
+        className={`modal modal-box modal-bottom sm:modal-middle  justify-items-start [overflow-y:hidden] px-0 max-h-[700px] -translate-x-1/2 left-1/2 pt-0 mt-0 h-fit top-1/2 -translate-y-1/2 overflow-x-hidden ${
+          showFrowardModal ? 'pointer-events-auto visible opacity-100' : ''
+        }`}
+      >
+        <div className="flex items-center gap-5 px-6 py-4 w-full">
+          <button
+            className="btn btn-sm btn-square   grid place-items-center"
+            onClick={() => setShowForwardModal(false)}
+          >
+            <AiOutlineClose size={16} />
+          </button>
+          <input
+            type="text"
+            className="input focus-visible:outline-0 text-xl font-normal dark:text-white w-full text-gray-700"
+            value={chatFilter}
+            onChange={(e) => setChatFilter(e.target.value.trim())}
+            placeholder="Forward to ..."
+          />
+        </div>
 
-                    <ul className="  w-full  flex flex-col gap-0.5">
-                      
-                        {chat &&
-                            chat
-                                ?.filter((item) => item.userName?.toLowerCase().includes(chatFilter.toLowerCase()))
-                                ?.map((item) => (
-                                    <UserProfile
-                                        key={item.id}
-                                        {...item}
-                                        onForward={() => {
-                                            !forwardContact
-                                                ? forwardClickHandler(item.id)
-                                                : forwardContactClickHandler(item.id)
-                                            setForwardContact(false)
-                                        }}
-                                    />
-                                ))}
-                    </ul>
-                </div>
-            </dialog>
-        </>
-    )
+        <div className="modal-body max-h-[350px] h-full min-h-[230px]">
+          {/* body */}
+
+          <ul className="  w-full  flex flex-col gap-0.5">
+            {forwardList?.length > 0 &&
+           forwardUserLiat?.map((item) => (
+                <UserProfile
+                  key={item?.userid}
+                  chats={item?.senderid?.userid==user?.userid?{...item?.recipientid}:{...item?.senderid}}
+                  saveChat={item?.meID?.userid==user?.userid?{...item.meID}:null}
+                  chatID={item?.requestid}
+                  fromChatID={userID}
+                  user={user}
+                  {...item}
+                  onForward={!checkMessage.length?forwardClickHandler:multiForwardClickHandler}
+                  forwardContact={forwardContact}
+                //   onForward={() => {
+                //     !forwardContact
+                //       ? forwardClickHandler(item?.requestid)
+                //       : forwardContactClickHandler(item.id)
+                //     setForwardContact(false)
+                //   }}
+                />
+              ))}
+          </ul>
+        </div>
+      </dialog>
+    </>
+  )
 }
 
 export default Modal
