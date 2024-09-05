@@ -21,6 +21,7 @@ import { UserContext } from '../../Context/UserContext'
 import { useParams } from 'react-router-dom'
 import { strToByte } from '../../Utility/helper'
 import decodeMessage from '../../Utility/decodeMessage'
+import AlertBox from '../UI/AlertBox/AlertBox'
 
 const ChatForm = ({ setMessage }) => {
   const [text, setText] = useState('')
@@ -36,6 +37,7 @@ const ChatForm = ({ setMessage }) => {
   const [filesUpload, setFilesUpload] = useState([])
   const [uploadUrl, setUploadUrl] = useState([])
   const [content, setContent] = useState('')
+  const [showAlert, setShowAlert] = useState(false)
   const { user } = useContext(UserContext)
   const param = useParams()
 
@@ -181,11 +183,12 @@ const ChatForm = ({ setMessage }) => {
     const { data: signedUrlData, error: urlError } = await supabase.storage
       .from('uploads')
       .upload(
-        `audio/${param.id}/${Date.now()}_${crypto.randomUUID()}.wav`,
+        `chats/${param.id}/${Date.now()}_${crypto.randomUUID()}.wav`,
         file
       )
 
     if (urlError) {
+      console.log(urlError);
       return false
     }
     return signedUrlData.path
@@ -252,7 +255,7 @@ const ChatForm = ({ setMessage }) => {
       }
     }
   }
-  const sendMessageHandler = async (content, replay = null) => {
+  const sendMessageHandler = async (content, replay = null,url) => {
     let fileUrl = ''
 
     if (!content || content === '&nbsp;') return
@@ -260,8 +263,9 @@ const ChatForm = ({ setMessage }) => {
       [
         {
           senderid: user.userid,
-          content: strToByte(content),
-          messageType: 'text',
+          content:typeof content === 'string'?strToByte(content):null,
+          src:typeof content !== 'string'?url:null,
+          messageType:typeof content === 'string'? 'text':'audio/wav',
           sentat: new Date(),
         },
       ],
@@ -269,8 +273,9 @@ const ChatForm = ({ setMessage }) => {
     )
 
     if (typeof content !== 'string') {
-      fileUrl = await handleAudioUpload(content[0])
-      setMessage(content[0], true)
+      console.log(content);
+      fileUrl = await handleAudioUpload(content)
+      // setMessage(content[0], true)
     }
     if (typeof content !== 'string' && !fileUrl) return
     const { data, error } = await supabase.from('messages').insert([
@@ -278,7 +283,7 @@ const ChatForm = ({ setMessage }) => {
         senderid: user.userid,
         recipientid: friendID,
         content: typeof content !== 'string' ? fileUrl : content,
-        messageType: typeof content !== 'string' ? content[0].type : 'text',
+        messageType: typeof content !== 'string' ? content.type : 'text',
         status: 'send',
         chatID: param.id,
         replayId: replay,
@@ -476,6 +481,7 @@ const ChatForm = ({ setMessage }) => {
           setRecord={setRecord}
           setMessage={sendMessageHandler}
           isText={text}
+          setShowAlert={setShowAlert}
         />
       )}
 
@@ -514,6 +520,14 @@ const ChatForm = ({ setMessage }) => {
         onUploadFile={uploadFileHandler}
         setSelectedFile={setSelectedFile}
       />
+        {showAlert && (
+        <AlertBox
+          title="Unable to Send Voice Message"
+          dis="There has been a problem with recording audio. Please check your microphone access."
+          showAlert={showAlert}
+          setShowAlert={setShowAlert}
+        />
+      )}
     </form>
   )
 }
