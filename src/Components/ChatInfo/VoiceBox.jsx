@@ -1,9 +1,10 @@
-import React, { useState, useRef, useEffect, useContext } from 'react'
+import React, { useState, useRef, useEffect, useContext, useCallback } from 'react'
 import WaveSurfer from 'wavesurfer.js'
 import { FaPlay, FaPause } from 'react-icons/fa'
 import { MdOutlineDeleteOutline } from 'react-icons/md'
 import ProgressFile from '../UI/ProgressFile/ProgressFile'
 import { MusicControlContext } from '../../Context/MusicContext'
+import { supabase } from '../../superbase'
 
 
 
@@ -45,6 +46,7 @@ const VoiceBox = ({
     const [currentTime, setCurrentTime] = useState(0)
     const [duration, setDuration] = useState(0)
     const [showName, setShowName] = useState(true)
+    const [url, setUrl] = useState('')
     // const audioRef = useRef()
     const wavesurfRef = useRef(null)
     const waveFormRef = useRef()
@@ -52,12 +54,17 @@ const VoiceBox = ({
     const { isPlay, playMusic, seekMusic, currentSong, currentTimeMusic } =
         useContext(MusicControlContext)
     const audioRef = useRef(null)
+    // useEffect(() => {
+    //     if (path) download(path)
+    //   }, [path])
 
+  
     useEffect(() => {
+   
         if (waveFormRef.current) {
             const option = formWaveSurferOptions(waveFormRef.current, isColor)
             wavesurfRef.current = WaveSurfer.create(option)
-            wavesurfRef.current.load(audioRef.current.src)
+            wavesurfRef.current.load(path)
 
             wavesurfRef.current.on('ready', function () {
                 setDuration(wavesurfRef.current.getDuration())
@@ -82,14 +89,20 @@ const VoiceBox = ({
 
                 setCurrentTime(0)
                 setAudio(null)
-                seekMusic(0, wavesurfRef.current.getDuration())
+                seekMusic(0,0)
                 setShowName(true)
             })
         }
 
         return () => wavesurfRef.current.destroy()
-    }, [])
-
+    }, [setAudio])
+    const download = useCallback(async (path) => {
+        const {data,error}=await supabase.storage
+           .from('uploads')
+           .createSignedUrl(path,6000)
+           if(error) console.log(error);
+           setUrl(data.signedUrl)
+       }, [])
     const handleLoadedMetadata = (e) => {
         console.log(audioRef.current?.metadata?.artist)
     }
@@ -103,7 +116,7 @@ const VoiceBox = ({
     const formatTime = function (time) {
         let min = Math.floor(time / 60)
         let sec = Math.floor(time - min * 60)
-        return `${min} : ${sec < 10 ? ` 0 ${sec}` : sec}`
+        return `${min}:${sec < 10 ? `0${sec}`:sec}`
     }
 
     return (
@@ -123,7 +136,7 @@ const VoiceBox = ({
                     }`}
                     onClick={controlAudioHandler}
                 >
-                    {path === currentSong && isPlay ? <FaPlay /> : <FaPause />}
+                    {url === currentSong && isPlay ? <FaPlay /> : <FaPause />}
                 </button>
             </div>
             <div className="flex flex-col gap-2 max-w-[90%] w-full">
