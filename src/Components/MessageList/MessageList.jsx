@@ -18,10 +18,20 @@ const MessageList = () => {
   const [pageY, setPageY] = useState(null)
   const [showMenu, setShowMenu] = useState(false)
   const [friends, setFriends] = useState([])
-  const { chat, DeleteChat,setChatInfo,lastMessage } = useContext(ChatContext)
+  const {
+    chat,
+    DeleteChat,
+    setChatInfo,
+    lastMessage,
+    setForwardList,
+    forwardList,
+  } = useContext(ChatContext)
+  
   const [isActiveSearch, setIsActiveSearch] = useState(false)
   const navigate = useNavigate()
-
+  useEffect(() => {
+    getFriendsList()
+  }, [])
   const contextMenuHandler = (e, id) => {
     setShowMenu(false)
     e.preventDefault()
@@ -30,10 +40,20 @@ const MessageList = () => {
     setShowMenu(true)
     setChatId(id)
   }
-  useEffect(() => {
-    getFriendsList()
-    
-  }, [])
+
+  const markAsReadHandler = async (id) => {
+    try {
+      const { data, error } = await supabase
+        .from('messages')
+        .update({ status: 'read' })
+        .eq('chatID', id)
+        .eq('recipientid',user?.userid)
+        .select()
+        if(error) throw error
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const getFriendsList = async () => {
     try {
@@ -41,18 +61,17 @@ const MessageList = () => {
         .from('friendrequests')
         .select('requestid,senderid(*),recipientid(*)')
         .or(`senderid.eq.${user?.userid},recipientid.eq.${user?.userid}`)
-        .eq('status','accepted')
-      
+        .eq('status', 'accepted')
 
       if (error) throw error
 
       setFriends(friendrequests)
-
+      setForwardList(friendrequests)
     } catch (error) {
       console.log(error)
     }
   }
-  
+
   return (
     <Box style={'ml-3 overflow-hidden'}>
       <SearchBar
@@ -75,19 +94,25 @@ const MessageList = () => {
               isSave={true}
               onContext={(e) => contextMenuHandler(e, user?.id)}
             />
-            {friends.length?friends?.map((chat) => (
-              <MessageItem
-                key={chat?.id}
-                chats={chat?.senderid?.userid==user?.userid?{...chat?.recipientid}:{...chat?.senderid}}
-                chatID={chat?.requestid}
-                isSave={false}
-                onContext={(e) => contextMenuHandler(e, chat?.id)}
-              />
-            )):null}
+            {friends.length
+              ? friends?.map((chat) => (
+                  <MessageItem
+                    key={chat?.id}
+                    chats={
+                      chat?.senderid?.userid == user?.userid
+                        ? { ...chat?.recipientid }
+                        : { ...chat?.senderid }
+                    }
+                    chatID={chat?.requestid}
+                    isSave={false}
+                    onContext={(e) => contextMenuHandler(e, chat?.requestid)}
+                  />
+                ))
+              : null}
           </div>
           <UserMenu
             show={showMenu}
-            pageX={pageX}
+            pageX={pageX + 150}
             pageY={pageY}
             chatId={chatId}
             closeMenu={setShowMenu}
@@ -95,6 +120,7 @@ const MessageList = () => {
               DeleteChat(chatId)
               navigate('/')
             }}
+            markRead={markAsReadHandler}
           />
         </>
       ) : (
