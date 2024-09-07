@@ -8,8 +8,8 @@ import ReactionEmoji from "../ReactionEmoji/ReactionEmoji";
 import { ChatContext } from "../../../Context/ChatContext";
 import { UserContext } from "../../../Context/UserContext";
 
-const MessageMenu = ({onShowMessage,show,isChatInfo=false}) => {
-const {pageX,pageY,messageID,checkMessageHandler,selectEditTextMessageHandler,replyMessageHandler,ForwardHandler,reactionEmojiHandler,clickRemoveHandler,pinMessage,setShowContextMenu,setShowAlert,setIsPin,setISChatInfo,deleteMessage,senderID,messageType,messageContent,messageName}=useContext(ChatContext)
+const MessageMenu = ({onShowMessage,show,isChatInfo=false,close}) => {
+const {pageX,pageY,messageID,checkMessageHandler,selectEditTextMessageHandler,replyMessageHandler,ForwardHandler,reactionEmojiHandler,clickRemoveHandler,pinMessage,setShowContextMenu,setShowAlert,setIsPin,setISChatInfo,deleteMessage,senderID,messageType,messageContent,messageName,isPin}=useContext(ChatContext)
 const {user}=useContext(UserContext)
 
 
@@ -49,9 +49,9 @@ const {user}=useContext(UserContext)
 
 
   const findItemPin=(messageID)=>{
-    const findedItem=pinMessage?.find((item)=>item.messageId===messageID)
+    
   
-    if(findedItem&&findedItem?.pin)return "Unpin"
+    if(isPin.mID===messageID&&isPin.isPin)return "Unpin"
     else return "Pin"
   }
 
@@ -106,7 +106,7 @@ const {user}=useContext(UserContext)
       icon: <BsPin size={17} className="self-start mr-1.5" />,
       title: findItemPin(messageID),
       event:()=>{
-        setIsPin(true)
+ 
         setShowAlert(true)
         setShowContextMenu(false)
      
@@ -233,8 +233,8 @@ const {user}=useContext(UserContext)
           ? "[scale-z:1] scale-100 opacity-100 "
           : "[scale-z:0] scale-0 opacity-0"
       } fixed `}
-      style={{ left: `${pageX-200}px`, top: `${pageY}px` }}
-      onMouseLeave={() => setShowContextMenu(false)}
+      style={{ left: `${pageX-100}px`, top: `${pageY}px` }}
+      onMouseLeave={() => close()}
     >
       <div
         className={`menu dark:bg-[rgba(33,33,33,.75)] backdrop-blur-[50px] rounded-xl gap-1.5 w-[190px] bg-base-200/60`}
@@ -267,6 +267,6 @@ const {user}=useContext(UserContext)
       }
     </div>
   );
-};
+}
 
 export default MessageMenu;
