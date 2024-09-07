@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import FileItem from '../FIleItem/FileItem'
 import Progress from '../UI/Progress/Progress'
 import AudioFile from '../AudioFIle/AudioFile'
@@ -8,14 +8,14 @@ import { ChatContext } from '../../Context/ChatContext'
 import { supabase } from '../../superbase'
 
 const FileType = ({
-  type,
+  mType,
   src,
   name,
   size,
   progress,
   id,
   from,
-  
+  path,
   idType,
   messageId,
   isColor,
@@ -25,34 +25,55 @@ const FileType = ({
   isFile = true,
   isChatInfo = false,
   contextMenu,
+  senderID,
+  source
 }) => {
-  const { removeMessages, setShowPreview, setAudio ,setFileUrl} = useContext(ChatContext)
-console.log(type);
-  let file = null
-  const [url,setUrl]=useState('')
+  const {
+    removeMessages,
+    setShowPreview,
+    setAudio,
+    setFileUrl,
+    fileProgress,
+    chatId,
+    setFile,
+    setVoice,
+    setType,
+    type,
+    file,
+    voice,
+  } = useContext(ChatContext)
+
+  let mFile = null
+  const [url, setUrl] = useState('')
 
   useEffect(() => {
     if (src) download(src)
-      
-  }, [src])
+  }, [])
 
-  const download = async (path) => {
-    try {
-      const { data, error } =await supabase.storage
-        .from('uploads')
-        .createSignedUrl(path,60)
-      if (error) throw error
+  const download = useCallback(async (path) => {
+    const groupFile = []
 
-      
-      setUrl(data.signedUrl)
-      
-    } catch (error) {
-      console.log(error.message)
-    }
-  }
+    // if (findItem(messageId)) return false
+    supabase.storage
+      .from('uploads')
+      .download(path)
+      .then((res) => {
+        const fr = new FileReader()
+        fr.addEventListener('load', (ev) => {
+          setUrl(ev.target.result)
+        })
+        fr.readAsDataURL(res.data)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }, [])
+  // const findItem = (id) => {
+  //   return url.find((item) => item.messageID === id)
+  // }
 
-  if (type == 'video') {
-    file = (
+  if (mType == 'video') {
+    mFile = (
       <Video
         contextMenu={contextMenu}
         progress={progress}
@@ -67,8 +88,19 @@ console.log(type);
         caption={caption}
       />
     )
-  } else if (type == 'mp3'||type=='audio/webm') {
-    file = (
+    const findedLink = type.find((item) => item.messageid === messageId)
+    if (!findedLink)
+      setType((prev) => [
+        ...prev,
+        { content: url, messageid: messageId, messageType: mType },
+      ])
+  } else if (
+    mType == 'mp3' ||
+    mType == 'audio/webm' ||
+    mType?.includes('audio')
+  ) {
+   
+    mFile = (
       <AudioFile
         path={url}
         size={size}
@@ -78,8 +110,22 @@ console.log(type);
         setAudio={setAudio}
       />
     )
-  } else if (type == 'img') {
-    file = (
+
+    const findedLink = voice.find((item) => item.messageid === messageId)
+    if (!findedLink&&url)
+    setVoice((prev) => [
+      ...prev,
+      {
+        content: url,
+        messageid: messageId,
+        messageType: mType,
+        name,
+        senderid: senderID,
+      },
+    ])
+  } else if (mType == 'img') {
+
+    mFile = (
       <li
         className={` ${
           imgSize ? 'h-[100px]' : 'h-[210px]'
@@ -87,11 +133,11 @@ console.log(type);
         onContextMenu={(e) => contextMenu(e, messageId, idType, isChatInfo)}
       >
         <Progress
-          size={progress}
+          size={fileProgress}
           onRemove={() => removeMessages(messageId, idType)}
         />
         <img
-          src={url}
+          src={path ? path : url}
           alt=""
           className="object-cover w-full h-full rounded-xl min-w-[170px]"
           onClick={() =>
@@ -99,7 +145,7 @@ console.log(type);
               show: true,
               type: 'img',
               from,
-              src:url,
+              src: url,
               messageId,
               caption,
             })
@@ -107,11 +153,17 @@ console.log(type);
         />
       </li>
     )
-  } else if (type == 'file' && !isFile) {
-    file = (
+    const findedLink = type.find((item) => item.messageid === messageId)
+    if (!findedLink&&url)
+    setType((prev) => [
+      ...prev,
+      { content:url, messageid: messageId, messageType: mType },
+    ])
+  } else if (mType == 'file' && !isFile) {
+    mFile = (
       <div>
         <FileIcon
-          type={type}
+          type={mType}
           path={src ? src : ''}
           message={true}
           from={from}
@@ -121,11 +173,17 @@ console.log(type);
         />
       </div>
     )
+    const findedLink = file.find((item) => item.messageid === messageId)
+    if (!findedLink)
+    setFile((prev) => [
+      ...prev,
+      { content: src, messageid: messageId, messageType: mType },
+    ])
   } else {
-    file = (
+    mFile = (
       <FileItem
         name={name}
-        type={type}
+        type={mType}
         src={src}
         size={size}
         message={true}
@@ -135,13 +193,23 @@ console.log(type);
         isColor={isColor}
       />
     )
+    const findedLink = file.find((item) => item.messageid === messageId)
+    if (!findedLink)
+    setFile((prev) => [
+      ...prev,
+      { content: src, messageid: messageId, messageType: mType },
+    ])
   }
-  return <>
-  {file}
-  {caption&&
-  <p className='mt-2.5  px-2.5 text-gray-200' dir='auto'>{caption}</p>
-  }
-  </>
+  return (
+    <>
+      {mFile}
+      {caption && (
+        <p className="mt-2.5  px-2.5 text-gray-200" dir="auto">
+          {caption}
+        </p>
+      )}
+    </>
+  )
 }
 
 export default FileType
