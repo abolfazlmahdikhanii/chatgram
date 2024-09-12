@@ -24,6 +24,7 @@ const Layout = () => {
     setShowSetting((prev) => !prev)
     setShowEditProfile(false)
   }
+  
   return (
     <>
       <ChatProvider>
