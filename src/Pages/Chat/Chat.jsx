@@ -60,7 +60,8 @@ const Chat = () => {
     setProfileInfo,
     friendID,
     setPinMessage,
-    checkMessageHandler
+    checkMessageHandler,
+    setShowContextMenu
   } = useContext(ChatContext)
   const { user } = useContext(UserContext)
   let lastMessage = []
@@ -168,7 +169,7 @@ const Chat = () => {
     }
   }
   const deleteChat = () => {
-    DeleteChat()
+    DeleteChat(match.id)
     navigate('/', { replace: true })
   }
   const groupMessageHandler = (message, isSend) => {
@@ -238,6 +239,8 @@ const Chat = () => {
             setShowChatInfo={setShowChatInfo}
             deleteChat={deleteChat}
             getInfo={getFriendinfo}
+            chatID={match.id}
+            isMessage={groupedMessages.length}
           />
 
           <main
@@ -306,7 +309,7 @@ const Chat = () => {
 
             {/* FORM */}
             {!showPin ? (
-              !checkMessage?.length && !showCheckBox ? (
+              !checkMessage?.length && !showCheckBox || !groupedMessages.length? (
                 <ChatForm setMessage={groupMessageHandler} />
               ) : (
                 <CheckMessageBox chatId={match.id}/>
@@ -316,7 +319,7 @@ const Chat = () => {
             )}
             {/* menu */}
 
-            <MessageMenu show={showContextMenu} isChatInfo={false} />
+            <MessageMenu show={showContextMenu} isChatInfo={false} close={()=>setShowContextMenu(false)} />
 
             {/* <Uploader /> */}
 
