@@ -63,6 +63,19 @@
     -ms-border-radius: 6px !important;
     -o-border-radius: 6px !important;
 }
+.chat-bubble{
+    border-radius: 10px !important;
+    -webkit-border-radius: 10px !important;
+    -moz-border-radius: 10px !important;
+    -ms-border-radius: 10px !important;
+    -o-border-radius: 10px !important;
+}
+.chat-start .chat-bubble{
+    border-bottom-left-radius: 0 !important;
+}
+.chat-end .chat-bubble{
+    border-bottom-right-radius: 0 !important;
+}
 @layer base {
     ::-webkit-scrollbar {
         @apply w-[9px];
@@ -89,6 +102,9 @@
     .message-item,
     .user-profile {
         @apply flex  p-2.5 w-full gap-5 transition-all duration-300 dark:hover:bg-gray-700/20 rounded-lg cursor-pointer hover:bg-gray-300/40;
+    }
+    .message-item--active{
+        @apply bg-gray-700/20 before:absolute before:inline-block before:w-2 before:h-full before:top-0 before:-left-1 before:bg-indigo-700
     }
 
     .chat__input {
