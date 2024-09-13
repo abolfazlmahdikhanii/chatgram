@@ -4,35 +4,92 @@ import { PiChecksBold } from 'react-icons/pi'
 import { PiCheck } from 'react-icons/pi'
 import Profile from '../Profile/Profile'
 import NotifyNumber from '../UI/NotifyNumber/NotifyNumber'
-import { Link } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import MessageItemContent from '../MessageItemContent/MessageItemContent'
 import { ChatContext } from '../../Context/ChatContext'
 import { supabase } from '../../superbase'
 import { UserContext } from '../../Context/UserContext'
 
-const MessageItem = ({
-  isSave,
-  onContext,
-  messagesArr,
-  chats,
-  chatID
-}) => {
+const MessageItem = ({ isSave, onContext, messagesArr, chats, chatID }) => {
   const [messages, setMessages] = useState([])
+  const [unreadMessage, setUnreadMessage] = useState([])
 
-  const { searchChat,lastMessage ,setLastMessage,setFriendID} = useContext(ChatContext)
- const {username,email,avatar_url,bgProfile, relation}=chats
-  const {user}=useContext(UserContext)
+  const { searchChat, lastMessage, setLastMessage, setFriendID } =
+    useContext(ChatContext)
 
+  const { user } = useContext(UserContext)
+
+  // useEffect(()=>{
+  //  for (const item in lastMessage) {
+  //   if(item==chatID){
+  //     console.log(item);
+  //     setMessages(lastMessage[item])
+  //   }
+  //  }
+  // },[lastMessage])
+  console.log(chatID);
   useEffect(()=>{
-   for (const item in lastMessage) {
-    if(item==chatID){
-      console.log(item);
-      setMessages(lastMessage[item])
-    }
-   }
-  },[lastMessage,chatID])
-  
+    fetchMessages()
+    filterUnreadMessage()
+  },[lastMessage])
+  useEffect(() => {
+    fetchMessages()
 
+    // Subscribe to real-time messages
+    const subscription = supabase
+      .channel('public:messages')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'messages' },
+        (payload) => {
+          const newMsg = payload.new
+          console.log(newMsg);
+          if (newMsg.chatID == chatID) {
+          
+      
+            setMessages(payload.new)
+          
+            // console.log(payload.new);
+            fetchMessages()
+            filterUnreadMessage()
+            // groupMessageHandler(messages)
+          }
+        }
+      )
+      .subscribe()
+
+    // Cleanup subscription on unmount
+    return () => {
+      // supabase.removeSubscription(subscription)
+    }
+  }, [])
+  
+  const fetchMessages = async () => {
+    let { data: messages, error } = await supabase
+      .from('messages')
+      .select('*')
+      .eq('chatID', chatID)
+      .order('sentat', { ascending: false })
+      .limit(1)
+    if (error) console.error('Error fetching messages:', error)
+
+    
+  
+    setMessages(messages)
+
+  }
+  const filterUnreadMessage=async()=>{
+    let { data: messages, error } = await supabase
+    .from('messages')
+    .select('*')
+    .eq('chatID', chatID)
+    .neq('senderid',user.userid)
+    .eq('status','send')
+
+  
+  if (error) console.error('Error fetching messages:', error)
+    setUnreadMessage(messages)
+  }
   const formatTime = (date) => {
     return new Intl.DateTimeFormat('tr', {
       hour: '2-digit',
@@ -40,16 +97,12 @@ const MessageItem = ({
     }).format(date)
   }
   let icon = null
- 
-  console.log(messages[messages?.length-1]?.status);
 
-
-    if (messages[messages?.length - 1]?.status==='read') {
-      icon = <PiChecksBold size={18} color="#818cf8" />
-    } else  {
-      icon = <PiCheck size={16} color="#9ca3af" />
-    }
-  
+  if (messages && messages[messages?.length - 1]?.status === 'read') {
+    icon = <PiChecksBold size={18} color="#818cf8" />
+  } else {
+    icon = <PiCheck size={16} color="#9ca3af" />
+  }
 
   const showSearchMessage = () => {
     let dis = null
@@ -66,18 +119,18 @@ const MessageItem = ({
   }
 
   return (
-    <Link
+    <NavLink
       to={`/chat/${chatID}`}
-      className="message-item "
+      className={({isActive})=>`message-item relative  ${isActive?'message-item--active ':''}`}
       onContextMenu={onContext}
-      onClick={()=>setFriendID(chats?.userid)}
+      onClick={() => setFriendID(chats?.userid)}
     >
       <Profile
         size="m"
-        path={avatar_url}
-        userName={username||email?.split('@')[0]}
-        bgProfile={bgProfile}
-        relation={relation}
+        path={chats?.avatar_url}
+        userName={chats?.username || chats?.email?.split('@')[0]}
+        bgProfile={chats?.bgProfile}
+        relation={chats?.relation}
         isSave={isSave}
       />
 
@@ -85,15 +138,21 @@ const MessageItem = ({
         {/* top */}
         <div className="flex items-center justify-between w-full">
           <p className="font-semibold  dark:text-white capitalize text-[17px] text-gray-800 w-[130px] truncate">
-            {!isSave?username||email?.split('@')[0]:'Saved Messages'}
+            {!isSave
+              ? chats?.username || chats?.email?.split('@')[0]
+              : 'Saved Messages'}
           </p>
+          <div className='flex items-center gap-1.5'>
+          <p>{messages?.length>0&&icon}</p>
           <p className="text-[11px] dark:text-gray-400 text-gray-600">
-            {messages.length > 0 &&
+            {messages?.length > 0 &&
               formatTime(messages[messages.length - 1]?.date)}
           </p>
+        
+          </div>
         </div>
         {/* bottom */}
-        {messages.length > 0 ? (
+        {messages?.length > 0 ? (
           <div className="flex items-center justify-between w-full">
             <MessageItemContent
               message={
@@ -102,16 +161,16 @@ const MessageItem = ({
                   : messages[messages.length - 1]
               }
             />
-            <p>{icon}</p>
-            {/* <NotifyNumber /> */}
+          
+            {unreadMessage?.length>0&&<NotifyNumber unread={unreadMessage.length} />}
           </div>
         ) : (
           <p className="-mt-1 text-sm font-normal dark:text-gray-400 text-gray-500">
-            {relation === 'me' ? 'online' : 'last seen recently'}
+            {chats?.relation === 'me' ? 'online' : 'last seen recently'}
           </p>
         )}
       </div>
-    </Link>
+    </NavLink>
   )
 }
 
