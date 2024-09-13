@@ -8,7 +8,7 @@ import ReactionEmoji from "../ReactionEmoji/ReactionEmoji";
 import { ChatContext } from "../../../Context/ChatContext";
 import { UserContext } from "../../../Context/UserContext";
 
-const MessageMenu = ({onShowMessage,show,isChatInfo=false,close}) => {
+const MessageMenu = ({onShowMessage,show,isChatInfo=false,close,showInfo,chatID}) => {
 const {pageX,pageY,messageID,checkMessageHandler,selectEditTextMessageHandler,replyMessageHandler,ForwardHandler,reactionEmojiHandler,clickRemoveHandler,pinMessage,setShowContextMenu,setShowAlert,setIsPin,setISChatInfo,deleteMessage,senderID,messageType,messageContent,messageName,isPin}=useContext(ChatContext)
 const {user}=useContext(UserContext)
 
@@ -229,7 +229,7 @@ const {user}=useContext(UserContext)
   return (
     <div
       className={`transition-all duration-200 z-20 ${
-        show
+        show||showInfo&&isChatInfo
           ? "[scale-z:1] scale-100 opacity-100 "
           : "[scale-z:0] scale-0 opacity-0"
       } fixed `}
@@ -261,7 +261,7 @@ const {user}=useContext(UserContext)
        gap-2.5  w-[190px]   flex items-center mt-1 p-3 bg-base-200/60"
        >
          {emoji.map((item) => (
-          <ReactionEmoji key={item.id} {...item} onReaction={()=>reactionEmojiHandler(item.emojiName)}/>
+          <ReactionEmoji key={item.id} {...item} onReaction={()=>reactionEmojiHandler(item.emojiName,messageID,chatID,user)}/>
          ))}
        </div>
       }
