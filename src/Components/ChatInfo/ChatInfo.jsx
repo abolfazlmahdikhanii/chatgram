@@ -17,6 +17,7 @@ import { ChatContext } from '../../Context/ChatContext'
 import { UserContext } from '../../Context/UserContext'
 import { supabase } from '../../superbase'
 import decodeMessage from '../../Utility/decodeMessage'
+import { createPortal } from 'react-dom'
 
 const ChatInfo = ({ setChatInfo, setClose, show }) => {
   const {
@@ -41,11 +42,13 @@ const ChatInfo = ({ setChatInfo, setClose, show }) => {
     setFile,
     setLink,
     setType,
+    showInfoMenu,
+    setShowInfoMenu
   } = useContext(ChatContext)
   const { user } = useContext(UserContext)
   const [tab, setTab] = useState('Media')
   const [isCall, setIsCall] = useState(false)
-  const [showInfoMenu, setShowInfoMenu] = useState(false)
+
   const [message, setMessage] = useState([])
   const navigate = useNavigate()
   const match = useParams()
@@ -118,14 +121,17 @@ const ChatInfo = ({ setChatInfo, setClose, show }) => {
     }
   }
 
+
   return (
+    
     <>
       <Box
-        style={`w-full transition-all duration-200 overflow-y-scroll h-full n-scroll max-h-[100vh] relative `}
+        style={`w-full transition-all duration-200 overflow-y-scroll h-full n-scroll max-h-[100vh] relative [scroll-width:none]`}
         context={(e) => {
           e.preventDefault()
-          setShowContextMenu(true)
+          // setShowContextMenu(true)
       }}
+      // mouseOut={()=>setShowInfoMenu(false)}
       >
         {/* header */}
         <div className="sticky -top-4 bg-base-100 z-10  py-4 -mt-3 w-full px-2 transition-all duration-200 flex items-center justify-between ">
@@ -278,7 +284,7 @@ const ChatInfo = ({ setChatInfo, setClose, show }) => {
             </button>
           </div>
           {/* shared-body */}
-          <section className="relative min-h-[250px]" onContextMenu={()=>setShowInfoMenu()}>
+          <section className="relative min-h-[250px]">
             {/* media */}
             <div
               className={` ${
@@ -358,6 +364,7 @@ const ChatInfo = ({ setChatInfo, setClose, show }) => {
                     remove={clickRemoveHandler}
                     contextMenu={contextmenuInfoHandler}
                     setClose={setClose}
+                    isChatInfo={showInfoMenu}
                   />
                 ))
               ) : (
@@ -403,7 +410,7 @@ const ChatInfo = ({ setChatInfo, setClose, show }) => {
           </section>
         </div>
         <MessageMenu
-              show={isChatInfo}
+              showInfo={showInfoMenu}
               close={()=>setShowInfoMenu(false)}
               isChatInfo={true}
               onShowMessage={navigateMessage}
