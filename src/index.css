@@ -104,7 +104,7 @@
         @apply flex  p-2.5 w-full gap-5 transition-all duration-300 dark:hover:bg-gray-700/20 rounded-lg cursor-pointer hover:bg-gray-300/40;
     }
     .message-item--active{
-        @apply bg-gray-700/20 before:absolute before:inline-block before:w-2 before:h-full before:top-0 before:-left-1 before:bg-indigo-700
+        @apply bg-gray-700/20  
     }
 
     .chat__input {
@@ -195,7 +195,7 @@
         @apply dark:bg-base-200 flex items-center justify-between py-1.5 rounded-xl w-full px-3  backdrop-blur-xl bg-base-300/80;
     }
     .unpin-btn {
-        @apply capitalize font-semibold dark:text-white py-4 px-8 rounded-xl bg-base-100 -mt-32 mb-16 w-fit mx-auto  z-[1] hover:bg-base-200 transition-all duration-200 active:scale-90 cursor-pointer text-gray-700;
+        @apply capitalize font-semibold dark:text-white py-4 px-8 rounded-xl bg-base-100 -mt-32 mb-28 w-fit mx-auto  z-[1] hover:bg-base-200 transition-all duration-200 active:scale-90 cursor-pointer text-gray-700;
     }
 
     [data-text-color='violet'] {
