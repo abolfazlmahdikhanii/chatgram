@@ -1,10 +1,10 @@
 import React, { useContext } from 'react'
 import { ChatContext } from '../../Context/ChatContext'
 
-const UnpinBtn = () => {
+const UnpinBtn = ({chatID}) => {
   const {unpinHandler}=useContext(ChatContext)
   return (
-    <div className='unpin-btn' onClick={unpinHandler}>
+    <div className='unpin-btn' onClick={()=>unpinHandler(chatID)}>
         unpin all messages
     </div>
   )
