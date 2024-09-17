@@ -30,6 +30,7 @@ export const ChatContext = createContext({
   isChatInfo: false,
   showSelfForward: false,
   showFrowardModal: false,
+  showInfoMenu: false,
   replyMessage: null,
   forwardSelfMessage: null,
   userMessage: null,
@@ -45,7 +46,16 @@ export const ChatContext = createContext({
   senderID: '',
   messageContent: '',
   messageName: '',
+  type: [],
+  link: [],
+  voice: [],
+  file: [],
   setMessageType: () => {},
+  setShowInfoMenu: () => {},
+  setType: () => {},
+  setLink: () => {},
+  setVoice: () => {},
+  setFile: () => {},
   setMessageName: () => {},
   setMessageContent: () => {},
   setSenderID: () => {},
@@ -113,7 +123,10 @@ export const ChatProvider = ({ children }) => {
   const [lastMessage, setLastMessage] = useState([])
   const [forwardList, setForwardList] = useState([])
   const [fileProgress, setFileProgress] = useState(0)
-
+  const [type, setType] = useState([])
+  const [link, setLink] = useState([])
+  const [voice, setVoice] = useState([])
+  const [file, setFile] = useState([])
   const [chatId, setChatId] = useState('')
   const [profileInfo, setProfileInfo] = useState(null)
   const [friendID, setFriendID] = useState(null)
@@ -149,6 +162,7 @@ export const ChatProvider = ({ children }) => {
   const [messageType, setMessageType] = useState('')
   const [senderID, setSenderID] = useState('')
   const [fileUrl, setFileUrl] = useState('')
+  const [showInfoMenu, setShowInfoMenu] = useState(false)
   const [showPreview, setShowPreview] = useState({
     show: false,
     type: null,
@@ -373,27 +387,7 @@ export const ChatProvider = ({ children }) => {
       })
     }
   }
-  // const forwardClickHandler = (userId) => {
-  //   const newChat = [...chat]
 
-  //   setCheckMessage([])
-  //   let findChat = null
-  //   const newMessages = [...userMessage.messages]
-  //   if (!checkForward) {
-  //     findChat = newMessages.find((item) => item?.messageId === messageID)
-
-  //     if (userId == chatId) forwardSelfMessageHandler(findChat.messageId)
-  //     else {
-  //       notCheckForward(newChat, findChat, userId)
-  //     }
-  //   } else {
-  //     findChat = newMessages.filter((item) => item?.check)
-  //     isCheckForward(newChat, findChat, userId)
-  //   }
-
-  //   setChat(newChat)
-  //   setShowForwardModal(false)
-  // }
   const forwardClickHandler = async (
     chatId,
     userId,
@@ -411,13 +405,13 @@ export const ChatProvider = ({ children }) => {
             chatID: chatId,
             content: !forwardContact ? messageContent : 'Contact',
             name: messageName,
-            messageType: !forwardContact?messageType:'text',
+            messageType: !forwardContact ? messageType : 'text',
             forward_type: forwardType,
             isForward: true,
-            forward_from: !forwardContact ?senderID:friendID,
+            forward_from: !forwardContact ? senderID : friendID,
             status: 'send',
             forwardFormChat,
-            forwardMessageID:!forwardContact ? messageID:null,
+            forwardMessageID: !forwardContact ? messageID : null,
             contact: forwardContact ? friendID : null,
           },
         ])
@@ -641,56 +635,44 @@ export const ChatProvider = ({ children }) => {
     setShowCheckBox(false)
   }
 
-  const reactionEmojiHandler = (emojiId) => {
-    const newChat = [...chat]
-    const newMessage = [...message?.messages]
-    const findedChat = newChat.find((item) => item.id == chatId)
-    const ractionUser = newChat.find((item) => item.relation === 'me')
-
-    const { id, bgProfile, profileImg, relation, userName } = ractionUser
-    const findMessage = newMessage.find(
-      (message) => message.messageId === messageID
-    )
-
-    if (findMessage.reaction === emojiId) {
-      findMessage.reaction = {}
-    } else {
-      findMessage.reaction = {
-        reaction: emojiId,
-        profile: {
-          id,
-          bgProfile,
-          profileImg,
-          relation,
-          userName,
-        },
-      }
-    }
-
-    setMessage(newMessage)
-    findedChat.messages = newMessage
-    setChat(newChat)
+  const reactionEmojiHandler = async (emojiId,msgId,chatID,userInfo) => {
+   try {
+    const { data, error } = await supabase
+    .from('messages')
+    .update({ reactions:{emojiId,userInfos:{username:userInfo.username,email:userInfo.email,profile:userInfo.avatar_url,bgProfile:userInfo.bgProfile}} })
+    .eq('chatID', chatID)
+    .eq('messageid',msgId)
+    .select()
+    if(error) throw error
+   } catch (error) {
+    console.log(error);
+   } 
   }
-  const removeReactionEmojiHandler = (messageid) => {
-    const newChat = [...chat]
-    const newMessage = [...message?.messages]
-    const findedChat = newChat.find((item) => item.id == chatId)
-
-    const findMessage = newMessage.find(
-      (message) => message.messageId === messageid
-    )
-
-    findMessage.reaction = ''
-    setMessage(newMessage)
-    findedChat.messages = newMessage
-    setChat(newChat)
+  const removeReactionEmojiHandler =async (messageid,chatID) => {
+    try {
+      const { data, error } = await supabase
+      .from('messages')
+      .update({ reactions:null })
+      .eq('chatID', chatID)
+      .eq('messageid',messageid)
+      .select()
+      if(error) throw error
+     } catch (error) {
+      console.log(error);
+     } 
   }
 
-  const DeleteChat = (id = null) => {
-    if (!id) {
-      setChat(chat.filter((item) => item.id != chatId))
-    } else {
-      setChat(chat.filter((item) => item.id != id))
+  const DeleteChat = async (id) => {
+    try {
+      console.log(id)
+      const { error } = await supabase
+        .from('friendrequests')
+        .delete()
+        .eq('requestid', id)
+        .select()
+      if (error) throw error
+    } catch (error) {
+      console.log(error)
     }
   }
   // edit message type===text
@@ -748,17 +730,22 @@ export const ChatProvider = ({ children }) => {
 
     setPageX(e.pageX)
     setPageY(e.pageY)
-
+    setShowInfoMenu((prev) => !prev)
     setMessageID(id)
     setMessageIDFile(idFile)
 
     setISChatInfo(isInfo)
   }
-  const clearHistory = () => {
-    const newChat = [...chat]
-    const findedChat = findChat(newChat, chatId)
-    findedChat.messages = []
-    setChat(newChat)
+  const clearHistory = async (id) => {
+    try {
+      const { error } = await supabase
+        .from('messages')
+        .delete()
+        .eq('chatID', id)
+      if (error) throw error
+    } catch (error) {
+      console.log(error)
+    }
   }
   return (
     <ChatContext.Provider
@@ -862,6 +849,16 @@ export const ChatProvider = ({ children }) => {
         forwardList,
         setForwardList,
         multiForwardClickHandler,
+        file,
+        type,
+        voice,
+        link,
+        setFile,
+        setType,
+        setLink,
+        setVoice,
+        setShowInfoMenu,
+        showInfoMenu,
       }}
     >
       {children}
