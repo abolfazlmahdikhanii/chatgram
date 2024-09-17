@@ -40,7 +40,7 @@ const SearchBar = ({activeSearch,setActiveSearch}) => {
             </svg>
           </button>
           
-        <div className={`flex items-center justify-between bg-base-300/70 pr-3.5 rounded-xl  mx-1  transition-all duration-300 border  ${activeSearch?'w-[90%] border border-primary':'w-full border-transparent'}`} onClick={()=>setActiveSearch(true)}>
+        <div className={`flex items-center justify-between bg-base-300/70 pr-3.5 rounded-xl  mx-1  transition-all duration-300 border  ${activeSearch?'w-[100%] border border-primary':'w-full border-transparent'}`} onClick={()=>setActiveSearch(true)}>
             <input
                 type="text"
                 className=" py-2.5 pl-4 w-full bg-transparent focus-visible:outline-none dark:text-white dark:placeholder:text-gray-500 placeholder:text-sm text-gray-800 placeholder:text-gray-600"
