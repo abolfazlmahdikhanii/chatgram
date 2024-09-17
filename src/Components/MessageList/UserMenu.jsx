@@ -1,6 +1,6 @@
 import React from 'react'
 
-const UserMenu = ({ show,pageX,pageY,chatId,closeMenu,deleteChat }) => {
+const UserMenu = ({ show,pageX,pageY,chatId,closeMenu,deleteChat,markRead }) => {
     return (
         <div
             className={`transition-all duration-200 z-20 ${
@@ -14,7 +14,7 @@ const UserMenu = ({ show,pageX,pageY,chatId,closeMenu,deleteChat }) => {
             <div
                 className={`menu dark:bg-[rgba(39,45,53,.80)] backdrop-blur-xl rounded-xl gap-1.5 w-[200px] bg-base-300/80`}
             >
-                <label className={`select-box--item  `}>
+                <label className={`select-box--item  `} onClick={()=>markRead(chatId)}>
                     {/* icon */}
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
