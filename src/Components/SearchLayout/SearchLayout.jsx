@@ -4,46 +4,61 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/css'
 import { ChatContext } from '../../Context/ChatContext'
 import MessageItem from '../Messageitem/MessageItem'
-const SearchLayout = ({ chatData }) => {
-  console.log(chatData)
+import { UserContext } from '../../Context/UserContext'
+import SearchItem from '../SearchItem/SearchItem'
+const SearchLayout = ({ chatData, setActiveSearch }) => {
   const { searchChat } = useContext(ChatContext)
-  const filterMessage=(messages)=>{
-    const indexMessage= messages.
-    console.log(indexMessage);
-    return indexMessage
+  const { user } = useContext(UserContext)
+  const forwardUserList = [{ meID: user }, ...chatData]
+  const filterFriend = (id) => {
+    const findChat = forwardUserList.find(
+      (item) =>
+        item?.senderid?.userid === id ||
+        item?.recipientid?.userid === id ||
+        item?.meID?.userid === id
+    )
+    return findChat
   }
+
   return (
     <div className=" w-full ">
       <Swiper
         slidesPerView={4}
-        spaceBetween={70}
-        className="w-full px-2 pt-1 pb-5"
+        spaceBetween={75}
+        className="w-full px-1 pt-1 pb-5"
       >
-        {chatData?.map((profile) => (
+        {forwardUserList?.map((profile) => (
           <SwiperSlide key={profile.id} className="">
-            <ColumnProfile {...profile} />
+            <ColumnProfile
+              {...profile}
+              key={profile?.userid}
+              chats={
+                profile?.senderid?.userid == user?.userid
+                  ? { ...profile?.recipientid }
+                  : { ...profile?.senderid }
+              }
+              saveChat={
+                profile?.meID?.userid == user?.userid
+                  ? { ...profile.meID }
+                  : null
+              }
+              chatID={profile?.requestid}
+              setActiveSearch={setActiveSearch}
+            />
           </SwiperSlide>
         ))}
       </Swiper>
       <p className="border-[3px] border-base-200 mt-2 -mx-3"></p>
 
-      <div className='my-3'>
-        {searchChat&&chatData
-          .filter(
-            (item, i) =>
-              item?.userName.toLowerCase().includes(searchChat.toLowerCase()) ||
-              item?.messages[item.messages.findIndex(item=>item.messageDis.includes(searchChat))]?.messageDis
-          )
-          .map((data,i,arr) => (
-            <MessageItem
-              key={data.id}
-              {...data}
-              isSave={data.relation === 'me' ? true : false}
-              messagesArr={ arr}
-             
-              // onContext={(e) => contextMenuHandler(e, data.id)}
-            />
-          ))}
+      <div className="my-3">
+        {searchChat&&searchChat.map((chat, i, arr) => (
+          <SearchItem
+            key={chat?.id}
+            chats={chat}
+            isSave={user.userid == chat?.userid}
+            isFriend={filterFriend(chat?.userid)}
+          />
+        ))}
       </div>
     </div>
   )
