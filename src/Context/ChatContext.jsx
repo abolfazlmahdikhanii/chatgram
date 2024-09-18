@@ -158,7 +158,7 @@ export const ChatProvider = ({ children }) => {
   const [isChatInfo, setISChatInfo] = useState(false)
   const [font, setFont] = useState(16)
   const [chatBg, setChatBg] = useState('')
-  const [searchChat, setSearchChat] = useState('')
+  const [searchChat, setSearchChat] = useState([])
   const [messageType, setMessageType] = useState('')
   const [senderID, setSenderID] = useState('')
   const [fileUrl, setFileUrl] = useState('')
@@ -541,7 +541,7 @@ export const ChatProvider = ({ children }) => {
     setPageY(e.pageY)
 
     setMessageID(id)
-    console.log(id)
+
     // setMessageIDFile(idFile)
     setMessageContent(content)
     setSenderID(senderid)
@@ -587,12 +587,19 @@ export const ChatProvider = ({ children }) => {
       setIsPin(false)
     }
   }
-  const unpinHandler = () => {
-    const newPinMessage = [...pinMessage]
-    newPinMessage.forEach((item) => (item.pin = false))
-
-    setPinMessage([])
-    setShowPin(false)
+  const unpinHandler =async (chatID) => {
+    try {
+      const { data, error } = await supabase
+      .from('messages')
+      .update({isPin:false})
+      .eq('chatID', chatID)
+      .select()
+      if(error) throw error
+      setPinMessage([])
+      setShowPin(false)
+     } catch (error) {
+      console.log(error);
+     } 
   }
   const replyMessageHandler = (id, content, type, name, senderid) => {
     // const newMessage = [...message?.messages]
@@ -859,6 +866,8 @@ export const ChatProvider = ({ children }) => {
         setVoice,
         setShowInfoMenu,
         showInfoMenu,
+        setSenderID,
+        
       }}
     >
       {children}
