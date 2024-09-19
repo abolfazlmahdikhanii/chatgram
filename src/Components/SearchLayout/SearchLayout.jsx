@@ -28,7 +28,7 @@ const SearchLayout = ({ chatData, setActiveSearch }) => {
         className="w-full px-1 pt-1 pb-5"
       >
         {forwardUserList?.map((profile) => (
-          <SwiperSlide key={profile.id} className="">
+          <SwiperSlide key={profile?.userid} className="">
             <ColumnProfile
               {...profile}
               key={profile?.userid}
