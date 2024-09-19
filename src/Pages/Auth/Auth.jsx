@@ -8,7 +8,7 @@ const Auth = () => {
   const [isOtpEnterWord, setIsOtpEnterWord] = useState(false)
   const [isNextPage, setIsNextPage] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [error,setError]=useState('')
+  const [error, setError] = useState('')
 
   const registerUser = async (e) => {
     e.preventDefault()
@@ -33,14 +33,15 @@ const Auth = () => {
     setIsLoading(true)
 
     try {
-      const { user, error } = await supabase.auth.verifyOtp({
+      const { session, error } = await supabase.auth.verifyOtp({
         email,
         token: otp,
         type: 'magiclink',
       })
       if (error) throw error
 
-
+      // location.reload()
+     console.log(session);
     } catch (error) {
       setError('invalid code')
     } finally {
@@ -174,7 +175,9 @@ const Auth = () => {
           <div className="relative w-full">
             <input
               type="text"
-              className={`  peer input-profile ${error?'border-red-600 dark:border-red-600 text-red-500 ':''}`}
+              className={`  peer input-profile ${
+                error ? 'border-red-600 dark:border-red-600 text-red-500 ' : ''
+              }`}
               id="code"
               autoComplete="off"
               value={otp}
@@ -188,9 +191,11 @@ const Auth = () => {
 
             <label
               htmlFor="code"
-              className={` lbl-focus  ${otp !== '' ? 'lbl-shown' : ''} ${error?'text-red-500':''}`}
+              className={` lbl-focus  ${otp !== '' ? 'lbl-shown' : ''} ${
+                error ? 'text-red-500' : ''
+              }`}
             >
-              {!error?'Code':error}
+              {!error ? 'Code' : error}
             </label>
           </div>
 
