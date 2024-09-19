@@ -27,7 +27,7 @@ const Message = ({
   send,
   messageid,
   contact,
-  reaction,
+  reactions,
   forward,
   forwardSelf,
   onContext,
@@ -41,6 +41,14 @@ const Message = ({
   sentat,
   isDeleted,
   isEdited,
+  isPin,
+  forwardInfo,
+  isForward,
+  forward_type,
+  forwardFormChat,
+  forwardMessageID,
+  isSelected,
+  chatId
 }) => {
   const location = useLocation()
   const navigate = useNavigate()
@@ -59,6 +67,9 @@ const Message = ({
     setAudio,
     chatBg,
     font,
+    setFriendID,
+    setLink,
+    link
   } = useContext(ChatContext)
   const { user } = useContext(UserContext)
   let messageContent = null
@@ -73,10 +84,11 @@ const Message = ({
         navigate(location.pathname)
       }, 800)
     }
+
     return () => {
       setStyle('')
     }
-  }, [location])
+  }, [location, param.id])
   // useEffect(() => {
   //   if (replayId) getReplayMessageInfo(replayId)
   // }, [])
@@ -113,15 +125,13 @@ const Message = ({
       !decodeMessage(content)?.includes(
         '<img src=https://cdn.jsdelivr.net/npm/emoji-datasource-apple@14.0.0/img/apple/64/'
       ) &&
-      content &&
-      !decodeMessage(content)?.includes('<img src=') &&
-      messageType === 'text' &&
-      content &&
       decodeMessage(content)?.includes('http://')) ||
-    (content && decodeMessage(content)?.includes('https://')) ||
-    (content && decodeMessage(content)?.includes('www.'))
+    decodeMessage(content)?.includes('https://') ||
+    decodeMessage(content)?.includes('www.')
   ) {
     messageContent = <LinkPreview text={decodeMessage(content)} />
+   const findedLink= link.find(item=>item.messageid===messageid)
+   if(!findedLink)setLink(prev=>[...prev,{content,messageid,senderid}])
   } else {
     messageContent = (
       <div
@@ -142,15 +152,23 @@ const Message = ({
   return (
     <div
       className={`grid w-full  relative  px-6 py-3   ${
-        senderid === user.userid && user.userid !== recipientid
+        senderid === user.userid && user.userid !== recipientid||senderid === user.userid && user.userid === recipientid
           ? 'chat-end '
           : 'chat-start '
       } 
       ${
-        checkMessage[arr]?.check ? 'bg-indigo-300/10' : ''
+       isSelected ? 'bg-indigo-300/10' : ''
       }  ${style}  transition-all duration-200`}
       onContextMenu={(e) =>
-        contextmenuHandler(e, messageid, senderid, messageType, content, name)
+        contextmenuHandler(
+          e,
+          messageid,
+          senderid,
+          messageType,
+          content,
+          name,
+          isPin
+        )
       }
     >
       <section className="flex justify-between w-full ">
@@ -158,13 +176,14 @@ const Message = ({
         <div
           style={{ fontSize: `${font}px` }}
           id={messageid}
+          data-id={messageid}
           className={`chat-bubble relative break-words px-2.5 group 
             ${
               isDeleted
                 ? 'animate-fade-out-down [animation-iteration-count:1_!important]'
                 : ''
-            } ${reaction ? 'min-w-[140px]' : ''} ${
-              senderid === user.userid && user.userid !== recipientid
+            } ${reactions ? 'min-w-[140px]' : ''} ${
+              senderid === user.userid && user.userid !== recipientid||senderid === user.userid && user.userid === recipientid
                 ? 'chat-bubble-primary order-1 justify-self-end  '
                 : 'chat-bubble order-0 dark:bg-gray-700 bg-gray-50 '
             }  ${
@@ -172,37 +191,40 @@ const Message = ({
                 content &&
                 decodeMessage(content) &&
                 messageType === 'file') ||
-              (content && typeof decodeMessage(content) === 'string')
-                ? 'max-w-[345px]'
-                : 'max-w-[420px] px-1.5 py-1.5'
+              messageType === 'text'
+                ? 'max-w-[430px]'
+                : 'max-w-[450px] px-1.5 py-1.5'
             } `}
         >
-          {forwardSelf && (
+          {/* {forwardSelf && (
             <p className="text-xs pr-4 pb-1 pt-0.5 pl-0.5 text-gray-300">
               Forward from {forwardSelf?.userName}
             </p>
-          )}
-          {forward && (
-            <HashLink to={`/chat/${forward.id}/#${messageId}`}>
+          )} */}
+          {isForward && (
+            <Link
+              to={user?.userid!==forwardInfo?.userid?`/chat/${forwardFormChat}#${forwardMessageID}`:''}
+              onClick={() =>user?.userid!==forwardInfo?.userid&& setFriendID(forwardInfo?.userid)}
+            >
               <span
-                data-text-color={forward.bgProfile}
-                className={`text-xs   mb-1.5 block mt-0.5`}
+                data-text-color={forwardInfo?.bgProfile}
+                className={`text-xs   mb-1.5 block mt-0.5 max-w-[130px] truncate`}
                 dir="auto"
               >
-                {user.username}
+                Forward from{' '}
+                {forwardInfo?.username || forwardInfo?.email?.split('@')[0]}
               </span>
 
               <button className="absolute bottom-2 -right-11 btn btn-circle btn-sm text-white bg-opacity-70 -translate-x-5 opacity-0 group-hover:opacity-100 group-hover:translate-x-0">
                 <BsArrowRightShort size={24} />
               </button>
-            </HashLink>
+            </Link>
           )}
           {/* box for reply Message */}
 
           {replayData && (
             <HashLink
-              
-              to={`#${replayData?.messageid}`}
+              to={!replayData?.isDeleted && `#${replayData?.messageid}`}
               scroll={(el) =>
                 el.scrollIntoView({
                   behavior: 'smooth',
@@ -210,7 +232,7 @@ const Message = ({
                   block: 'end',
                 })
               }
-              className={`  mx-0 py-1 px-2 mb-2 w-32 rounded-lg flex gap-2.5 cursor-pointer transition-all duration-200  ${
+              className={`  mx-0 py-1 px-2 mb-2 w-[132px] rounded-lg flex gap-2.5 cursor-pointer transition-all duration-200 overflow-hidden  ${
                 // user?.userid === replayData?.senderid && !forward
                 user?.userid === replayData?.senderid
                   ? 'bg-indigo-400/30 hover:bg-indigo-400/60 '
@@ -229,53 +251,57 @@ const Message = ({
               ) : null}
 
               <div className="flex flex-col gap-0.5 ">
-                <p
-                  className={`font-semibold  text-sm ${
-                    // from?.relation === 'me' && !forward
-                    user?.userid === replayData?.senderid
-                      ? 'text-white'
-                      : 'text-indigo-500'
-                  }`}
-                  dir="auto"
-                >
-                  Abolfazl
-                </p>
-                <p className="text-[12px] truncate text-gray-300">
-                  {replayData?.content &&
-                  replayData?.messageType !== 'img' &&
-                  replayData?.messageType !== 'video' ? (
-                    <TypeMessage
-                      dis={replayData?.content}
-                      type={replayData?.messageType}
-                    />
-                  ) : (
-                    messageTypeChecker(
-                      replayData?.messageType,
-                      replayData?.name
-                    )
-                  )}
-                </p>
+                {replayData?.isDeleted ? (
+                  <p className="text-[13px]  text-gray-300 py-2">
+                    Deleted Message
+                  </p>
+                ) : (
+                  <>
+                    <p
+                      className={`font-semibold  text-sm ${
+                        // from?.relation === 'me' && !forward
+                        user?.userid === replayData?.senderid
+                          ? 'text-white'
+                          : 'text-indigo-500'
+                      }`}
+                      dir="auto"
+                    >
+                      Abolfazl
+                    </p>
+                    <p className="text-[12px] truncate text-gray-300">
+                      {replayData?.content &&
+                      replayData?.messageType !== 'img' &&
+                      replayData?.messageType !== 'video' ? (
+                        <TypeMessage
+                          dis={replayData?.content}
+                          type={replayData?.messageType}
+                        />
+                      ) : (
+                        messageTypeChecker(
+                          replayData?.messageType,
+                          replayData?.name
+                        )
+                      )}
+                    </p>
+                  </>
+                )}
               </div>
             </HashLink>
           )}
           {contact && (
             <Link
-              to={`/chat/${contact.id}`}
+              to={`/chat/${forwardFormChat}`}
               className="flex gap-3 items-center px-0.5 py-1"
+              onClick={()=>setFriendID(forwardInfo?.userid)}
             >
               <div>
-                <Profile
-                  size="m"
-                  path={contact.profileImg}
-                  userName={contact.userName}
-                  bgProfile={contact.bgProfile}
-                  relation={contact.relation}
-                />
+              <ProfileImage {...contact} src={contact?.avatar_url} userName={contact?.username||contact?.email?.split('@')[0]} />
+
               </div>
               <div className="space-y-1">
-                <p className="font-semibold">{contact.userName}</p>
+                <p className="font-semibold">{contact?.username||contact?.email?.split('@')[0]}</p>
                 <p className="text-gray-300 text-sm max-w-[145px] truncate font-semibold">
-                  abolfazlmk@gmail.com
+                {contact?.email}
                 </p>
               </div>
             </Link>
@@ -291,15 +317,16 @@ const Message = ({
                   key={messageid}
                   src={content && decodeMessage(content)}
                   path={src}
-                  type={messageType}
+                  mType={messageType}
                   from={senderid}
                   idType={messageid}
                   contextMenu={contextmenuHandler}
                   isChatInfo={false}
                   messageId={messageid}
-                  setAudio={messageType === 'mp3' && setAudio}
+                  setAudio={messageType?.includes('audio') && setAudio}
                   isColor={senderid !== user.userid && !forward ? true : false}
                   caption={caption}
+                  senderID={senderid}
                   name={name}
                 />
               </>
@@ -312,12 +339,14 @@ const Message = ({
                 {content[content?.length - 1]?.caption}
               </p>
             )}
-          {reaction && (
+          <div className='flex items-center justify-between'>
+          {reactions && (
             <ReactionBox
-              reaction={reaction}
-              setReaction={() => removeReactionEmojiHandler(messageId)}
+              reaction={reactions}
+              setReaction={() => removeReactionEmojiHandler(messageid,chatId)}
             />
           )}
+        
           <FooterMessage
             message={
               content && decodeMessage(content) && decodeMessage(content)[0]
@@ -327,9 +356,11 @@ const Message = ({
             edited={isEdited}
             messageType={messageType}
             caption={caption}
-            pin={pin}
-            reaction={reaction}
+            pin={isPin}
+            reaction={reactions}
           />
+         
+            </div>
         </div>
 
         <input
@@ -339,16 +370,18 @@ const Message = ({
               ? 'opacity-100'
               : 'opacity-0'
           } ${
-            senderid === user.userid && user.userid !== recipientid
+            senderid === user.userid && user.userid !== recipientid||senderid === user.userid && user.userid === recipientid
               ? 'order-0 mr-16 self-end'
               : 'order-1 ml-16'
           }`}
-          checked={checkMessage[arr]?.check}
+          checked={isSelected}
           onChange={(e) =>
-            checkHandler(messageId, e.target.checked ? false : true)
+            checkHandler(messageid)
           }
         />
+       
       </section>
+     
     </div>
   )
 }
