@@ -1,4 +1,11 @@
-import React, { useCallback, useContext, useEffect, useId, useRef, useState } from 'react'
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from 'react'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import ChatHeader from '../../Components/ChatHeader/ChatHeader'
@@ -48,6 +55,7 @@ const Chat = () => {
     showAlert,
     showContextMenu,
     setShowAlert,
+
     DeleteChat,
     userMessage,
     messageID,
@@ -61,7 +69,7 @@ const Chat = () => {
     friendID,
     setPinMessage,
     checkMessageHandler,
-    setShowContextMenu
+    setShowContextMenu,
   } = useContext(ChatContext)
   const { user } = useContext(UserContext)
   let lastMessage = []
@@ -75,12 +83,18 @@ const Chat = () => {
   useEffect(() => {
     fetchMessages()
     if (!friendID) navigate('/')
+    // if (match?.id == user?.userid) fetchSavedMessages()
   }, [match.id])
   useEffect(() => {
     getFriendinfo(friendID)
   }, [friendID])
   useEffect(() => {
-    fetchMessages()
+    // if (match?.id == user?.userid) {
+    //   fetchSavedMessages()
+    // } else {
+      fetchMessages()
+    // }
+
     updateMessageStatus()
 
     // Subscribe to real-time messages
@@ -91,14 +105,28 @@ const Chat = () => {
         { event: '*', schema: 'public', table: 'messages' },
         (payload) => {
           const newMsg = payload.new
-         
-          if (newMsg.chatID == match?.id||!newMsg.length) {
+
+          if (newMsg.chatID == match?.id || !newMsg.length) {
             setMessages((prevMessages) => [...prevMessages, payload.new])
             lastMessage[match.id] = payload.new
-            console.log(message);
+            console.log(message)
             setLastMessage(payload.new)
             // console.log(payload.new);
             fetchMessages()
+            updateMessageStatus()
+            // groupMessageHandler(messages)
+          }
+           else if (
+            (newMsg.senderid === user?.userid &&
+              newMsg.recipientid === user?.userid) ||
+            !newMsg.length
+          ) {
+            setMessages((prevMessages) => [...prevMessages, payload.new])
+            lastMessage[match.id] = payload.new
+            console.log(message)
+            setLastMessage(payload.new)
+            // console.log(payload.new);
+            fetchSavedMessages()
             updateMessageStatus()
             // groupMessageHandler(messages)
           }
@@ -111,12 +139,17 @@ const Chat = () => {
       // supabase.removeSubscription(subscription)
     }
   }, [match.id])
-  const fetchMessages =async () => {
+  const fetchMessages = async () => {
+    if(match?.id==user?.userid) fetchSavedMessages()
+      else{
+    
     let { data: messages, error } = await supabase
       .from('messages')
-      .select('*,replayId(messageid,messageType,content,name,senderid,isDeleted),forward_from(email,bgProfile,username,userid),contact(email,username,bgProfile,avatar_url)')
+      .select(
+        '*,replayId(messageid,messageType,content,name,senderid,isDeleted),forward_from(email,bgProfile,username,userid),contact(email,username,bgProfile,avatar_url)'
+      )
       .eq('chatID', match.id)
-      .eq('isDeleted',false)
+      .eq('isDeleted', false)
       .order('sentat', { ascending: true })
 
     if (error) console.error('Error fetching messages:', error)
@@ -126,11 +159,13 @@ const Chat = () => {
     groupMessageHandler(messages)
     getPinMessage(messages)
   }
+  }
   const fetchSavedMessages = async () => {
     let { data: messages, error } = await supabase
       .from('messages')
       .select('*')
       .eq('recipientid', user.userid)
+      .eq('senderid', user.userid)
       .order('sentat', { ascending: true })
 
     if (error) console.error('Error fetching messages:', error)
@@ -202,9 +237,9 @@ const Chat = () => {
 
     setGroupedMessages(messageGroup)
   }
-  const getPinMessage=(arr)=>{
-    const filteredPin=arr.filter(message=>message?.isPin)
-    console.log(filteredPin);
+  const getPinMessage = (arr) => {
+    const filteredPin = arr?.filter((message) => message?.isPin)
+    console.log(filteredPin)
     setPinMessage(filteredPin)
   }
   const closePinBox = () => {
@@ -248,9 +283,7 @@ const Chat = () => {
             ref={chatRef}
           >
             <PinAudio path={audio} />
-            {pinMessage?.length>0 ? (
-              <PinBox close={closePinBox} />
-            ) : null}
+            {pinMessage?.length > 0 ? <PinBox close={closePinBox} /> : null}
 
             {/* simple message */}
             <section
@@ -280,7 +313,7 @@ const Chat = () => {
                         src={item.src}
                         replayData={item?.replayId}
                         isSelected={checkMessage.includes(item.messageid)}
-                       
+                        chatId={match.id}
                         messageType={
                           item.messageType ? item.messageType : item.type
                         }
@@ -293,7 +326,9 @@ const Chat = () => {
             {/* pin message */}
             <section
               className={`h-[90%]  overflow-y-auto  flex flex-col  mt-1 mb-1.5 transition-all duration-200 ease-linear w-full${
-                showPin ? 'translate-x-0 flex' : 'translate-x-full hidden'
+                pinMessage && showPin
+                  ? 'translate-x-0 flex'
+                  : 'translate-x-full hidden'
               }`}
             >
               {pinMessage &&
@@ -309,24 +344,30 @@ const Chat = () => {
 
             {/* FORM */}
             {!showPin ? (
-              !checkMessage?.length && !showCheckBox || !groupedMessages.length? (
+              (!checkMessage?.length && !showCheckBox) ||
+              !groupedMessages.length ? (
                 <ChatForm setMessage={groupMessageHandler} />
               ) : (
-                <CheckMessageBox chatId={match.id}/>
+                <CheckMessageBox chatId={match.id} />
               )
             ) : (
-              <UnpinBtn />
+              <UnpinBtn chatID={match.id} />
             )}
             {/* menu */}
 
-            <MessageMenu show={showContextMenu} isChatInfo={false} close={()=>setShowContextMenu(false)} />
+            <MessageMenu
+              show={showContextMenu}
+              isChatInfo={false}
+              close={() => setShowContextMenu(false)}
+              chatID={match.id}
+            />
 
             {/* <Uploader /> */}
 
             <Modal userID={match?.id} />
             <ToastContainer />
           </main>
-          {showAlert && <Dialog chatId={match.id}/>}
+          {showAlert && <Dialog chatId={match.id} />}
         </div>
 
         {showChatInfo && (
