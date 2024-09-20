@@ -1,4 +1,5 @@
 import React, {
+  memo,
   useCallback,
   useContext,
   useEffect,
@@ -105,11 +106,11 @@ const Chat = () => {
         { event: '*', schema: 'public', table: 'messages' },
         (payload) => {
           const newMsg = payload.new
-
+       
           if (newMsg.chatID == match?.id || !newMsg.length) {
             setMessages((prevMessages) => [...prevMessages, payload.new])
             lastMessage[match.id] = payload.new
-            console.log(message)
+            console.log(payload.new)
             setLastMessage(payload.new)
             // console.log(payload.new);
             fetchMessages()
@@ -136,14 +137,14 @@ const Chat = () => {
 
     // Cleanup subscription on unmount
     return () => {
-      // supabase.removeSubscription(subscription)
+      // supabase&&supabase.removeSubscription(subscription)
     }
   }, [match.id])
   const fetchMessages = async () => {
     if(match?.id==user?.userid) fetchSavedMessages()
       else{
     
-    let { data: messages, error } = await supabase
+    let { data: message, error } = await supabase
       .from('messages')
       .select(
         '*,replayId(messageid,messageType,content,name,senderid,isDeleted),forward_from(email,bgProfile,username,userid),contact(email,username,bgProfile,avatar_url)'
@@ -153,11 +154,11 @@ const Chat = () => {
       .order('sentat', { ascending: true })
 
     if (error) console.error('Error fetching messages:', error)
-    setMessages(messages)
-    lastMessage[match.id] = messages
+    setMessages(prev=>[...prev,message])
+    lastMessage[match.id] = message
     setLastMessage(lastMessage)
-    groupMessageHandler(messages)
-    getPinMessage(messages)
+    groupMessageHandler(message)
+    getPinMessage(message)
   }
   }
   const fetchSavedMessages = async () => {
@@ -306,7 +307,7 @@ const Chat = () => {
 
                     {group.messages.map((item) => (
                       <Message
-                        key={item.id}
+                        key={item.messageid}
                         forwardInfo={item?.forward_from}
                         forwardSelf={item?.forwardSelf}
                         contact={item?.contact}
