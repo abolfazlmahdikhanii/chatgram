@@ -48,7 +48,7 @@ const Message = ({
   forwardFormChat,
   forwardMessageID,
   isSelected,
-  chatId
+  chatId,
 }) => {
   const location = useLocation()
   const navigate = useNavigate()
@@ -69,7 +69,7 @@ const Message = ({
     font,
     setFriendID,
     setLink,
-    link
+    link,
   } = useContext(ChatContext)
   const { user } = useContext(UserContext)
   let messageContent = null
@@ -130,8 +130,9 @@ const Message = ({
     decodeMessage(content)?.includes('www.')
   ) {
     messageContent = <LinkPreview text={decodeMessage(content)} />
-   const findedLink= link.find(item=>item.messageid===messageid)
-   if(!findedLink)setLink(prev=>[...prev,{content,messageid,senderid}])
+    const findedLink = link.find((item) => item.messageid === messageid)
+    if (!findedLink)
+      setLink((prev) => [...prev, { content, messageid, senderid }])
   } else {
     messageContent = (
       <div
@@ -152,12 +153,13 @@ const Message = ({
   return (
     <div
       className={`grid w-full  relative  px-6 py-3   ${
-        senderid === user.userid && user.userid !== recipientid||senderid === user.userid && user.userid === recipientid
+        (senderid === user.userid && user.userid !== recipientid) ||
+        (senderid === user.userid && user.userid === recipientid)
           ? 'chat-end '
           : 'chat-start '
       } 
       ${
-       isSelected ? 'bg-indigo-300/10' : ''
+        isSelected ? 'bg-indigo-300/10' : ''
       }  ${style}  transition-all duration-200`}
       onContextMenu={(e) =>
         contextmenuHandler(
@@ -183,7 +185,8 @@ const Message = ({
                 ? 'animate-fade-out-down [animation-iteration-count:1_!important]'
                 : ''
             } ${reactions ? 'min-w-[140px]' : ''} ${
-              senderid === user.userid && user.userid !== recipientid||senderid === user.userid && user.userid === recipientid
+              (senderid === user.userid && user.userid !== recipientid) ||
+              (senderid === user.userid && user.userid === recipientid)
                 ? 'chat-bubble-primary order-1 justify-self-end  '
                 : 'chat-bubble order-0 dark:bg-gray-700 bg-gray-50 '
             }  ${
@@ -203,8 +206,15 @@ const Message = ({
           )} */}
           {isForward && (
             <Link
-              to={user?.userid!==forwardInfo?.userid?`/chat/${forwardFormChat}#${forwardMessageID}`:''}
-              onClick={() =>user?.userid!==forwardInfo?.userid&& setFriendID(forwardInfo?.userid)}
+              to={
+                user?.userid !== forwardInfo?.userid
+                  ? `/chat/${forwardFormChat}#${forwardMessageID}`
+                  : ''
+              }
+              onClick={() =>
+                user?.userid !== forwardInfo?.userid &&
+                setFriendID(forwardInfo?.userid)
+              }
             >
               <span
                 data-text-color={forwardInfo?.bgProfile}
@@ -292,16 +302,21 @@ const Message = ({
             <Link
               to={`/chat/${forwardFormChat}`}
               className="flex gap-3 items-center px-0.5 py-1"
-              onClick={()=>setFriendID(forwardInfo?.userid)}
+              onClick={() => setFriendID(forwardInfo?.userid)}
             >
               <div>
-              <ProfileImage {...contact} src={contact?.avatar_url} userName={contact?.username||contact?.email?.split('@')[0]} />
-
+                <ProfileImage
+                  {...contact}
+                  src={contact?.avatar_url}
+                  userName={contact?.username || contact?.email?.split('@')[0]}
+                />
               </div>
               <div className="space-y-1">
-                <p className="font-semibold">{contact?.username||contact?.email?.split('@')[0]}</p>
+                <p className="font-semibold">
+                  {contact?.username || contact?.email?.split('@')[0]}
+                </p>
                 <p className="text-gray-300 text-sm max-w-[145px] truncate font-semibold">
-                {contact?.email}
+                  {contact?.email}
                 </p>
               </div>
             </Link>
@@ -314,7 +329,6 @@ const Message = ({
             <ul className={`${messageType !== 'text' ? 'grid-2' : 'grid-1'}  `}>
               <>
                 <FileType
-                  key={messageid}
                   src={content && decodeMessage(content)}
                   path={src}
                   mType={messageType}
@@ -339,28 +353,31 @@ const Message = ({
                 {content[content?.length - 1]?.caption}
               </p>
             )}
-          <div className='flex items-center justify-between'>
-          {reactions && (
-            <ReactionBox
+          <div className={`flex items-center ${reactions?.length?'justify-between':'justify-end px-1'}`}>
+            {reactions &&
+              reactions?.map((item,i) => (
+                <ReactionBox
+                   key={i+1}
+                  reaction={item}
+                  setReaction={() =>
+                    item.userInfos?.userid===user?.userid? removeReactionEmojiHandler(messageid, chatId,item.userInfos,user):null
+                  }
+                />
+              ))}
+
+            <FooterMessage
+              message={
+                content && decodeMessage(content) && decodeMessage(content)[0]
+              }
+              date={sentat && formatTime(sentat)}
+              status={status}
+              edited={isEdited}
+              messageType={messageType}
+              caption={caption}
+              pin={isPin}
               reaction={reactions}
-              setReaction={() => removeReactionEmojiHandler(messageid,chatId)}
             />
-          )}
-        
-          <FooterMessage
-            message={
-              content && decodeMessage(content) && decodeMessage(content)[0]
-            }
-            date={sentat && formatTime(sentat)}
-            status={status}
-            edited={isEdited}
-            messageType={messageType}
-            caption={caption}
-            pin={isPin}
-            reaction={reactions}
-          />
-         
-            </div>
+          </div>
         </div>
 
         <input
@@ -370,18 +387,15 @@ const Message = ({
               ? 'opacity-100'
               : 'opacity-0'
           } ${
-            senderid === user.userid && user.userid !== recipientid||senderid === user.userid && user.userid === recipientid
+            (senderid === user.userid && user.userid !== recipientid) ||
+            (senderid === user.userid && user.userid === recipientid)
               ? 'order-0 mr-16 self-end'
               : 'order-1 ml-16'
           }`}
           checked={isSelected}
-          onChange={(e) =>
-            checkHandler(messageid)
-          }
+          onChange={(e) => checkHandler(messageid)}
         />
-       
       </section>
-     
     </div>
   )
 }
