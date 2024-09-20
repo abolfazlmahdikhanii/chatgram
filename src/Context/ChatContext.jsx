@@ -587,19 +587,19 @@ export const ChatProvider = ({ children }) => {
       setIsPin(false)
     }
   }
-  const unpinHandler =async (chatID) => {
+  const unpinHandler = async (chatID) => {
     try {
       const { data, error } = await supabase
-      .from('messages')
-      .update({isPin:false})
-      .eq('chatID', chatID)
-      .select()
-      if(error) throw error
+        .from('messages')
+        .update({ isPin: false })
+        .eq('chatID', chatID)
+        .select()
+      if (error) throw error
       setPinMessage([])
       setShowPin(false)
-     } catch (error) {
-      console.log(error);
-     } 
+    } catch (error) {
+      console.log(error)
+    }
   }
   const replyMessageHandler = (id, content, type, name, senderid) => {
     // const newMessage = [...message?.messages]
@@ -642,31 +642,110 @@ export const ChatProvider = ({ children }) => {
     setShowCheckBox(false)
   }
 
-  const reactionEmojiHandler = async (emojiId,msgId,chatID,userInfo) => {
-   try {
-    const { data, error } = await supabase
-    .from('messages')
-    .update({ reactions:{emojiId,userInfos:{username:userInfo.username,email:userInfo.email,profile:userInfo.avatar_url,bgProfile:userInfo.bgProfile}} })
-    .eq('chatID', chatID)
-    .eq('messageid',msgId)
-    .select()
-    if(error) throw error
-   } catch (error) {
-    console.log(error);
-   } 
-  }
-  const removeReactionEmojiHandler =async (messageid,chatID) => {
-    try {
-      const { data, error } = await supabase
+  const reactionEmojiHandler = async (emojiId, msgId, chatID, userInfo) => {
+    let { data: emoji, error } = await supabase
       .from('messages')
-      .update({ reactions:null })
+      .select('*')
       .eq('chatID', chatID)
-      .eq('messageid',messageid)
+      .eq('messageid', msgId)
+
+    if (error) return
+    const messages = emoji[0]?.reactions
+    console.log(emoji?.reactions)
+    if (!messages?.length || messages?.userInfos?.userid == userInfo?.userid) {
+      const { data, error: err } = await supabase
+        .from('messages')
+        .update({
+          reactions: [
+            {
+              emojiId,
+              userInfos: {
+                userid: userInfo.userid,
+                username: userInfo.username,
+                email: userInfo.email,
+                profile: userInfo.avatar_url,
+                bgProfile: userInfo.bgProfile,
+              },
+            },
+          ],
+        })
+        .eq('chatID', chatID)
+        .eq('messageid', msgId)
+        .select()
+      if (err) console.log(err)
+    } else if (messages[0]) {
+      console.log(emoji)
+      if (messages[0]?.userInfos?.userid !== userInfo?.userid) {
+        const { data, error: err } = await supabase
+          .from('messages')
+          .update({
+            reactions: [
+              messages[0],
+              {
+                emojiId,
+                userInfos: {
+                  userid: userInfo.userid,
+                  username: userInfo.username,
+                  email: userInfo.email,
+                  profile: userInfo.avatar_url,
+                  bgProfile: userInfo.bgProfile,
+                },
+              },
+            ],
+          })
+          .eq('chatID', chatID)
+          .eq('messageid', msgId)
+          .select()
+        if (err) console.log(err)
+      }
+      if (messages[0]?.userInfos?.userid === userInfo?.userid) {
+        const newMessage = [...messages]
+        const findedReaction = newMessage.find(
+          (item) => item.userInfos.userid === userInfo.userid
+        )
+        findedReaction.emojiId = emojiId
+        const { data, error: err } = await supabase
+          .from('messages')
+          .update({
+            reactions: newMessage,
+          })
+          .eq('chatID', chatID)
+          .eq('messageid', msgId)
+          .select()
+        if (err) console.log(err)
+      }
+    }
+  }
+  const removeReactionEmojiHandler = async (
+    messageid,
+    chatID,
+    userInfo,
+    user
+  ) => {
+    let { data: emoji, error } = await supabase
+      .from('messages')
+      .select('*')
+      .eq('chatID', chatID)
+      .eq('messageid', messageid)
+
+    if (error) return
+    const messages = emoji[0]?.reactions
+
+    const newMessage = [...messages]
+    const findedReaction = newMessage.findIndex(
+      (item) => item.userInfos.userid === userInfo.userid
+    )
+   
+    newMessage?.splice(findedReaction, 1)
+    const { data, error: err } = await supabase
+      .from('messages')
+      .update({
+        reactions: newMessage,
+      })
+      .eq('chatID', chatID)
+      .eq('messageid', messageid)
       .select()
-      if(error) throw error
-     } catch (error) {
-      console.log(error);
-     } 
+    if (err) console.log(err)
   }
 
   const DeleteChat = async (id) => {
@@ -867,7 +946,6 @@ export const ChatProvider = ({ children }) => {
         setShowInfoMenu,
         showInfoMenu,
         setSenderID,
-        
       }}
     >
       {children}
