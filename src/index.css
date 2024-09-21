@@ -76,6 +76,7 @@
 .chat-end .chat-bubble{
     border-bottom-right-radius: 0 !important;
 }
+
 @layer base {
     ::-webkit-scrollbar {
         @apply w-[9px];
@@ -106,7 +107,9 @@
     .message-item--active{
         @apply bg-gray-700/20  
     }
-
+    .st0,.st1,.st2,.st3,.st4,.st5,.st6,.st7,.st8,.svg{
+      @apply dark:stroke-[#fff_!important]
+    }
     .chat__input {
         @apply appearance-none px-3 py-2 placeholder:text-xs w-full dark:text-gray-50 bg-transparent focus-visible:outline-0 break-all transition-all duration-300 text-gray-800 focus-visible:outline-none;
     }
@@ -224,7 +227,10 @@
     }
 
     [data-color='violet'] {
-      @apply bg-gradient-to-r from-violet-600 to-indigo-600 text-violet-400
+      @apply bg-gradient-to-r from-violet-600 to-violet-400 text-violet-400
+    }
+    [data-color='blue'] {
+      @apply bg-gradient-to-r from-blue-600 to-sky-600 text-blue-400
     }
     [data-color='green'] {
       @apply  bg-gradient-to-br from-green-500 via-green-600 to-green-800 text-green-400
@@ -232,8 +238,20 @@
     [data-color='indigo'] {
       @apply  bg-gradient-to-r from-indigo-700 to-indigo-500 text-indigo-400
     }
-    [data-color='yellow'] {
+    [data-color='emerald'] {
+      @apply  bg-gradient-to-r from-emerald-500 to-emerald-600 text-emerald-400
+    }
+    [data-color='lime'] {
+      @apply  bg-gradient-to-r from-lime-500 to-lime-400 text-lime-400
+    }
+    [data-color='cyan'] {
+      @apply  bg-gradient-to-r from-cyan-500 to-cyan-400 text-cyan-400
+    }
+    [data-color='amber'] {
       @apply  bg-gradient-to-r from-amber-500 to-amber-300 text-amber-400
+    }
+    [data-color='yellow'] {
+      @apply  bg-gradient-to-r from-yellow-500 to-yellow-600 text-yellow-400
     }
     [data-color='red'] {
       @apply  bg-gradient-to-r from-red-600 to-red-500 text-red-400
