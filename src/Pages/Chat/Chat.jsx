@@ -251,6 +251,11 @@ const Chat = () => {
       item.pin = false
     })
   }
+  const checkBgIsSvg=(img)=>{
+    const splitedBg=chatBg?.split('/')
+    const isSvg=splitedBg[splitedBg?.length-1]?.includes('.svg')
+    return isSvg
+  }
 
   return (
     <MusicControlProvider>
@@ -262,7 +267,7 @@ const Chat = () => {
         <div
           className={`${
             showChatInfo ? 'bg-[size:35%] ' : ''
-          }  h-screen relative overflow-hidden  transition-all duration-200 ease-in-out`}
+          }  h-screen relative overflow-hidden    ${!chatBg||checkBgIsSvg(chatBg)?'bg-contain bg-repeat  [-webkit-background-origin:border] transition-colors duration-200':' bg-[size:100vw_100vh]  bg-no-repeat transition-all duration-200 relative before:absolute before:inset-0 before:top-20 before:backdrop-blur-[2px] before:w-full before:h-full'} dark:stroke-[#fff] `}
           onContextMenu={(e) => e.preventDefault()}
           style={{
             backgroundImage: `url(${
