@@ -25,7 +25,7 @@ const ProfileImage = ({
           <img src={src} alt="profile" className="w-full h-full" />
         ) : (
           <div
-            data-color={bgProfile}
+            data-color={!isSave?bgProfile:'purple'}
             className={`grid place-items-center text-white h-full font-bold w-full  `}
           >
             {!src && !isSave && (
