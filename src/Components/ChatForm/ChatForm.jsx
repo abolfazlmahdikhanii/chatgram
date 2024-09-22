@@ -38,6 +38,7 @@ const ChatForm = ({ setMessage }) => {
   const [uploadUrl, setUploadUrl] = useState([])
   const [content, setContent] = useState('')
   const [showAlert, setShowAlert] = useState(false)
+  const [showPastUploader, setShowPastUploader] = useState(false)
   const { user } = useContext(UserContext)
   const param = useParams()
 
@@ -82,7 +83,7 @@ const ChatForm = ({ setMessage }) => {
   useEffect(() => {
     inputRef.current.innerHTML = ''
     updateTypingStatus(false)
-  }, [param.id])
+  }, [])
 
   const handleUpload = async (files) => {
     setFileProgress(0)
@@ -195,12 +196,19 @@ const ChatForm = ({ setMessage }) => {
   }
   const handleInputChange = (e) => {
     setContent(inputRef.current.innerHTML)
-    console.log(e.target)
+    console.log(e.target.innerHTML.includes('<img src='))
+   
+    if(e.target.innerHTML.startsWith('<img src=')){
+      e.target.innerHTML=""
+     
+    }
     if (e.target.innerText !== '') {
       updateTypingStatus(true)
+    
     } else {
       updateTypingStatus(false)
     }
+
   }
 
   const updateTypingStatus = async (isTyping) => {
@@ -285,7 +293,7 @@ const ChatForm = ({ setMessage }) => {
         content: typeof content !== 'string' ? fileUrl : content,
         messageType: typeof content !== 'string' ? content.type : 'text',
         status: 'send',
-        chatID: param.id,
+        chatID: param.id!==user?.userid?param.id:null,
         replayId: replay,
       },
     ])
@@ -443,9 +451,17 @@ const ChatForm = ({ setMessage }) => {
                     e.key === 'Enter' && !editContent
                       ? submitFormHandler(e)
                       : null
+                    e.key === 'Space'
+                      ? setContent(prev=>prev+=" ")
+                      : null
+                      
                     // e.key === "Backspace"&&edit ? setEdit(e.target.innerText) : edit;
                     setContent(inputRef.current.innerHTML)
+                    console.log(inputRef.current.innerHTML);
                   }}
+                  
+                 
+                
                 >
                   {emoji &&
                     emoji?.map((item, i) => (
@@ -519,6 +535,7 @@ const ChatForm = ({ setMessage }) => {
         onUploadImage={uploadImageHandler}
         onUploadFile={uploadFileHandler}
         setSelectedFile={setSelectedFile}
+   
       />
         {showAlert && (
         <AlertBox
