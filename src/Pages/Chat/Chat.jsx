@@ -21,6 +21,8 @@ import UnpinBtn from '../../Components/UnpinBtn/UnpinBtn'
 import Modal from '../../Components/UI/Modal/Modal'
 import Dialog from '../../Components/UI/Dialog/Dialog'
 import PinAudio from '../../Components/PinAudio/PinAudio'
+import { Notifications } from 'react-push-notification'
+import addNotification from 'react-push-notification'
 import {
   MusicControlContext,
   MusicControlProvider,
@@ -31,6 +33,9 @@ import ModalPreviewImg from '../../Components/UI/ModalPreviewImg/ModalPreviewImg
 import { ChatContext, ChatProvider } from '../../Context/ChatContext'
 import { supabase } from '../../superbase'
 import { UserContext } from '../../Context/UserContext'
+import decodeMessage from '../../Utility/decodeMessage'
+import userNameSpliter from '../../Utility/userNameSpliter'
+import ProfileImage from '../../Components/ProfileImage/ProfileImage'
 
 const Chat = () => {
   const [showChatInfo, setShowChatInfo] = useState(false)
@@ -64,7 +69,6 @@ const Chat = () => {
     setISChatInfo,
     isChatInfo,
     chatId,
-    chatBg,
     showPinAudio,
     setProfileInfo,
     friendID,
@@ -72,7 +76,7 @@ const Chat = () => {
     checkMessageHandler,
     setShowContextMenu,
   } = useContext(ChatContext)
-  const { user } = useContext(UserContext)
+  const { user, chatBg } = useContext(UserContext)
   let lastMessage = []
   // useEffect(() => {
   //     filterChat(match?.id)
@@ -83,6 +87,8 @@ const Chat = () => {
 
   useEffect(() => {
     fetchMessages()
+    requestNotificationPermission()
+
     if (!friendID) navigate('/')
     // if (match?.id == user?.userid) fetchSavedMessages()
   }, [match.id])
@@ -93,7 +99,7 @@ const Chat = () => {
     // if (match?.id == user?.userid) {
     //   fetchSavedMessages()
     // } else {
-      fetchMessages()
+    fetchMessages()
     // }
 
     updateMessageStatus()
@@ -106,18 +112,25 @@ const Chat = () => {
         { event: '*', schema: 'public', table: 'messages' },
         (payload) => {
           const newMsg = payload.new
-       
+
+          if (newMsg.status === 'send' && newMsg.recipientid == user?.userid) {
+           
+         
+            showNotification('Chatgram', newMsg,newMsg?.content)
+          }
+
           if (newMsg.chatID == match?.id || !newMsg.length) {
             setMessages((prevMessages) => [...prevMessages, payload.new])
             lastMessage[match.id] = payload.new
             console.log(payload.new)
+
             setLastMessage(payload.new)
             // console.log(payload.new);
             fetchMessages()
             updateMessageStatus()
+
             // groupMessageHandler(messages)
-          }
-           else if (
+          } else if (
             (newMsg.senderid === user?.userid &&
               newMsg.recipientid === user?.userid) ||
             !newMsg.length
@@ -141,25 +154,24 @@ const Chat = () => {
     }
   }, [match.id])
   const fetchMessages = async () => {
-    if(match?.id==user?.userid) fetchSavedMessages()
-      else{
-    
-    let { data: message, error } = await supabase
-      .from('messages')
-      .select(
-        '*,replayId(messageid,messageType,content,name,senderid,isDeleted),forward_from(email,bgProfile,username,userid),contact(email,username,bgProfile,avatar_url)'
-      )
-      .eq('chatID', match.id)
-      .eq('isDeleted', false)
-      .order('sentat', { ascending: true })
+    if (match?.id == user?.userid) fetchSavedMessages()
+    else {
+      let { data: message, error } = await supabase
+        .from('messages')
+        .select(
+          '*,replayId(messageid,messageType,content,name,senderid,isDeleted),forward_from(email,bgProfile,username,userid),contact(email,username,bgProfile,avatar_url)'
+        )
+        .eq('chatID', match.id)
+        .eq('isDeleted', false)
+        .order('sentat', { ascending: true })
 
-    if (error) console.error('Error fetching messages:', error)
-    setMessages(prev=>[...prev,message])
-    lastMessage[match.id] = message
-    setLastMessage(lastMessage)
-    groupMessageHandler(message)
-    getPinMessage(message)
-  }
+      if (error) console.error('Error fetching messages:', error)
+      setMessages((prev) => [...prev, message])
+      lastMessage[match.id] = message
+      setLastMessage(lastMessage)
+      groupMessageHandler(message)
+      getPinMessage(message)
+    }
   }
   const fetchSavedMessages = async () => {
     let { data: messages, error } = await supabase
@@ -200,6 +212,19 @@ const Chat = () => {
         .single()
       if (error) throw error
       setProfileInfo(users)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  const getSenderinfo = async (id) => {
+    try {
+      let { data: users, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('userid', id)
+        .single()
+      if (error) throw error
+      return users
     } catch (error) {
       console.log(error)
     }
@@ -251,14 +276,48 @@ const Chat = () => {
       item.pin = false
     })
   }
-  const checkBgIsSvg=(img)=>{
-    const splitedBg=chatBg?.split('/')
-    const isSvg=splitedBg[splitedBg?.length-1]?.includes('.svg')
+  const checkBgIsSvg = (img) => {
+    const splitedBg = chatBg?.split('/')
+    const isSvg = splitedBg[splitedBg?.length - 1]?.includes('.svg')
     return isSvg
   }
+  const requestNotificationPermission = async () => {
+    if ('Notification' in window) {
+      const permission = await Notification.requestPermission()
+      return permission
+    }
+    return 'denied'
+  }
+  const showNotification = async (title, message,content) => {
+    if (document.hidden && window.Notification.permission === 'granted') {
+      console.log(content)
 
+     const senderInfo= await getSenderinfo(message?.senderid)
+     const reciverInfo= await getSenderinfo(message?.recipientid)
+       
+        addNotification({
+          // title: title,
+          // title: `${senderInfo?.username||senderInfo.email?.split('@')[0]}->${reciverInfo?.username||reciverInfo.email?.split('@')[0]}`,
+          title: `${senderInfo?.username||senderInfo.email?.split('@')[0]}`,
+          subtitle:'test',
+          duration: 3000,
+          message: 'New Message!',
+          theme: 'red',
+          native: true,
+          backgroundBottom: 'darkgreen',
+          icon: senderInfo?.avatar_url?senderInfo.avatar_url:"../../../src/assets/images/noti-logo2.png", // when using native, your OS will handle theming.
+        })
+      
+
+      // new Notification(title,{
+      //   body:msg,
+      //   icon:'../../../src/assets/images/logo.png'
+      // })
+    }
+  }
   return (
     <MusicControlProvider>
+      <Notifications />
       <div
         className={`grid transition-all duration-200 ${
           showChatInfo ? 'grid-cols-[1fr_30%]' : 'grid-cols-1'
@@ -267,11 +326,17 @@ const Chat = () => {
         <div
           className={`${
             showChatInfo ? 'bg-[size:35%] ' : ''
-          }  h-screen relative overflow-hidden    ${!chatBg||checkBgIsSvg(chatBg)?'bg-contain bg-repeat  [-webkit-background-origin:border] transition-colors duration-200':' bg-[size:100vw_100vh]  bg-no-repeat transition-all duration-200 relative before:absolute before:inset-0 before:top-20 before:backdrop-blur-[2px] before:w-full before:h-full'} dark:stroke-[#fff] `}
+          }  h-screen relative overflow-hidden    ${
+            !chatBg || checkBgIsSvg(chatBg)
+              ? 'bg-contain bg-repeat  [-webkit-background-origin:border] transition-colors duration-200'
+              : ' bg-[size:100vw_100vh]  bg-no-repeat transition-all duration-200 relative before:absolute before:inset-0 before:top-20 before:backdrop-blur-[2px] before:w-full before:h-full'
+          } dark:stroke-[#fff] `}
           onContextMenu={(e) => e.preventDefault()}
           style={{
             backgroundImage: `url(${
-              chatBg ? chatBg : '../../../src/assets/images/bg-pattern.svg'
+              chatBg
+                ? `../../../src/assets/images/chat-bg/${chatBg}`
+                : '../../../src/assets/images/bg-pattern.svg'
             })`,
           }}
         >
