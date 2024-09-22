@@ -65,13 +65,11 @@ const Message = ({
     checkMessage,
     contextmenuHandler,
     setAudio,
-    chatBg,
-    font,
     setFriendID,
     setLink,
     link,
   } = useContext(ChatContext)
-  const { user } = useContext(UserContext)
+  const { user,font } = useContext(UserContext)
   let messageContent = null
 
   useEffect(() => {
@@ -184,7 +182,7 @@ const Message = ({
               isDeleted
                 ? 'animate-fade-out-down [animation-iteration-count:1_!important]'
                 : ''
-            } ${reactions ? 'min-w-[140px]' : ''} ${
+            } ${reactions?.length>0 ? 'min-w-[140px]' : ''} ${
               (senderid === user.userid && user.userid !== recipientid) ||
               (senderid === user.userid && user.userid === recipientid)
                 ? 'chat-bubble-primary order-1 justify-self-end  '
@@ -354,7 +352,7 @@ const Message = ({
               </p>
             )}
           <div className={`flex items-center ${reactions?.length?'justify-between':'justify-end px-1'}`}>
-            {reactions &&
+            {reactions?.length>0 &&
               reactions?.map((item,i) => (
                 <ReactionBox
                    key={i+1}
