@@ -257,7 +257,7 @@ const EditProfileSetting = ({ close, profile }) => {
         {isEnterWord && (
           <div className="relative">
             <button
-              className="btn btn-success mask mask-squircle fixed bottom-7 ml-[245px] text-white "
+              className="btn btn-success mask mask-squircle fixed bottom-7 ml-[245px] text-white grid place-items-center"
               onClick={updateProfileHandler}
               disabled={isLoading}
             >
@@ -277,7 +277,7 @@ const EditProfileSetting = ({ close, profile }) => {
                   />
                 </svg>
               ) : (
-                <span className="loading loading-spinner w-[2rem] absolute right-4"></span>
+                <span className="loading loading-spinner w-[20px]    inline-block"></span>
               )}
             </button>
           </div>
