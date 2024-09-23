@@ -94,7 +94,7 @@ const HeaderMessage = ({
               : 'Saved Messages'}
           </p>
           <p className="dark:text-indigo-300 text-[11px] capitalize text-indigo-600">
-            {typingUsers && user.userid !== typingUsers ? (
+            {typingUsers?.length&&chatId==typingUsers[1] && user.userid !== typingUsers[0] ? (
               <p>
                 {(info.userid === typingUsers && info?.username) ||
                   info?.email.split('@')[0]}{' '}
