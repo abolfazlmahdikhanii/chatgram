@@ -12,7 +12,7 @@ const useTypingStatus = () => {
       .on('postgres_changes',{ event: '*', schema: 'public', table: 'typing_status' }, (payload) => {
     
         if (payload.new.is_typing) {
-          setTypingUsers( payload.new.user_id)
+          setTypingUsers([ payload.new.user_id,payload.new.chat_id])
         }
         else{
             setTypingUsers(null)
