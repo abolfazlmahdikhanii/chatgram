@@ -17,7 +17,7 @@ const ProfileImage = ({
   return (
     <div className="avatar">
       <div
-        className={`mask mask-squircle w-11 h-11 ${
+        className={`mask mask-squircle ${size!=='m'&&size!=='xs'&&size!=='lg'?'w-11 h-11':''} ${
           size === 'm' && 'w-14 h-14 text-lg'
         } ${size === 'xs' && 'w-5 h-5 text-[9px]'} ${size === 'lg' && 'w-32 h-32 text-4xl'}`}
       >
