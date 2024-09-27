@@ -30,11 +30,7 @@ const StoryForm = ({ show, close, isLink, setContent }) => {
 
   const addStoryQuote = (e) => {
     e.preventDefault()
-    setContent({
-      quoteText: quoteText,
-      type: 'img',
-      isQuote: true,
-    })
+    setContent( quoteText)
     close(false)
   }
 
