@@ -1,37 +1,38 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import StoryItem from './StoryItem'
 import chatData from '../../data'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/css'
 import StoryModal from '../UI/StoryModal/StoryModal'
 import StoryCreator from '../UI/StoryModal/StoryCreator'
+import { ChatContext } from '../../Context/ChatContext'
+import { UserContext } from '../../Context/UserContext'
+import { supabase } from '../../superbase'
 
 const StorySlider = () => {
   const [showStoryModal, setShowStoryModal] = useState(false)
   const [showStoryCreatorModal, setShowStoryCreatorModal] = useState(false)
   const [currentUserStoryIndex, setCurrentUserStoryIndex] = useState(null)
   const [profileAdd, setProfileAdd] = useState(null)
-  useEffect(() => {
-    checkUserHasStory()
+  const { forwardList } = useContext(ChatContext)
+  const { user } = useContext(UserContext)
+  const forwardUserList = [{ meID: user }, ...forwardList]
 
+  useEffect(() => {
     return () => {
       setShowStoryModal(false)
       setShowStoryCreatorModal(false)
     }
   }, [])
-  const storyProfileClickHandler = (id) => {
-    const findedIndex = chatData.findIndex((item) => item.id === id)
-    setCurrentUserStoryIndex(findedIndex)
+
+  const storyProfileClickHandler = async (id) => {
+    setCurrentUserStoryIndex(id)
     setShowStoryModal(true)
     setShowStoryCreatorModal(false)
+
+    
   }
-  const checkUserHasStory = () => {
-    const findedUser = chatData.find((item) => item.relation === 'me')
-    setProfileAdd(findedUser)
-    // if (findedUser.stories && findedUser.stories.length >= 0) {
-    //   setProfileAdd(findedUser)
-    // } else setProfileAdd(null)
-  }
+
   const addStoryHandler = (e) => {
     e.stopPropagation()
     setShowStoryCreatorModal(true)
@@ -50,7 +51,7 @@ const StorySlider = () => {
         spaceBetween={10}
         className="w-full px-2 pt-1 pb-5"
       >
-        {!profileAdd?.stories ||
+        {/* {!profileAdd?.stories ||
           (profileAdd?.stories && profileAdd?.stories.length <= 0 && (
             <SwiperSlide>
               <StoryItem
@@ -61,24 +62,24 @@ const StorySlider = () => {
                 relation={profileAdd?.relation}
               />
             </SwiperSlide>
-          ))}
-        {chatData.map(
-          (user) =>
-            user.stories &&
-            user.stories.length > 0 && (
-              <SwiperSlide key={user.id}>
-                <StoryItem
-                  userName={user.userName}
-                  profileImg={user.profileImg}
-                  onStoryClick={() => storyProfileClickHandler(user.id)}
-                  onCreateStory={addStoryHandler}
-                  relation={
-                    user?.id === profileAdd?.id ? profileAdd?.relation : null
-                  }
-                />
-              </SwiperSlide>
-            )
-        )}
+          ))} */}
+        {forwardUserList.map((item) => (
+          <SwiperSlide key={user.id}>
+            <StoryItem
+              chats={
+                item?.senderid?.userid == user?.userid
+                  ? { ...item?.recipientid }
+                  : { ...item?.senderid }
+              }
+              saveChat={
+                item?.meID?.userid == user?.userid ? { ...item.meID } : null
+              }
+              onStoryClick={storyProfileClickHandler}
+              onCreateStory={addStoryHandler}
+              // addStory={checkUserHasStory}
+            />
+          </SwiperSlide>
+        ))}
       </Swiper>
 
       {showStoryModal && currentUserStoryIndex !== null && (
