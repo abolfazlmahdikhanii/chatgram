@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useContext } from 'react'
 import Backdrop from '../Backdrop/Backdrop'
 import chatData from '../../../data'
 import { IoCloseSharp } from 'react-icons/io5'
@@ -8,35 +8,73 @@ import { IoIosArrowBack } from 'react-icons/io'
 import { IoIosArrowForward } from 'react-icons/io'
 import StoryEditor from './StoryEditor'
 import StoryForm from '../StoryForm/StoryForm'
+import { Rnd } from 'react-rnd'
+import { supabase } from '../../../superbase'
+import { UserContext } from '../../../Context/UserContext'
 
 const StoryCreator = ({ show, userId, close }) => {
   const StoryData = chatData
-  const [fileUpload, setFileUpload] = useState(null)
+  const [fileUpload, setFileUpload] = useState({})
+  const [fileSrc, setFileSrc] = useState({})
+
   const [addText, setAddText] = useState(false)
   const [addContent, setAddContent] = useState(null)
   const [newStory, setNewStory] = useState(null)
+  const [textPosition, setTextPosition] = useState({})
   const [showFormModal, setShowFormModal] = useState(false)
   const [showQuoteModal, setShowQuoteModal] = useState(false)
   const [storyLink, setStoryLink] = useState(null)
   const [quote, setQuote] = useState(null)
+  const { user } = useContext(UserContext)
 
-  const uploadFile = (e) => {
+  const uploadFile = async (e) => {
     e.preventDefault()
     const uploadData = {
+      type: e.target.files[0]?.type,
       src: URL.createObjectURL(e.target.files[0]),
-      type: e.target.files[0].type.startsWith('image/') ? 'img' : 'video',
     }
-    console.log(e.target.files[0].type)
     setFileUpload(uploadData)
+    const { data: signedUrlData, error: urlError } = await supabase.storage
+      .from('uploads')
+      .upload(
+        `story/${user?.userid}/${crypto.randomUUID()}.${e.target.files[0]?.name
+          .split('.')
+          .pop()}`,
+        e.target.files[0]
+      )
+
+    if (!urlError) {
+      setFileSrc({ src: signedUrlData.path, type: e.target.files[0]?.type })
+    }
   }
-
-  const addNewStory = () => {
-    const findedChat = StoryData.find((chat) => chat.id == userId)
-
+  const addNewStory = async () => {
     if (!quote) {
-      findedChat.stories.push({ ...fileUpload, ...addContent, ...storyLink })
+      const { data, error } = await supabase
+        .from('stories')
+        .insert([
+          {
+            userid: user?.userid,
+            src: fileSrc?.src,
+            type: fileSrc?.type,
+            link: storyLink,
+            content: { ...addContent, ...textPosition },
+            expiryat: new Date(Date.now() + 24 * 60 * 60 * 1000),
+          },
+        ])
+        .select()
+      if (error) console.log(error)
     } else {
-      findedChat.stories.push({ ...quote })
+      const { data, error } = await supabase
+        .from('stories')
+        .insert([
+          {
+            userid: user?.userid,
+            quote: quote,
+            expiryat: new Date(Date.now() + 24 * 60 * 60 * 1000),
+          },
+        ])
+        .select()
+      if (error) console.log(error)
     }
     close()
     setAddContent(null)
@@ -168,6 +206,7 @@ const StoryCreator = ({ show, userId, close }) => {
                           src={fileUpload.src}
                           type={fileUpload?.type}
                           content={addContent}
+                          setTextPosition={setTextPosition}
                         />
                       ) : (
                         <StoryMedia content={quote} isQuote={true} />
@@ -287,10 +326,10 @@ const StoryCreator = ({ show, userId, close }) => {
 
 export default StoryCreator
 
-const StoryMedia = ({ src, type, content, isQuote }) => {
+const StoryMedia = ({ src, type, content, isQuote, setTextPosition }) => {
   return (
     <div className="relative w-full h-full flex items-center justify-center">
-      {!isQuote && type === 'img' && (
+      {!isQuote && type.includes('image') && (
         <img
           src={src}
           // onLoad={handleOnLoad}
@@ -298,7 +337,7 @@ const StoryMedia = ({ src, type, content, isQuote }) => {
           className={`w-full h-auto object-cover py-3 `}
         />
       )}
-      {!isQuote && type === 'video' && (
+      {!isQuote && type.includes('video') && (
         <video
           autoPlay
           playsInline
@@ -312,14 +351,22 @@ const StoryMedia = ({ src, type, content, isQuote }) => {
         </video>
       )}
       {!isQuote && content && (
-        <div className="absolute bottom-4 left-0 right-0  w-full flex items-center justify-center">
-          <p
-            style={{ fontSize: content?.fontSize, color: content?.color }}
-            className=" w-fit min-w-[110px] bg-slate-700/40 max-h-[150px] text-center px-5 py-2.5  rounded-xl text-white backdrop-blur"
-          >
-            {content?.description}
-          </p>
-        </div>
+        <Rnd
+          default={{
+            x: 0,
+            y: 0,
+          }}
+          onDragStop={(e, d) => setTextPosition({ x: d.x, y: d.y })}
+        >
+          <div className="absolute bottom-26 left-0 right-0  w-full flex items-center justify-center">
+            <p
+              style={{ fontSize: content?.fontSize, color: content?.color }}
+              className="w-fit  min-w-[110px] bg-slate-700/40 max-h-[150px] text-center px-5 py-2.5  rounded-xl text-white backdrop-blur"
+            >
+              {content?.description}
+            </p>
+          </div>
+        </Rnd>
       )}
       {isQuote && (
         <div data-color="orange" className="w-full h-full p-4">
@@ -342,7 +389,7 @@ const StoryMedia = ({ src, type, content, isQuote }) => {
               </svg>
             </p>
             <p className="text-white font-bold text-xl flex items-center justify-center h-full">
-              {content.quoteText}
+              {content}
             </p>
             <p className="absolute -bottom-4 left-6 bg-[#FCC93D] py-2 px-3">
               <svg
