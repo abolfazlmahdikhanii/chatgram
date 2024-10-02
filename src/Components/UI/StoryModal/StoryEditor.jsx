@@ -67,7 +67,7 @@ const StoryEditor = ({ addContent, onHide }) => {
             autoFocus
             dir="auto"
             value={dis}
-            onChange={(e) => setDis(e.target.value.trim())}
+            onChange={(e) => setDis(e.target.value)}
           ></textarea>
         </div>
       </div>
