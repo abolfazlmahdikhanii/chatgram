@@ -256,6 +256,7 @@ const StoryCreator = ({ show, userId, close }) => {
                           type="file"
                           id="imgUpload"
                           className="hidden"
+                          accept='image/*'
                           onChange={uploadFile}
                         />
                       </div>
@@ -353,15 +354,15 @@ const StoryMedia = ({ src, type, content, isQuote, setTextPosition }) => {
       {!isQuote && content && (
         <Rnd
           default={{
-            x: 0,
-            y: 0,
+            x: 50,
+            y: 50,
           }}
           onDragStop={(e, d) => setTextPosition({ x: d.x, y: d.y })}
         >
           <div className="absolute bottom-26 left-0 right-0  w-full flex items-center justify-center">
             <p
               style={{ fontSize: content?.fontSize, color: content?.color }}
-              className="w-fit  min-w-[110px] bg-slate-700/40 max-h-[150px] text-center px-5 py-2.5  rounded-xl text-white backdrop-blur"
+              className="w-full min-w-[200px]   max-w-[300px] bg-slate-700/40 max-h-[150px] text-center px-5 py-2.5  rounded-xl text-white backdrop-blur"
             >
               {content?.description}
             </p>
