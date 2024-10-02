@@ -1,4 +1,10 @@
-import React, { useEffect, useState, useRef, useCallback, useContext } from 'react'
+import React, {
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+  useContext,
+} from 'react'
 import Backdrop from '../Backdrop/Backdrop'
 import chatData from '../../../data'
 import { IoCloseSharp } from 'react-icons/io5'
@@ -11,26 +17,30 @@ import { Rnd } from 'react-rnd'
 import { supabase } from '../../../superbase'
 import { UserContext } from '../../../Context/UserContext'
 
-const StoryModal = ({ show, currentUserStory, close }) => {
+const StoryModal = ({ show, currentUserStory, close, friends }) => {
   const [StoryData, setStoryData] = useState([])
   const [time, setTime] = useState(0)
   const [loading, setLoading] = useState(true)
   const [currentUser, setCurrentUser] = useState(currentUserStory)
+  const [currentUserIndex, setCurrentUserIndex] = useState(0)
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isPlaying, setIsPlaying] = useState(true)
   const [duration, setDuration] = useState(0)
   const [currentTime, setCurrentTime] = useState(0)
   const videoRef = useRef(null)
-  const {user}=useContext(UserContext)
+  const { user } = useContext(UserContext)
   const [storyLoading, setStoryLoading] = useState(false)
-
-  useEffect(()=>{
-    getStory()
-  },[])
+  const [friendsStory, setFriendsStory] = useState([])
 
   useEffect(() => {
+   
+    getStory()
+    checkFriendHasStory()
+    findCurrentUser(currentUser)
+    
+  }, [currentUser,currentUserIndex])
 
-
+  useEffect(() => {
     let timerId
 
     if (isPlaying) {
@@ -42,19 +52,19 @@ const StoryModal = ({ show, currentUserStory, close }) => {
           // clearInterval(timerId)
           setCurrentSlide((prevSlide) => (prevSlide + 1) % StoryData?.length)
 
-          if (currentSlide >= StoryData?.length - 1) {
-            setCurrentUser((prev) => prev + 1)
+          if (
+            
+            currentSlide >= StoryData?.length - 1
+          ) {
+            changeCurrentUserHandler(currentUserIndex)
             setTime(0)
           }
 
-          if (
-            currentUser >= StoryData?.length - 1 &&
-            currentSlide >= StoryData?.length - 1
-          ) {
+           if ( currentUser === friendsStory[friendsStory?.length - 1] &&currentSlide >= StoryData?.length - 1) {
             setTime(0)
             clearInterval(timerId)
             setIsPlaying(false)
-            close(false)
+            close()
           }
         }
       }, 100)
@@ -63,16 +73,17 @@ const StoryModal = ({ show, currentUserStory, close }) => {
     return () => {
       clearInterval(timerId)
     }
-  }, [time, isPlaying, currentUserStory])
-  useEffect(()=>{
+  }, [time, isPlaying, currentUserStory,currentUserIndex])
+  useEffect(() => {
     updateUserView()
-  },[currentSlide])
+  }, [currentSlide])
   const getStory = async () => {
     try {
       let { data: stories, error } = await supabase
-        .from('stories')
+        .from('active_stories')
         .select('*')
         .eq('userid', currentUser)
+
       if (error) throw Error
       setStoryData(stories)
     } catch (error) {
@@ -80,6 +91,41 @@ const StoryModal = ({ show, currentUserStory, close }) => {
     }
   }
 
+  const checkFriendHasStory = async () => {
+    try {
+      let { data: users, error } = await supabase
+        .from('active_stories')
+        .select('userid')
+        .in('userid', friends)
+
+      if (error) throw Error
+      const uniqeFriend = [user?.userid,...new Set(users.map((item,i,arr) => {
+        if(item.userid&&item.userid!==user?.userid) return item.userid
+        else if(item.userid===undefined) users.slice(i,1)
+      }))]
+
+  console.log(uniqeFriend);
+      setFriendsStory(uniqeFriend)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  const findCurrentUser=(currUser)=>{
+    const findIndexUser = friendsStory?.findIndex((item) => item === currUser)
+    if(findIndexUser!==-1)setCurrentUserIndex(findIndexUser)
+      else setCurrentUserIndex(0)
+  }
+  const changeCurrentUserHandler = (currUser) => {
+
+
+    if (currUser === friendsStory?.length - 1) {
+      setCurrentUser(friendsStory[currUser-1])
+
+    }  if (currUser >= 0) {
+      setCurrentUser(friendsStory[currUser+1])
+   
+    }
+  }
   const handlePlay = () => {
     setIsPlaying((prev) => !prev)
   }
@@ -91,32 +137,32 @@ const StoryModal = ({ show, currentUserStory, close }) => {
     }
     if (currentSlide >= StoryData?.length - 1) {
       setTime(0)
-      setCurrentUser((prev) => prev + 1)
+      changeCurrentUserHandler(currentUserIndex)
       setCurrentSlide(0)
     }
     if (
-      currentUser >= StoryData.length - 1 &&
+      currentUser === friends[friends?.length - 1] &&
       currentSlide >= StoryData?.length - 1
     ) {
       setTime(0)
-      close(false)
+      close()
       setCurrentSlide(0)
     }
   }
   const backwardSliderHandler = () => {
     // setTime(0)
     if (StoryData?.length > 0 && currentSlide > 0) {
-      setCurrentSlide((prev) => prev - 1)
+      changeCurrentUserHandler(currentUserIndex)
       setTime(0)
     }
     if (currentSlide === 0) {
       setTime(0)
-      setCurrentUser((prev) => prev - 1)
+      changeCurrentUserHandler(currentUserIndex)
       setCurrentSlide(0)
     }
-    if (currentUser === 0 || currentUser === 1) {
+    if (currentUserIndex === 0 || currentUserIndex === 1) {
       if (currentSlide === 0) {
-        setCurrentUser(0)
+       setCurrentUser(friendsStory[0])
       }
     }
     console.log(currentSlide)
@@ -147,17 +193,20 @@ const StoryModal = ({ show, currentUserStory, close }) => {
       return 'video'
     }
   }
-  const updateUserView=async()=>{
-    console.log();
-try {
-  const { data, error } = await supabase
-      .from('storyviews')
-      .upsert({ storyid: StoryData[currentSlide]?.storyid,userid:user?.userid },{onConflict:['userid','storyid']})
-      .select()
-      if(error) throw Error;
-} catch (error) {
-  console.log(error)
-}
+  const updateUserView = async () => {
+    console.log()
+    try {
+      const { data, error } = await supabase
+        .from('storyviews')
+        .upsert(
+          { storyid: StoryData[currentSlide]?.storyid, userid: user?.userid },
+          { onConflict: ['userid', 'storyid'] }
+        )
+        .select()
+      if (error) throw Error
+    } catch (error) {
+      console.log(error)
+    }
   }
   return (
     <>
@@ -234,7 +283,13 @@ try {
                             i > currentSlide ? 'hidden' : 'block'
                           }`}
                           style={{
-                            width: i === currentSlide && `${time}%`,
+                            width:
+                              i === currentSlide &&
+                              `${
+                                !StoryData[i]?.type?.includes('video')
+                                  ? time
+                                  : time / 2
+                              }%`,
                           }}
                         ></div>
                       </div>
@@ -246,7 +301,6 @@ try {
                     StoryData?.map((item, i) => (
                       <div
                         key={item.id}
-                         
                         className={`relative ${
                           item.quote ? 'h-full w-full' : ''
                         } ${i === currentSlide ? 'block' : 'hidden'}`}
@@ -426,13 +480,14 @@ try {
             <button
               className="btn btn-primary mask mask-squircle"
               onClick={backwardSliderHandler}
-              disabled={currentSlide === 0}
+              disabled={currentSlide === 0&&friendsStory.length===0||currentUserIndex===0}
             >
               <IoIosArrowBack size={22} />
             </button>
             <button
               className="btn btn-primary mask mask-squircle"
               onClick={forwardSliderHandler}
+
             >
               <IoIosArrowForward size={22} />
             </button>
