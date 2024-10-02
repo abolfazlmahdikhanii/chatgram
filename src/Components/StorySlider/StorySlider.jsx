@@ -11,6 +11,8 @@ import { supabase } from '../../superbase'
 
 const StorySlider = () => {
   const [showStoryModal, setShowStoryModal] = useState(false)
+  const [friends, setFriends] = useState([])
+  const [storyFriend, setStoryFriends] = useState([])
   const [showStoryCreatorModal, setShowStoryCreatorModal] = useState(false)
   const [currentUserStoryIndex, setCurrentUserStoryIndex] = useState(null)
   const [profileAdd, setProfileAdd] = useState(null)
@@ -18,7 +20,10 @@ const StorySlider = () => {
   const { user } = useContext(UserContext)
   const forwardUserList = [{ meID: user }, ...forwardList]
 
+
+
   useEffect(() => {
+
     return () => {
       setShowStoryModal(false)
       setShowStoryCreatorModal(false)
@@ -29,10 +34,22 @@ const StorySlider = () => {
     setCurrentUserStoryIndex(id)
     setShowStoryModal(true)
     setShowStoryCreatorModal(false)
-
-    
+    filterFriends(forwardUserList)
   }
 
+  const filterFriends = (arr) => {
+    const newFriends = arr?.map((item) => {
+      if (item?.senderid?.userid == user?.userid)
+        return item?.recipientid?.userid
+      else if (item?.recipientid?.userid == user?.userid)
+        return item?.senderid?.userid
+      else if (item?.meID?.userid == user?.userid) return item?.meID?.userid
+    })
+
+
+    setFriends(newFriends)
+
+  }
   const addStoryHandler = (e) => {
     e.stopPropagation()
     setShowStoryCreatorModal(true)
@@ -86,7 +103,8 @@ const StorySlider = () => {
         <StoryModal
           show={showStoryModal}
           currentUserStory={currentUserStoryIndex}
-          close={setShowStoryModal}
+          close={()=>setShowStoryModal(false)}
+          friends={friends}
         />
       )}
 
