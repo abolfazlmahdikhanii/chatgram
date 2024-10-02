@@ -13,47 +13,53 @@ const StoryItem = ({
   let profile = null
   if (chats) profile = chats
   if (saveChat) profile = saveChat
-  const [isStory,setIsStory]=useState(false)
-  useEffect(()=>{
+  const [isStory, setIsStory] = useState(false)
+  useEffect(() => {
     checkUserHasStory(profile?.userid)
-    
-      // // Subscribe to real-time changes in the chat_requests table
-      const subscription = supabase
-        .channel('public:stories')
-        .on(
-          'postgres_changes',
-          { event: '*', schema: 'public', table: 'stories' },
-          (payload) => {
-            // Handle insert, update, delete events
-         
-            checkUserHasStory(profile?.userid)
-          }
-        )
-        .subscribe()
 
-  },[])
+
+    // // Subscribe to real-time changes in the chat_requests table
+    const subscription = supabase
+      .channel('public:stories')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'stories' },
+        (payload) => {
+          // Handle insert, update, delete events
+
+          checkUserHasStory(profile?.userid)
+       
+        }
+      )
+      .subscribe()
+  }, [])
   const checkUserHasStory = async (id) => {
+    const now=new Date()
     try {
       let { data: stories, error } = await supabase
-        .from('stories')
+        .from('active_stories')
         .select('*')
         .eq('userid', id)
-        
+     
+
       if (error) throw Error
-   
-        if(stories&&stories?.length>0) setIsStory(true)
-    
+  
+      if (stories && stories?.length > 0) setIsStory(true)
     } catch (error) {
       console.log(error)
       return false
     }
   }
-  console.log(isStory);
+
 
   return (
     <div
-      className={` flex-col gap-2 justify-center items-center ${!isStory&&!saveChat?'hidden':'flex'}`}
-      onClick={()=>{isStory?onStoryClick(profile?.userid):null}}
+      className={` flex-col gap-2 justify-center items-center ${
+        !isStory && !saveChat ? 'hidden' : 'flex'
+      }`}
+      onClick={() => {
+        isStory ? onStoryClick(profile?.userid) : null
+      }}
     >
       <div className="p-1 relative ">
         <div
