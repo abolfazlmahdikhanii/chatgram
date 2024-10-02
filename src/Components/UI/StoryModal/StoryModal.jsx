@@ -16,6 +16,8 @@ import StoryImage from '../../StoryImage/StoryImage'
 import { Rnd } from 'react-rnd'
 import { supabase } from '../../../superbase'
 import { UserContext } from '../../../Context/UserContext'
+import userNameSpliter from '../../../Utility/userNameSpliter'
+import { relativeTimeFormat } from '../../../Utility/helper'
 
 const StoryModal = ({ show, currentUserStory, close, friends }) => {
   const [StoryData, setStoryData] = useState([])
@@ -33,12 +35,10 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
   const [friendsStory, setFriendsStory] = useState([])
 
   useEffect(() => {
-   
     getStory()
     checkFriendHasStory()
     findCurrentUser(currentUser)
-    
-  }, [currentUser,currentUserIndex])
+  }, [currentUser, currentUserIndex])
 
   useEffect(() => {
     let timerId
@@ -52,15 +52,15 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
           // clearInterval(timerId)
           setCurrentSlide((prevSlide) => (prevSlide + 1) % StoryData?.length)
 
-          if (
-            
-            currentSlide >= StoryData?.length - 1
-          ) {
+          if (currentSlide >= StoryData?.length - 1) {
             changeCurrentUserHandler(currentUserIndex)
             setTime(0)
           }
 
-           if ( currentUser === friendsStory[friendsStory?.length - 1] &&currentSlide >= StoryData?.length - 1) {
+          if (
+            currentUser === friendsStory[friendsStory?.length - 1] &&
+            currentSlide >= StoryData?.length - 1
+          ) {
             setTime(0)
             clearInterval(timerId)
             setIsPlaying(false)
@@ -73,7 +73,7 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
     return () => {
       clearInterval(timerId)
     }
-  }, [time, isPlaying, currentUserStory,currentUserIndex])
+  }, [time, isPlaying, currentUserStory, currentUserIndex])
   useEffect(() => {
     updateUserView()
   }, [currentSlide])
@@ -81,7 +81,7 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
     try {
       let { data: stories, error } = await supabase
         .from('active_stories')
-        .select('*')
+        .select('*,userid(*)')
         .eq('userid', currentUser)
 
       if (error) throw Error
@@ -99,31 +99,42 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
         .in('userid', friends)
 
       if (error) throw Error
-      const uniqeFriend = [user?.userid,...new Set(users.map((item,i,arr) => {
-        if(item.userid&&item.userid!==user?.userid) return item.userid
-        else if(item.userid===undefined) users.slice(i,1)
-      }))]
 
-  console.log(uniqeFriend);
-      setFriendsStory(uniqeFriend)
+      const uniqeFriend = [
+        users.every((item) => item.userid === user?.userid) && user?.userid,
+        ...new Set(
+          users
+            .filter((item, i, arr) => item.userid !== user?.userid)
+            .map((item) => item.userid)
+        ),
+      ]
+
+      if (uniqeFriend[0] !== false) {
+        setFriendsStory(uniqeFriend)
+      } else {
+        setFriendsStory([
+          ...new Set(
+            users
+              .filter((item, i, arr) => item.userid !== user?.userid)
+              .map((item) => item.userid)
+          ),
+        ])
+      }
     } catch (error) {
       console.log(error)
     }
   }
-  const findCurrentUser=(currUser)=>{
+  const findCurrentUser = (currUser) => {
     const findIndexUser = friendsStory?.findIndex((item) => item === currUser)
-    if(findIndexUser!==-1)setCurrentUserIndex(findIndexUser)
-      else setCurrentUserIndex(0)
+    if (findIndexUser !== -1) setCurrentUserIndex(findIndexUser)
+    else setCurrentUserIndex(0)
   }
   const changeCurrentUserHandler = (currUser) => {
-
-
     if (currUser === friendsStory?.length - 1) {
-      setCurrentUser(friendsStory[currUser-1])
-
-    }  if (currUser >= 0) {
-      setCurrentUser(friendsStory[currUser+1])
-   
+      setCurrentUser(friendsStory[currUser - 1])
+    }
+    if (currUser >= 0) {
+      setCurrentUser(friendsStory[currUser + 1])
     }
   }
   const handlePlay = () => {
@@ -162,7 +173,7 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
     }
     if (currentUserIndex === 0 || currentUserIndex === 1) {
       if (currentSlide === 0) {
-       setCurrentUser(friendsStory[0])
+        setCurrentUser(friendsStory[0])
       }
     }
     console.log(currentSlide)
@@ -265,9 +276,9 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
         <section className="flex items-center justify-center -mt-4 relative">
           <div className="mockup-phone">
             <div className="camera h-3"></div>
-            <div className="display">
-              <div className="artboard artboard-demo phone-1 relative">
-                <div className="flex items-center gap-x-2 absolute top-9 left-0 right-0 w-full px-4 z-10">
+            <div className="display relative">
+              <div className="absolute top-9 left-0 right-0 w-full px-4 z-10">
+                <div className="flex items-center gap-x-2 w-full">
                   {StoryData &&
                     StoryData?.map((_, i) => (
                       <div
@@ -294,6 +305,48 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
                         ></div>
                       </div>
                     ))}
+                </div>
+              </div>
+              <div
+                data-color={
+                  StoryData[currentSlide]?.type === 'text' ? 'orange' : ''
+                }
+                className="artboard artboard-demo phone-1 relative h-full"
+              >
+                <div className="flex items-center gap-x-3 w-full mt-16 ml-8">
+                  <div
+                    data-color={
+                      StoryData[currentSlide]?.userid?.userid !== user?.userid
+                        ? StoryData[currentSlide]?.userid?.bgProfile
+                        : 'purple'
+                    }
+                    className="w-[45px] h-[45px] mask mask-squircle z-[5] relative grid place-items-center "
+                  >
+                    {StoryData[currentSlide]?.userid?.avatar_url ? (
+                      <img
+                        src={StoryData[currentSlide]?.userid?.avatar_url}
+                        alt="story img"
+                      />
+                    ) : (
+                      <span className="text-base text-white font-bold">
+                        {userNameSpliter(
+                          StoryData[currentSlide]?.userid?.username ||
+                            StoryData[currentSlide]?.userid?.email?.split(
+                              '@'
+                            )[0]
+                        )}
+                      </span>
+                    )}
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-white font-semibold">
+                      {StoryData[currentSlide]?.userid?.username ||
+                        StoryData[currentSlide]?.userid?.email?.split('@')[0]}
+                    </p>
+                    <p className="text-[12px] text-gray-200">
+                      {relativeTimeFormat(StoryData[currentSlide]?.createdat)}
+                    </p>
+                  </div>
                 </div>
 
                 <div className="flex items-center w-full h-full justify-center">
@@ -353,10 +406,7 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
                           </>
                         )}
                         {item?.type === 'text' && (
-                          <div
-                            data-color="orange"
-                            className="w-full h-full p-4"
-                          >
+                          <div className="w-full h-full p-4">
                             <div className=" border-2 relative rounded-xl w-full h-[82%] mb-8 mt-20">
                               <p className="absolute -top-6 right-6 grid place-items-center py-2 px-3  bg-[#FA8A21] rounded">
                                 <svg
@@ -480,14 +530,21 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
             <button
               className="btn btn-primary mask mask-squircle"
               onClick={backwardSliderHandler}
-              disabled={currentSlide === 0&&friendsStory.length===0||currentUserIndex===0}
+              disabled={
+                currentSlide === 0 ||friendsStory.length===0||
+                currentUser !== friendsStory[friendsStory.length - 1]
+              }
             >
               <IoIosArrowBack size={22} />
             </button>
             <button
               className="btn btn-primary mask mask-squircle"
               onClick={forwardSliderHandler}
-
+              disabled={
+                StoryData.length === 0 ||
+                (StoryData[StoryData.length - 1] &&
+                  currentUser === friendsStory[friendsStory.length - 1])
+              }
             >
               <IoIosArrowForward size={22} />
             </button>
