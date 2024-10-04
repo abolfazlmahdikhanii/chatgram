@@ -18,6 +18,9 @@ const StoryCreator = ({ show, userId, close }) => {
   const [fileSrc, setFileSrc] = useState({})
 
   const [addText, setAddText] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [isUploadingLoading, setIsUploadingLoading] = useState(false)
+
   const [addContent, setAddContent] = useState(null)
   const [newStory, setNewStory] = useState(null)
   const [textPosition, setTextPosition] = useState({})
@@ -29,6 +32,7 @@ const StoryCreator = ({ show, userId, close }) => {
 
   const uploadFile = async (e) => {
     e.preventDefault()
+    setIsLoading(true)
     const uploadData = {
       type: e.target.files[0]?.type,
       src: URL.createObjectURL(e.target.files[0]),
@@ -45,24 +49,29 @@ const StoryCreator = ({ show, userId, close }) => {
 
     if (!urlError) {
       setFileSrc({ src: signedUrlData.path, type: e.target.files[0]?.type })
+      setIsLoading(false)
     }
   }
   const addNewStory = async () => {
+    setIsUploadingLoading(true)
     if (!quote) {
-      const { data, error } = await supabase
-        .from('stories')
-        .insert([
-          {
-            userid: user?.userid,
-            src: fileSrc?.src,
-            type: fileSrc?.type,
-            link: storyLink,
-            content: { ...addContent, ...textPosition },
-            expiryat: new Date(Date.now() + 24 * 60 * 60 * 1000),
-          },
-        ])
-        .select()
-      if (error) console.log(error)
+      if (fileSrc?.src) {
+        const { data, error } = await supabase
+          .from('stories')
+          .insert([
+            {
+              userid: user?.userid,
+              src: fileSrc?.src,
+              type: fileSrc?.type,
+              link: storyLink,
+              content: { ...addContent, ...textPosition },
+              expiryat: new Date(Date.now() + 24 * 60 * 60 * 1000),
+            },
+          ])
+          .select('*')
+        if (error) console.log(error)
+        setIsUploadingLoading(false)
+      }
     } else {
       const { data, error } = await supabase
         .from('stories')
@@ -73,10 +82,12 @@ const StoryCreator = ({ show, userId, close }) => {
             expiryat: new Date(Date.now() + 24 * 60 * 60 * 1000),
           },
         ])
-        .select()
+        .select('*')
       if (error) console.log(error)
+      setIsUploadingLoading(false)
     }
     close()
+
     setAddContent(null)
     setAddText(null)
     setFileUpload(null)
@@ -97,7 +108,7 @@ const StoryCreator = ({ show, userId, close }) => {
         <section className="flex items-center justify-end  w-11/12 mx-auto py-5 my-3">
           {/* right */}
           <div className="flex items-center gap-x-4 relative ">
-            {fileUpload?.src && (
+            {fileSrc?.src && (
               <div className="flex items-center gap-7 px-6 py-2.5 border dark:border-gray-500/40 rounded-xl z-10 border-gray-300">
                 <button onClick={() => setAddText(true)}>
                   <svg
@@ -172,8 +183,15 @@ const StoryCreator = ({ show, userId, close }) => {
               <div className="artboard artboard-demo phone-1 relative">
                 {/* content */}
                 <div className="w-full h-full">
-                  {!fileUpload?.src && !quote ? (
-                    <div className="flex flex-col items-center gap-y-2 text-gray-400 h-full justify-center">
+                  {isLoading && (
+                    <span className="loading loading-spinner loading-lg absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></span>
+                  )}
+                  {!fileSrc?.src && !quote ? (
+                    <div
+                      className={` flex-col items-center gap-y-2 text-gray-400 h-full justify-center ${
+                        isLoading ? 'hidden' : 'flex'
+                      }`}
+                    >
                       <svg
                         width={32}
                         height={32}
@@ -203,7 +221,7 @@ const StoryCreator = ({ show, userId, close }) => {
                     <div className="relative h-full">
                       {!quote ? (
                         <StoryMedia
-                          src={fileUpload.src}
+                          src={fileUpload?.src}
                           type={fileUpload?.type}
                           content={addContent}
                           setTextPosition={setTextPosition}
@@ -221,12 +239,14 @@ const StoryCreator = ({ show, userId, close }) => {
                   )}
                 </div>
                 <div className="absolute bottom-5 left-3 right-3 w-10/12 mx-auto flex items-center justify-between">
-                  {!fileUpload?.src && !quote ? (
+                  {!fileSrc?.src && !quote ? (
                     <>
                       <div className="relative">
                         <label
                           htmlFor="imgUpload"
-                          className="flex items-center flex-col text-gray-300 gap-y-1"
+                          className={` items-center flex-col text-gray-300 gap-y-1 ${
+                            isLoading ? 'hidden' : 'flex'
+                          }`}
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -256,12 +276,14 @@ const StoryCreator = ({ show, userId, close }) => {
                           type="file"
                           id="imgUpload"
                           className="hidden"
-                          accept='image/*'
+                          accept="image/*"
                           onChange={uploadFile}
                         />
                       </div>
                       <div
-                        className="flex items-center flex-col text-gray-300 gap-y-1"
+                        className={` items-center flex-col text-gray-300 gap-y-1 ${
+                          isLoading ? 'hidden' : 'flex'
+                        }`}
                         onClick={() => setShowQuoteModal(true)}
                       >
                         <svg
@@ -288,6 +310,7 @@ const StoryCreator = ({ show, userId, close }) => {
                         <button
                           className="btn btn-primary px-7 -ml-2"
                           onClick={addNewStory}
+                          disabled={isLoading}
                         >
                           Upload
                         </button>
@@ -295,6 +318,13 @@ const StoryCreator = ({ show, userId, close }) => {
                     </div>
                   )}
                 </div>
+
+                {isUploadingLoading && (
+                  <div className="flex items-center gap-x-4 bg-gray-500">
+                    <span className="loading loading-spinner loading-md "></span>
+                    <p>Uploading ...</p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -330,7 +360,7 @@ export default StoryCreator
 const StoryMedia = ({ src, type, content, isQuote, setTextPosition }) => {
   return (
     <div className="relative w-full h-full flex items-center justify-center">
-      {!isQuote && type.includes('image') && (
+      {!isQuote && type?.includes('image') && (
         <img
           src={src}
           // onLoad={handleOnLoad}
@@ -338,7 +368,7 @@ const StoryMedia = ({ src, type, content, isQuote, setTextPosition }) => {
           className={`w-full h-auto object-cover py-3 `}
         />
       )}
-      {!isQuote && type.includes('video') && (
+      {!isQuote && type?.includes('video') && (
         <video
           autoPlay
           playsInline
