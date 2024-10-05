@@ -26,15 +26,15 @@ const StoryItem = ({
         { event: '*', schema: 'public', table: 'stories' },
         (payload) => {
           // Handle insert, update, delete events
-
+          if(payload.new)
           checkUserHasStory(profile?.userid)
        
         }
       )
       .subscribe()
-  }, [])
+  }, [profile,isStory])
   const checkUserHasStory = async (id) => {
-    const now=new Date()
+   
     try {
       let { data: stories, error } = await supabase
         .from('active_stories')
@@ -45,6 +45,7 @@ const StoryItem = ({
       if (error) throw Error
   
       if (stories && stories?.length > 0) setIsStory(true)
+      else setIsStory(false)
     } catch (error) {
       console.log(error)
       return false
