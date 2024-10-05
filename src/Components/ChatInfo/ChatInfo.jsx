@@ -328,7 +328,7 @@ const ChatInfo = ({ setChatInfo, setClose, show }) => {
               {file && file?.length > 0 ? (
                 file.map((content) => (
                   <FileType
-                    key={crypto.randomUUID()}
+                    key={content?.messageid}
                     idType={content?.messageid}
                     src={content?.content}
                     mType={content?.messageType}
