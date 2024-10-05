@@ -92,7 +92,7 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
   useEffect(() => {
     updateUserView()
     displayUserView(StoryData[currentSlide]?.storyid)
-  }, [currentSlide])
+  }, [StoryData,currentSlide])
 
   const getStory = async () => {
     try {
@@ -603,7 +603,7 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
                     ))}
                 </div>
 
-                <div className="absolute bottom-8 left-4 flex items-baseline justify-between right-4">
+                <div className="absolute bottom-6 left-4 flex items-center justify-between right-4">
                   <div className="flex items-center gap-x-2.5 bg-gray-500/20 backdrop-blur-lg min-w-[100px] px-3 py-2.5 rounded-xl self-end">
                     <p className="w-7 h-7 bg-orange-600 mask mask-squircle text-white grid place-items-center">
                       <svg
@@ -725,7 +725,7 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
             <form method="dialog" className="mt-5 w-full">
               <div className="grid grid-cols-2 gap-x-4 w-full">
                 <button className="btn btn-error text-white" onClick={(e)=>deleteStroy(e,StoryData[currentSlide]?.storyid)}>Delete</button>
-                <button className="btn">close</button>
+                <button className="btn" onClick={()=>setIsDeleted(false)}>close</button>
               </div>
             </form>
           </div>
