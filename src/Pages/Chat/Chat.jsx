@@ -21,8 +21,8 @@ import UnpinBtn from '../../Components/UnpinBtn/UnpinBtn'
 import Modal from '../../Components/UI/Modal/Modal'
 import Dialog from '../../Components/UI/Dialog/Dialog'
 import PinAudio from '../../Components/PinAudio/PinAudio'
-import { Notifications } from 'react-push-notification'
-import addNotification from 'react-push-notification'
+// import { Notifications } from 'react-push-notification'
+// import addNotification from 'react-push-notification'
 import {
   MusicControlContext,
   MusicControlProvider,
@@ -39,11 +39,20 @@ import ProfileImage from '../../Components/ProfileImage/ProfileImage'
 
 const Chat = () => {
   const [showChatInfo, setShowChatInfo] = useState(false)
+
   const [groupedMessages, setGroupedMessages] = useState([])
   const [messages, setMessages] = useState([])
+  const [unreadMessage, setUnreadMessage] = useState([])
   const match = useParams()
   const navigate = useNavigate()
   const chatRef = useRef()
+  const messageEndRef = useRef(null)
+  const [isScrolledUp, setIsScrolledUp] = useState(false)
+  const [isShowUpBtn, setIsShowUpBtn] = useState(false)
+  const [lastScrollTop, setLastScrollTop] = useState(0)
+
+  const messagesContainerRef = useRef(null)
+
   const forwards = []
   const {
     chat,
@@ -103,7 +112,7 @@ const Chat = () => {
     // }
 
     updateMessageStatus()
-
+    filterUnreadMessage()
     // Subscribe to real-time messages
     const subscription = supabase
       .channel('public:messages')
@@ -114,9 +123,7 @@ const Chat = () => {
           const newMsg = payload.new
 
           if (newMsg.status === 'send' && newMsg.recipientid == user?.userid) {
-           
-         
-            showNotification('Chatgram', newMsg,newMsg?.content)
+            showNotification('Chatgram', newMsg, newMsg?.content)
           }
 
           if (newMsg.chatID == match?.id || !newMsg.length) {
@@ -128,7 +135,8 @@ const Chat = () => {
             // console.log(payload.new);
             fetchMessages()
             updateMessageStatus()
-
+            filterUnreadMessage()
+            if (!isScrolledUp) scrollToBottom()
             // groupMessageHandler(messages)
           } else if (
             (newMsg.senderid === user?.userid &&
@@ -142,6 +150,7 @@ const Chat = () => {
             // console.log(payload.new);
             fetchSavedMessages()
             updateMessageStatus()
+            if (!isScrolledUp) scrollToBottom()
             // groupMessageHandler(messages)
           }
         }
@@ -153,6 +162,12 @@ const Chat = () => {
       // supabase&&supabase.removeSubscription(subscription)
     }
   }, [match.id])
+  useEffect(() => {
+    if (!isScrolledUp) scrollToBottom()
+    return () => {
+      setIsShowUpBtn(false)
+    }
+  }, [isScrolledUp])
   const fetchMessages = async () => {
     if (match?.id == user?.userid) fetchSavedMessages()
     else {
@@ -186,7 +201,17 @@ const Chat = () => {
 
     groupMessageHandler(messages)
   }
+  const filterUnreadMessage = async () => {
+    let { data: messages, error } = await supabase
+      .from('messages')
+      .select('*')
+      .eq('chatID', match?.id)
+      .neq('senderid', user.userid)
+      .eq('status', 'send')
 
+    if (error) console.error('Error fetching messages:', error)
+    setUnreadMessage(messages)
+  }
   const updateMessageStatus = async () => {
     try {
       let { data, error } = await supabase
@@ -288,26 +313,25 @@ const Chat = () => {
     }
     return 'denied'
   }
-  const showNotification = async (title, message,content) => {
+  const showNotification = async (title, message, content) => {
     if (document.hidden && window.Notification.permission === 'granted') {
       console.log(content)
 
-     const senderInfo= await getSenderinfo(message?.senderid)
-     const reciverInfo= await getSenderinfo(message?.recipientid)
-       
-        addNotification({
-          // title: title,
-          // title: `${senderInfo?.username||senderInfo.email?.split('@')[0]}->${reciverInfo?.username||reciverInfo.email?.split('@')[0]}`,
-          title: `${senderInfo?.username||senderInfo.email?.split('@')[0]}`,
-          subtitle:'test',
-          duration: 3000,
-          message: 'New Message!',
-          theme: 'red',
-          native: true,
-          backgroundBottom: 'darkgreen',
-          icon: senderInfo?.avatar_url?senderInfo.avatar_url:"../../../src/assets/images/noti-logo2.png", // when using native, your OS will handle theming.
-        })
-      
+      const senderInfo = await getSenderinfo(message?.senderid)
+      const reciverInfo = await getSenderinfo(message?.recipientid)
+
+      // addNotification({
+      //   // title: title,
+      //   // title: `${senderInfo?.username||senderInfo.email?.split('@')[0]}->${reciverInfo?.username||reciverInfo.email?.split('@')[0]}`,
+      //   title: `${senderInfo?.username||senderInfo.email?.split('@')[0]}`,
+      //   subtitle:'test',
+      //   duration: 1000,
+      //   message: 'New Message!',
+      //   theme: 'red',
+      //   native: false,
+      //   backgroundBottom: 'darkgreen',
+      //   icon: senderInfo?.avatar_url?senderInfo.avatar_url:"../../../src/assets/images/noti-logo2.png", // when using native, your OS will handle theming.
+      // })
 
       // new Notification(title,{
       //   body:msg,
@@ -315,9 +339,35 @@ const Chat = () => {
       // })
     }
   }
+  const scrollToBottom = () => {
+    const container = messagesContainerRef.current
+    if (container) {
+      container.scrollTop = container.scrollHeight
+    }
+  }
+  const handleScroll = (e) => {
+    const container = messagesContainerRef.current
+
+    const isAtBottom = container.scrollHeight - container.clientHeight - 20
+
+    setIsScrolledUp(!isAtBottom)
+    //if scroll top show btn
+    const currentScrollTop = container.scrollTop
+
+    // Check if the user has scrolled up by more than 20px
+    if (currentScrollTop < lastScrollTop - 20) {
+      setIsShowUpBtn(true)
+    } else if (currentScrollTop >= lastScrollTop) {
+      setIsShowUpBtn(false)
+    }
+
+    // Update last scroll position
+    setLastScrollTop(currentScrollTop)
+
+    // }
+  }
   return (
     <MusicControlProvider>
-      <Notifications />
       <div
         className={`grid transition-all duration-200 ${
           showChatInfo ? 'grid-cols-[1fr_30%]' : 'grid-cols-1'
@@ -329,7 +379,7 @@ const Chat = () => {
           }  h-screen relative overflow-hidden    ${
             !chatBg || checkBgIsSvg(chatBg)
               ? 'bg-contain bg-repeat  [-webkit-background-origin:border] transition-colors duration-200'
-              : ' bg-[size:100vw_100vh]  bg-no-repeat transition-all duration-200 relative before:absolute before:inset-0 before:top-20 before:backdrop-blur-[2px] before:w-full before:h-full'
+              : ' bg-[size:80vw_100vh]  bg-no-repeat transition-all duration-200 relative'
           } dark:stroke-[#fff] `}
           onContextMenu={(e) => e.preventDefault()}
           style={{
@@ -358,18 +408,20 @@ const Chat = () => {
 
             {/* simple message */}
             <section
-              className={`h-[90%]  overflow-y-auto  flex flex-col  mt-1 mb-1.5 transition-all duration-200 ease-linear w-full ${
+              className={`h-[90%]  overflow-y-auto scroll-smooth flex flex-col px-1  mt-1 mb-1.5 transition-all w-full ${
                 showPin ? '-translate-x-full hidden' : 'translate-x-0 flex'
               }`}
+              ref={messagesContainerRef}
+              onScroll={handleScroll}
             >
               {messages?.content !== '' &&
                 groupedMessages?.map((group, i) => (
                   // console.log(grouped[item])
 
-                  <div key={crypto.randomUUID()}>
+                  <div key={i + 1 * 2}>
                     {group.date === group.date && (
                       <div
-                        className={`bg-gray-500/20 backdrop-blur-lg px-4 py-1 w-fit text-sm rounded-full mx-auto mt-2 mb-1 sticky top-2`}
+                        className={`dark:bg-gray-500/20 backdrop-blur-lg px-4 py-1 w-fit text-sm rounded-lg mx-auto mt-2 mb-1 sticky top-2 dark:text-gray-50 text-blue-200 bg-gray-600/30 `}
                       >
                         {group.date}
                       </div>
@@ -437,6 +489,34 @@ const Chat = () => {
 
             <Modal userID={match?.id} />
             <ToastContainer />
+
+            <div className="fixed bottom-[105px] right-5">
+             {isShowUpBtn&&unreadMessage?.length>0? <span className="px-2 h-[20px] absolute -top-1 right-0  rounded-full bg-indigo-600 text-indigo-200  text-[10px] flex items-center justify-center z-10">
+                {unreadMessage?.length}
+              </span>:null}
+              <button
+                className={`btn  mask mask-squircle ${
+                  isShowUpBtn ? 'inline-block' : 'hidden'
+                }`}
+                ref={messageEndRef}
+                onClick={scrollToBottom}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-6 h-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="m19.5 8.25-7.5 7.5-7.5-7.5"
+                  />
+                </svg>
+              </button>
+            </div>
           </main>
           {showAlert && <Dialog chatId={match.id} />}
         </div>
