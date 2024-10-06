@@ -32,6 +32,21 @@
         transform: translateY(20px);
     }
 }
+@keyframes shimmer {
+    0% {
+      background-position: -200px 0;
+    }
+    100% {
+      background-position: 200px -0;
+    }
+  }
+  
+  .animate-shimmer {
+    animation: shimmer 2s infinite ease;
+    background-size: 250% 250%, 100% 100%;
+    background-repeat: no-repeat;
+    -webkit-animation: shimmer 2s infinite ease;
+}
 .message-remove{
     animation: fade-out-downs .6s cubic-bezier(0.4, 0, 0.6, 1) once;
     -webkit-animation: fade-out-downs .6s cubic-bezier(0.4, 0, 0.6, 1) once;
@@ -76,7 +91,30 @@
 .chat-end .chat-bubble{
     border-bottom-right-radius: 0 !important;
 }
+.skeleton-loader {
+    width: 100%;
+  height: 100%;
+ 
+  position: relative;
+  overflow: hidden;
+}
 
+.shimmer-effect {
+  width: 100%;
+  height: 100%;
+
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
 @layer base {
     ::-webkit-scrollbar {
         @apply w-[9px];
@@ -94,7 +132,7 @@
         @apply bg-gray-600/50;
     }
     body {
-        @apply dark:bg-gray-950 scroll-smooth select-none   bg-gradient-to-br from-violet-500 to-pink-300 dark:bg-gradient-to-t dark:from-[unset] dark:to-[unset] ;
+        @apply dark:bg-gray-950 scroll-smooth select-none   bg-gradient-to-tr from-violet-500 to-pink-400 dark:bg-gradient-to-t dark:from-[unset] dark:to-[unset] ;
     }
     .auth-wrapper {
         @apply bg-base-100 ;
@@ -208,7 +246,7 @@
       @apply  bg-gradient-to-br from-green-500 via-green-600 to-green-800 text-transparent bg-clip-text
     }
     [data-text-color='indigo'] {
-      @apply  bg-gradient-to-r from-indigo-700 to-indigo-500 text-transparent bg-clip-text
+      @apply  bg-gradient-to-br from-indigo-300 to-indigo-200 text-transparent bg-clip-text font-bold 
     }
     [data-text-color='yellow'] {
       @apply  bg-gradient-to-r from-amber-500 to-amber-300 text-transparent bg-clip-text font-bold
@@ -264,6 +302,72 @@
     }
     [data-color='rose'] {
       @apply  bg-gradient-to-br from-rose-400 via-rose-400 to-rose-600 text-rose-400
+    }
+    /* Replay Them Color */
+
+    [data-rp-color='blue']{
+        @apply dark:bg-[#21384a] bg-[#e4f1f9]
+    }
+    [data-name-color='blue']{
+        @apply dark:text-[#66bdf3] text-[#168ad5]
+    }
+    [data-rp-border-color='blue']{
+        @apply dark:bg-[#5dadde] bg-[#2e96d2]
+    }
+
+    [data-rp-color='green']{
+        @apply dark:bg-[#263b3e] bg-[#eaf5e6]
+    }
+    [data-name-color='green']{
+        @apply dark:text-[#48ad85] text-[#4fad51]
+    }
+    [data-rp-border-color='green']{
+        @apply dark:bg-[#78cb7b] bg-[#61b542]
+    }
+    [data-rp-color='orange']{
+        @apply dark:bg-[#333438] bg-[#f9ede4]
+    }
+    [data-name-color='orange']{
+        @apply dark:text-[#faa353] text-[#ce6767]
+    }
+    [data-rp-border-color='orange']{
+        @apply dark:bg-[#e39553] bg-[#d37632]
+    }
+    [data-rp-color='red']{
+        @apply dark:bg-[#332d39] bg-[#f8e8e7]
+    }
+    [data-name-color='red']{
+        @apply dark:text-[#fb6161] text-[#c03d56]
+    }
+    [data-rp-border-color='red']{
+        @apply dark:bg-[#e35c63] bg-[#c65148] 
+    }
+    [data-rp-color='purple']{
+        @apply dark:bg-[#2b3149] bg-[#f1e9fa] 
+    }
+    [data-name-color='purple']{
+        @apply dark:text-[#b48bd9] text-[#8544dc]
+    }
+    [data-rp-border-color='purple']{
+        @apply dark:bg-[#b48bd9]  bg-[#9157da] 
+    }
+    /* [data-rp-color='teal']{
+        @apply dark:bg-[#203a47]/70  bg-[#e6f3f5]
+    }
+    [data-name-color='teal']{
+        @apply dark:text-[#62d4cc] text-[#2996ba]
+    }
+    [data-rp-border-color='teal']{
+        @apply dark:bg-[#5bc2d1] bg-[#3fa1b5]
+    } */
+    [data-rp-color='rose']{
+        @apply dark:bg-[#332c3e] bg-[#f9e9ef]
+    }
+    [data-name-color='rose']{
+        @apply dark:text-[#ff5685] text-[#cd4089]
+    }
+    [data-rp-border-color='rose']{
+        @apply dark:bg-[#e65189] bg-[#d25381] 
     }
     
     /* [data-bg-color='violet'] {
