@@ -6,6 +6,7 @@ import useChangeThem from './CustomHooks/useChangeThem'
 import Auth from './Pages/Auth/Auth'
 import { supabase } from './superbase'
 import { UserContext, UserProvider } from './Context/UserContext'
+import { ToastContainer } from 'react-toastify'
 
 const App = () => {
   const [them, setThem] = useChangeThem('light')
@@ -16,16 +17,12 @@ const App = () => {
     setThem(localStorage.getItem('them'))
     setIsLoading(true)
     supabase.auth.getSession().then(({ data: { session } }) => {
- 
-    
       if (session) {
         setSession(session)
-       
-     
       }
-      setTimeout(()=>{
+      setTimeout(() => {
         setIsLoading(false)
-      },1000)
+      }, 1000)
     })
 
     const {
@@ -35,17 +32,17 @@ const App = () => {
 
       if (session) {
         setSession(session)
+
         getProfile(session?.user?.id)
-      
+        updateUserStatus(session?.user?.id)
       }
-      setTimeout(()=>{
+      setTimeout(() => {
         setIsLoading(false)
-      },1000)
+      }, 1000)
     })
 
     return () => {
       subscription.unsubscribe()
-     
     }
   }, [setSession])
   const getProfile = async (id) => {
@@ -60,34 +57,48 @@ const App = () => {
         throw profileError
       } else {
         localStorage.setItem('profile', JSON.stringify(data))
-        console.log(data);
+        setSession(data)
       }
     } catch (error) {
       console.log(error)
     }
   }
 
-  if (isLoading) {
-
-      element = (
-        <TailSpin
-          visible={true}
-          height="80"
-          width="80"
-          color="#4fa94d"
-          ariaLabel="tail-spin-loading"
-          radius="1"
-          wrapperStyle={{}}
-          wrapperClass="fixed top-1/2 left-1/2"
-        />
-      )
-    }  else if(!session) {
-
-      element =( <Auth />)
+  const updateUserStatus = async (id) => {
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .update({ userStatus: navigator.onLine ? 'online' : 'offline' })
+        .eq('userid', id)
+        .select()
+    } catch (error) {
+      console.log(error)
     }
- else  element = <Layout />
+  }
 
-  return <UserProvider>{element}</UserProvider>
+  if (isLoading) {
+    element = (
+      <TailSpin
+        visible={true}
+        height="80"
+        width="80"
+        color="#4fa94d"
+        ariaLabel="tail-spin-loading"
+        radius="1"
+        wrapperStyle={{}}
+        wrapperClass="fixed top-1/2 left-1/2"
+      />
+    )
+  } else if (!session) {
+    element = <Auth />
+  } else element = <Layout />
+
+  return (
+    <UserProvider>
+      {element}
+      <ToastContainer />
+    </UserProvider>
+  )
 }
 
 export default App
