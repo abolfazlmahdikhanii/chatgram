@@ -320,7 +320,7 @@ const StoryCreator = ({ show, userId, close }) => {
                 </div>
 
                 {isUploadingLoading && (
-                  <div className="flex items-center gap-x-4 bg-gray-500/20 w-full backdrop-blur-md h-[100px]">
+                  <div className="flex items-center gap-x-4 bg-gray-500/20 w-full backdrop-blur-md h-[100px] ml-3">
                     <span className="loading loading-spinner loading-md "></span>
                     <p>Uploading ...</p>
                   </div>
