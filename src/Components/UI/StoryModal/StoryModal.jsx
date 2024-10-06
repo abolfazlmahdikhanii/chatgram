@@ -19,6 +19,7 @@ import { UserContext } from '../../../Context/UserContext'
 import userNameSpliter from '../../../Utility/userNameSpliter'
 import { relativeTimeFormat } from '../../../Utility/helper'
 import { toast } from 'react-toastify'
+import Profile from '../../Profile/Profile'
 
 const StoryModal = ({ show, currentUserStory, close, friends }) => {
   const [StoryData, setStoryData] = useState([])
@@ -35,10 +36,15 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
   const videoRef = useRef(null)
   const { user } = useContext(UserContext)
   const [storyLoading, setStoryLoading] = useState(false)
+  const [isReaction, setIsReaction] = useState(false)
   const [friendsStory, setFriendsStory] = useState([])
+  const [userViewStory, setUserViewStory] = useState([])
+  const [userLikeStory, setUserLikeStory] = useState([])
+  const [storyInfoTab, setStoryInfoTab] = useState('views')
+  const [isShowStoryInfo, setIsShowStoryInfo] = useState(false)
   const toastOptions = {
     position: toast.POSITION.BOTTOM_CENTER,
-    autoClose: 3000,
+    autoClose: 1200,
     hideProgressBar: true,
     closeOnClick: false,
     pauseOnHover: false,
@@ -47,7 +53,7 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
     theme: 'dark',
     closeButton: false,
     className:
-      'px-5 py-2.5 bg-slate-500/20 rounded-xl text-white backdrop-blur',
+      'px-5 py-2.5 bg-slate-500/20 rounded-xl text-white backdrop-blur text-center',
   }
   useEffect(() => {
     getStory()
@@ -92,7 +98,9 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
   useEffect(() => {
     updateUserView()
     displayUserView(StoryData[currentSlide]?.storyid)
-  }, [StoryData,currentSlide])
+    getStoryLike(StoryData[currentSlide]?.storyid)
+    subscribeToLikes(StoryData[currentSlide]?.storyid)
+  }, [StoryData, currentSlide])
 
   const getStory = async () => {
     try {
@@ -222,6 +230,34 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
     }
     console.log(currentSlide)
   }
+
+  const storyViewInfo = async (sid) => {
+    try {
+      console.log(sid)
+      let { data: storyviews, error } = await supabase
+        .from('storyviews')
+        .select('*,userid(*)')
+        .eq('storyid', sid)
+      if (error) throw Error
+      console.log(storyviews)
+      setUserViewStory(storyviews)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  const storyLikeInfo = async (sid) => {
+    try {
+      let { data: storyReaction, error } = await supabase
+        .from('storyReaction')
+        .select('*,userid(*)')
+        .eq('storyid', sid)
+      if (error) throw Error
+      console.log(storyReaction)
+      setUserLikeStory(storyReaction)
+    } catch (error) {
+      console.log(error)
+    }
+  }
   const handleOnLoad = () => {
     setLoading(false)
     setIsPlaying(true)
@@ -288,19 +324,68 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
   )
   const deleteStroy = async (e, id) => {
     e.preventDefault()
+
     try {
       const { error } = await supabase
         .from('stories')
         .delete()
         .eq('storyid', id)
         .eq('userid', user?.userid)
-        
+
       if (error) throw Error
       close()
-      toast("Story is deleted!", toastOptions)
-
+      toast('Story is deleted!', toastOptions)
     } catch (error) {
       console.log(error)
+    }
+  }
+  const getStoryLike = async (sid) => {
+    console.log(sid)
+    try {
+      let { data: storyReaction, error } = await supabase
+        .from('storyReaction')
+        .select('*')
+        .eq('storyid', sid)
+        .eq('userid', user?.userid)
+        .single()
+      if (error) throw Error
+      if (storyReaction) setIsReaction(true)
+      else setIsReaction(false)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  const subscribeToLikes = (storyId) => {
+    const likeChannel = supabase
+      .channel('public:storyReaction')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'storyReaction' },
+        (payload) => {
+          if (payload.new.storyid === storyId) {
+            getStoryLike(storyId) // Refresh the like count when a like is added or removed
+          }
+        }
+      )
+      .subscribe()
+  }
+  const storyLikeHandler = async (sid) => {
+    if (!isReaction) {
+      const { data, error } = await supabase
+        .from('storyReaction')
+        .insert([{ storyid: sid, userid: user?.userid }])
+        .select()
+      if (error) console.log(error)
+      setIsReaction(true)
+    } else {
+      const { data, error } = await supabase
+        .from('storyReaction')
+        .delete()
+        .eq('storyid', sid)
+        .eq('userid', user?.userid)
+        .select()
+      if (error) console.log(error)
+      setIsReaction(false)
     }
   }
   return (
@@ -463,7 +548,11 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
                   </div>
                 </div>
 
-                <div className="flex items-center w-full h-full justify-center relative">
+                <div
+                  className={`flex items-center w-full h-full justify-center relative overflow-hidden ${
+                    isShowStoryInfo ? 'blur-md ' : ''
+                  }`}
+                >
                   {StoryData &&
                     StoryData?.map((item, i) => (
                       <div
@@ -604,7 +693,15 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
                 </div>
 
                 <div className="absolute bottom-6 left-4 flex items-center justify-between right-4">
-                  <div className="flex items-center gap-x-2.5 bg-gray-500/20 backdrop-blur-lg min-w-[100px] px-3 py-2.5 rounded-xl self-end">
+                  <div
+                    className="flex items-center gap-x-2.5 bg-gray-500/20 backdrop-blur-lg min-w-[100px] px-3 py-2.5 rounded-xl self-end"
+                    onClick={() => {
+                      setIsPlaying(false)
+                      storyViewInfo(StoryData[currentSlide]?.storyid)
+                      setStoryInfoTab('views')
+                      setIsShowStoryInfo(true)
+                    }}
+                  >
                     <p className="w-7 h-7 bg-orange-600 mask mask-squircle text-white grid place-items-center">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -623,13 +720,23 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
                     <p className="text-sm text-white">{storyView}</p>
                   </div>
                   <div className="flex flex-col  gap-y-3 ">
-                    <button className=" text-white grid place-items-center bg-gray-500/20 backdrop-blur-lg  px-3 py-2.5  mask mask-squircle">
+                    <button
+                      className="  grid place-items-center bg-gray-500/20 backdrop-blur-lg  px-3 py-2.5  mask mask-squircle"
+                      onClick={() =>
+                        storyLikeHandler(StoryData[currentSlide]?.storyid)
+                      }
+                    >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="24"
                         height="24"
-                        fill="none"
+                        fill="currentColor"
                         viewBox="0 0 24 24"
+                        className={`${
+                          isReaction
+                            ? 'fill-red-500 text-red-500'
+                            : 'fill-transparent'
+                        }`}
                       >
                         <path
                           stroke="currentColor"
@@ -659,6 +766,215 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
                     </button> */}
                   </div>
                 </div>
+
+                {/* view Detail */}
+                {isShowStoryInfo && (
+                  <dialog className="modal  modal-bottom modal-open absolute bottom-0 left-0 right-0 h-full overflow-hidden z-[1]">
+                    <div className="modal-box h-[350px] ">
+                      <button
+                        className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+                        onClick={() => {
+                          setIsShowStoryInfo(false)
+                          setIsPlaying(true)
+                        }}
+                      >
+                        ✕
+                      </button>
+                      <div
+                        role="tablist"
+                        className="tabs tabs-boxed mt-4 w-full"
+                      >
+                        <button
+                          role="tab"
+                          className={`tab transition-all duration-200 w-1/2 ${
+                            storyInfoTab === 'views' ? 'tab-active' : ''
+                          }`}
+                          onClick={() => {
+                            storyViewInfo(StoryData[currentSlide]?.storyid)
+                            setStoryInfoTab('views')
+                          }}
+                        >
+                          Views
+                        </button>
+                        <button
+                          role="tab"
+                          className={`tab transition-all duration-200  w-1/2 ${
+                            storyInfoTab === 'likes' ? 'tab-active' : ''
+                          }`}
+                          onClick={() => {
+                            storyLikeInfo(StoryData[currentSlide]?.storyid)
+                            setStoryInfoTab('likes')
+                          }}
+                        >
+                          Likes
+                        </button>
+                      </div>
+
+                      {storyInfoTab === 'views' && (
+                        <>
+                          <p className="pt-5 text-gray-400">Viewers</p>
+                          <ul className="mt-4 space-y-0.5 px-1 ">
+                            {userViewStory?.length ? (
+                              userViewStory.map((info, i) => (
+                                <li
+                                  key={info.id}
+                                  className={`w-full flex items-center gap-x-4  pb-3 border-b-gray-700 ${
+                                    i === userViewStory.length - 1
+                                      ? 'border-none'
+                                      : 'border-b'
+                                  }`}
+                                >
+                                  <Profile
+                                    path={info?.userid?.avatar_url}
+                                    userName={
+                                      info?.userid?.username ||
+                                      info?.userid?.email.split('@')[0]
+                                    }
+                                    bgProfile={
+                                      info?.userid?.userid === user.userid
+                                        ? 'purple'
+                                        : info?.userid?.bgProfile
+                                    }
+                                    size="sm"
+                                  />
+                                  <div className="flex items-center justify-between w-full">
+                                    <div className="flex flex-col gap-y-1">
+                                      <span className="text-gray-100 max-w-[132px] truncate inline-block">
+                                        {info?.userid?.username ||
+                                          info?.userid?.email.split('@')[0]}
+                                      </span>
+                                      <span className="text-gray-400 text-xs">
+                                        {relativeTimeFormat(info?.viewedat)}
+                                      </span>
+                                    </div>
+                                    <span>
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        strokeWidth={1.5}
+                                        stroke="currentColor"
+                                        className="w-4 h-4"
+                                      >
+                                        <path
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                          d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
+                                        />
+                                        <path
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                          d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                                        />
+                                      </svg>
+                                    </span>
+                                  </div>
+                                </li>
+                              ))
+                            ) : (
+                              <li className="flex flex-col justify-center items-center h-1/2 ">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  strokeWidth={1.5}
+                                  stroke="currentColor"
+                                  className="w-9 h-9"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
+                                  />
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                                  />
+                                </svg>
+                                <p className="text-lg mt-2">No viewers</p>
+                              </li>
+                            )}
+                          </ul>
+                        </>
+                      )}
+
+                      {storyInfoTab === 'likes' && (
+                        <>
+                          <p className="pt-5 text-gray-400">Likes</p>
+                          <ul className="mt-4 space-y-0.5 px-1 h-full w-full">
+                            {userLikeStory?.length ? (
+                              userLikeStory.map((info, i) => (
+                                <li
+                                  key={info.id}
+                                  className={`w-full flex items-center gap-x-4  pb-3 border-b-gray-700 ${
+                                    i === userLikeStory.length - 1
+                                      ? 'border-none'
+                                      : 'border-b'
+                                  }`}
+                                >
+                                  <Profile
+                                    path={info?.userid?.avatar_url}
+                                    userName={
+                                      info?.userid?.username ||
+                                      info?.userid?.email.split('@')[0]
+                                    }
+                                    bgProfile={
+                                      info?.userid?.userid === user.userid
+                                        ? 'purple'
+                                        : info?.userid?.bgProfile
+                                    }
+                                    size="sm"
+                                  />
+                                  <div className="flex items-center justify-between w-full">
+                                    <div className="flex flex-col gap-y-1">
+                                      <span className="text-gray-100 max-w-[132px] truncate inline-block">
+                                        {info?.userid?.username ||
+                                          info?.userid?.email.split('@')[0]}
+                                      </span>
+                                      <span className="text-gray-400 text-xs">
+                                        {relativeTimeFormat(info?.viewedat)}
+                                      </span>
+                                    </div>
+                                    <span className="inline-block ">
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 20 20"
+                                        fill="currentColor"
+                                        className="w-4 h-4 fill-red-500"
+                                      >
+                                        <path d="m9.653 16.915-.005-.003-.019-.01a20.759 20.759 0 0 1-1.162-.682 22.045 22.045 0 0 1-2.582-1.9C4.045 12.733 2 10.352 2 7.5a4.5 4.5 0 0 1 8-2.828A4.5 4.5 0 0 1 18 7.5c0 2.852-2.044 5.233-3.885 6.82a22.049 22.049 0 0 1-3.744 2.582l-.019.01-.005.003h-.002a.739.739 0 0 1-.69.001l-.002-.001Z" />
+                                      </svg>
+                                    </span>
+                                  </div>
+                                </li>
+                              ))
+                            ) : (
+                              <li className="flex flex-col justify-center items-center h-1/2 ">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  strokeWidth={1.5}
+                                  stroke="currentColor"
+                                  className="w-9 h-9"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
+                                  />
+                                </svg>
+
+                                <p className="text-lg mt-2">No reactions</p>
+                              </li>
+                            )}
+                          </ul>
+                        </>
+                      )}
+                    </div>
+                  </dialog>
+                )}
               </div>
             </div>
           </div>
@@ -724,8 +1040,17 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
             </p>
             <form method="dialog" className="mt-5 w-full">
               <div className="grid grid-cols-2 gap-x-4 w-full">
-                <button className="btn btn-error text-white" onClick={(e)=>deleteStroy(e,StoryData[currentSlide]?.storyid)}>Delete</button>
-                <button className="btn" onClick={()=>setIsDeleted(false)}>close</button>
+                <button
+                  className="btn btn-error text-white"
+                  onClick={(e) =>
+                    deleteStroy(e, StoryData[currentSlide]?.storyid)
+                  }
+                >
+                  Delete
+                </button>
+                <button className="btn" onClick={() => setIsDeleted(false)}>
+                  close
+                </button>
               </div>
             </form>
           </div>
