@@ -36,6 +36,7 @@ import { UserContext } from '../../Context/UserContext'
 import decodeMessage from '../../Utility/decodeMessage'
 import userNameSpliter from '../../Utility/userNameSpliter'
 import ProfileImage from '../../Components/ProfileImage/ProfileImage'
+import SkeletonLoaderMessage from '../../Components/UI/SkeletonLoaderMessage/SkeletonLoaderMessage'
 
 const Chat = () => {
   const [showChatInfo, setShowChatInfo] = useState(false)
@@ -49,6 +50,7 @@ const Chat = () => {
   const messageEndRef = useRef(null)
   const [isScrolledUp, setIsScrolledUp] = useState(false)
   const [isShowUpBtn, setIsShowUpBtn] = useState(false)
+  const [isLoad, setIsLoad] = useState(false)
   const [lastScrollTop, setLastScrollTop] = useState(0)
 
   const messagesContainerRef = useRef(null)
@@ -121,7 +123,7 @@ const Chat = () => {
         { event: '*', schema: 'public', table: 'messages' },
         (payload) => {
           const newMsg = payload.new
-
+          setIsLoad(false)
           if (newMsg.status === 'send' && newMsg.recipientid == user?.userid) {
             showNotification('Chatgram', newMsg, newMsg?.content)
           }
@@ -145,7 +147,7 @@ const Chat = () => {
           ) {
             setMessages((prevMessages) => [...prevMessages, payload.new])
             lastMessage[match.id] = payload.new
-            console.log(message)
+    
             setLastMessage(payload.new)
             // console.log(payload.new);
             fetchSavedMessages()
@@ -169,37 +171,56 @@ const Chat = () => {
     }
   }, [isScrolledUp])
   const fetchMessages = async () => {
-    if (match?.id == user?.userid) fetchSavedMessages()
-    else {
-      let { data: message, error } = await supabase
-        .from('messages')
-        .select(
-          '*,replayId(messageid,messageType,content,name,senderid,isDeleted),forward_from(email,bgProfile,username,userid),contact(email,username,bgProfile,avatar_url)'
-        )
-        .eq('chatID', match.id)
-        .eq('isDeleted', false)
-        .order('sentat', { ascending: true })
+    
+    try {
+      if (match?.id == user?.userid) fetchSavedMessages()
+  
+        setIsLoad(true)
 
-      if (error) console.error('Error fetching messages:', error)
-      setMessages((prev) => [...prev, message])
-      lastMessage[match.id] = message
-      setLastMessage(lastMessage)
-      groupMessageHandler(message)
-      getPinMessage(message)
+        let { data: message, error } = await supabase
+          .from('messages')
+          .select(
+            '*,replayId(messageid,messageType,content,name,senderid,isDeleted),forward_from(email,bgProfile,username,userid),contact(email,username,bgProfile,avatar_url)'
+          )
+          .eq('chatID', match.id)
+          .eq('isDeleted', false)
+          .order('sentat', { ascending: true })
+
+        if (error) throw Error('Error fetching messages:', error)
+        setMessages((prev) => [...prev, message])
+        lastMessage[match.id] = message
+        setLastMessage(lastMessage)
+        groupMessageHandler(message)
+        getPinMessage(message)
+        setIsLoad(false)
+      
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setIsLoad(false)
     }
+    
   }
   const fetchSavedMessages = async () => {
-    let { data: messages, error } = await supabase
-      .from('messages')
-      .select('*')
-      .eq('recipientid', user.userid)
-      .eq('senderid', user.userid)
-      .order('sentat', { ascending: true })
+    try {
+      setIsLoad(true)
+      let { data: messages, error } = await supabase
+        .from('messages')
+        .select('*')
+        .eq('recipientid', user.userid)
+        .eq('senderid', user.userid)
+        .order('sentat', { ascending: true })
 
-    if (error) console.error('Error fetching messages:', error)
-    setMessages(messages)
+      if (error) throw Error('Error fetching messages:', error)
+      setMessages(messages)
 
-    groupMessageHandler(messages)
+      groupMessageHandler(messages)
+      setIsLoad(false)
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setIsLoad(false)
+    }
   }
   const filterUnreadMessage = async () => {
     let { data: messages, error } = await supabase
@@ -414,37 +435,50 @@ const Chat = () => {
               ref={messagesContainerRef}
               onScroll={handleScroll}
             >
-              {messages?.content !== '' &&
-                groupedMessages?.map((group, i) => (
-                  // console.log(grouped[item])
+              {isLoad&&!groupedMessages?.length ? (
+                <>
+                  <SkeletonLoaderMessage />
+                  <SkeletonLoaderMessage size="md" />
+                </>
+             
+              
+              )
+              :
+             (
+              <>
+                {messages?.content !== '' &&
+                  groupedMessages?.map((group, i) => (
+                    // console.log(grouped[item])
 
-                  <div key={i + 1 * 2}>
-                    {group.date === group.date && (
-                      <div
-                        className={`dark:bg-gray-500/20 backdrop-blur-lg px-4 py-1 w-fit text-sm rounded-lg mx-auto mt-2 mb-1 sticky top-2 dark:text-gray-50 text-blue-200 bg-gray-600/30 `}
-                      >
-                        {group.date}
-                      </div>
-                    )}
+                    <div key={i + 1 * 2}>
+                      {group.date === group.date && (
+                        <div
+                          className={`dark:bg-gray-500/20 backdrop-blur-lg px-4 py-1 w-fit text-sm rounded-lg mx-auto mt-2 mb-1 sticky top-2 dark:text-gray-50 text-blue-200 bg-gray-600/30 `}
+                        >
+                          {group.date}
+                        </div>
+                      )}
 
-                    {group.messages.map((item) => (
-                      <Message
-                        key={item.messageid}
-                        forwardInfo={item?.forward_from}
-                        forwardSelf={item?.forwardSelf}
-                        contact={item?.contact}
-                        src={item.src}
-                        replayData={item?.replayId}
-                        isSelected={checkMessage.includes(item.messageid)}
-                        chatId={match.id}
-                        messageType={
-                          item.messageType ? item.messageType : item.type
-                        }
-                        {...item}
-                      />
-                    ))}
-                  </div>
-                ))}
+                      {group.messages.map((item) => (
+                        <Message
+                          key={item.messageid}
+                          forwardInfo={item?.forward_from}
+                          forwardSelf={item?.forwardSelf}
+                          contact={item?.contact}
+                          src={item.src}
+                          replayData={item?.replayId}
+                          isSelected={checkMessage.includes(item.messageid)}
+                          chatId={match.id}
+                          messageType={
+                            item.messageType ? item.messageType : item.type
+                          }
+                          {...item}
+                        />
+                      ))}
+                    </div>
+                  ))}
+              </>
+                )}
             </section>
             {/* pin message */}
             <section
@@ -488,12 +522,13 @@ const Chat = () => {
             {/* <Uploader /> */}
 
             <Modal userID={match?.id} />
-            <ToastContainer />
 
             <div className="fixed bottom-[105px] right-5">
-             {isShowUpBtn&&unreadMessage?.length>0? <span className="px-2 h-[20px] absolute -top-1 right-0  rounded-full bg-indigo-600 text-indigo-200  text-[10px] flex items-center justify-center z-10">
-                {unreadMessage?.length}
-              </span>:null}
+              {isShowUpBtn && unreadMessage?.length > 0 ? (
+                <span className="px-2 h-[20px] absolute -top-1 right-0  rounded-full bg-indigo-600 text-indigo-200  text-[10px] flex items-center justify-center z-10">
+                  {unreadMessage?.length}
+                </span>
+              ) : null}
               <button
                 className={`btn  mask mask-squircle ${
                   isShowUpBtn ? 'inline-block' : 'hidden'
