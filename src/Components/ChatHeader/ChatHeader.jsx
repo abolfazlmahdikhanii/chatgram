@@ -10,8 +10,15 @@ import { UserContext } from '../../Context/UserContext'
 import { useMatch, useParams } from 'react-router-dom'
 import useTypingStatus from '../../CustomHooks/useTypingStatus'
 import { ThreeDots } from 'react-loader-spinner'
+import SkeletonLoaderProfile from '../UI/SkeletonLoaderProfile/SkeletonLoaderProfile'
 
-const ChatHeader = ({ setShowChatInfo, DeleteChat, getInfo,chatID,isMessage }) => {
+const ChatHeader = ({
+  setShowChatInfo,
+  DeleteChat,
+  getInfo,
+  chatID,
+  isMessage,
+}) => {
   const typingUsers = useTypingStatus()
 
   const [showMenu, setShowMenu] = useState(false)
@@ -27,7 +34,6 @@ const ChatHeader = ({ setShowChatInfo, DeleteChat, getInfo,chatID,isMessage }) =
     chatId,
     clearHistory,
     checkMessage,
-  
   } = useContext(ChatContext)
 
   return (
@@ -73,52 +79,58 @@ const HeaderMessage = ({
   getInfo,
   checkMessage,
   chatId,
-  isMessage
+  isMessage,
 }) => {
   const { user } = useContext(UserContext)
 
   return (
     <section className="px-5 flex items-center justify-between relative">
-      <div className="flex gap-4">
-        <Profile
-          path={info?.avatar_url}
-          userName={info?.username || info?.email.split('@')[0]}
-          bgProfile={info?.bgProfile}
-          relation={info?.relation}
-          isSave={info?.userid === user.userid}
-        />
-        <div className="w-full flex-col   flex">
-          <p className="font-semibold  dark:text-white capitalize text-[17px] text-gray-900">
-            {user?.userid !== info?.userid
-              ? info?.username || info?.email.split('@')[0]
-              : 'Saved Messages'}
-          </p>
-          <p className="dark:text-indigo-300 text-[11px] capitalize text-indigo-600">
-            {typingUsers?.length&&chatId==typingUsers[1] && user.userid !== typingUsers[0] ? (
-              <p>
-                {(info.userid === typingUsers && info?.username) ||
-                  info?.email.split('@')[0]}{' '}
-                <span className='inline-flex items-end  gap-x-1.5'>
-                is typing 
-                <ThreeDots
-                  visible={true}
-                  height="12"
-                  width="12"
-                  color=""
-                  radius="9"
-                  ariaLabel="three-dots-loading"
-                  wrapperStyle={{}}
-                  wrapperClass="typing-loader"
-                  
-                />
-                </span>
-              </p>
-            ):info?.userStatus}
-            {/* {user?.userid == info?.userid||typingUsers?info.userStatus:''} */}
-          </p>
+      {info ? (
+        <div className="flex gap-4">
+          <Profile
+            path={info?.lavatar_url}
+            userName={info?.username || info?.email.split('@')[0]}
+            bgProfile={info?.bgProfile}
+            relation={info?.relation}
+            isSave={info?.userid === user.userid}
+          />
+          <div className="w-full flex-col   flex">
+            <p className="font-semibold  dark:text-white capitalize text-[17px] text-gray-900">
+              {user?.userid !== info?.userid
+                ? info?.username || info?.email.split('@')[0]
+                : 'Saved Messages'}
+            </p>
+            <p className="dark:text-indigo-300 text-[11px] capitalize text-indigo-600">
+              {typingUsers?.length &&
+              chatId == typingUsers[1] &&
+              user.userid !== typingUsers[0] ? (
+                <p>
+                  {(info.userid === typingUsers && info?.username) ||
+                    info?.email.split('@')[0]}{' '}
+                  <span className="inline-flex items-end  gap-x-1.5">
+                    is typing
+                    <ThreeDots
+                      visible={true}
+                      height="12"
+                      width="12"
+                      color=""
+                      radius="9"
+                      ariaLabel="three-dots-loading"
+                      wrapperStyle={{}}
+                      wrapperClass="typing-loader"
+                    />
+                  </span>
+                </p>
+              ) : (
+                info?.userStatus
+              )}
+              {/* {user?.userid == info?.userid||typingUsers?info.userStatus:''} */}
+            </p>
+          </div>
         </div>
-      </div>
-
+      ) : (
+        <SkeletonLoaderProfile />
+      )}
       {/* right-side */}
 
       <div className="flex items-center">
@@ -162,7 +174,7 @@ const HeaderMessage = ({
         <div
           className=" select-box--item "
           onClick={() => {
-            isMessage?setCheckBox((prev) => !prev):null
+            isMessage ? setCheckBox((prev) => !prev) : null
             showCheckBox ? setCheckMessage([]) : null
             setShowMenu(false)
           }}
@@ -174,7 +186,9 @@ const HeaderMessage = ({
           />
 
           <p className={`font-[700] text-[14px] `}>
-            {!showCheckBox&&!checkMessage.length ? 'Select Message' : 'Clear Selection'}
+            {!showCheckBox && !checkMessage.length
+              ? 'Select Message'
+              : 'Clear Selection'}
           </p>
         </div>
         <div
@@ -207,7 +221,10 @@ const HeaderMessage = ({
           <p className={`font-[700] text-[14px] ml-1`}>Share contact</p>
         </div>
 
-        <div className=" select-box--item " onClick={()=>clearHistory(chatId)}>
+        <div
+          className=" select-box--item "
+          onClick={() => clearHistory(chatId)}
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="19"
