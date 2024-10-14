@@ -1,4 +1,4 @@
-import { createContext, useState } from 'react'
+import { createContext, useCallback, useState } from 'react'
 import chatData from '../data'
 import { supabase } from '../superbase'
 import messageType from '../Utility/messageTypeChecker'
@@ -50,6 +50,10 @@ export const ChatContext = createContext({
   link: [],
   voice: [],
   file: [],
+  searchText: '',
+  searchLoading: false,
+  setSearchText: () => {},
+  setSearchLoading: () => {},
   setMessageType: () => {},
   setShowInfoMenu: () => {},
   setType: () => {},
@@ -156,9 +160,10 @@ export const ChatProvider = ({ children }) => {
   const [replyMessage, setReplyMessage] = useState(null)
   const [audio, setAudio] = useState()
   const [isChatInfo, setISChatInfo] = useState(false)
-  const [font, setFont] = useState(16)
-  const [chatBg, setChatBg] = useState('')
+
   const [searchChat, setSearchChat] = useState([])
+  const [searchText, setSearchText] = useState('')
+  const [searchLoading, setSearchLoading] = useState(false)
   const [messageType, setMessageType] = useState('')
   const [senderID, setSenderID] = useState('')
   const [fileUrl, setFileUrl] = useState('')
@@ -522,7 +527,7 @@ export const ChatProvider = ({ children }) => {
     }
   }
 
-  const contextmenuHandler = (
+  const contextmenuHandler =useCallback( (
     e,
     id,
     senderid,
@@ -533,12 +538,30 @@ export const ChatProvider = ({ children }) => {
   ) => {
     e.preventDefault()
     e.stopPropagation()
+    const { clientX, clientY } = event
+
+    // Set initial position
+    let x = clientX
+    let y = clientY
+
+    const viewportWidth = window.innerWidth
+    const viewportHeight = window.innerHeight
+
+    // Adjust the position if it goes beyond the viewport
+    if (clientX + 250 > viewportWidth) {
+      x = viewportWidth - 250 // Assuming the context menu width is 150px
+    }
+    if (clientY + 300 > viewportHeight) {
+      y = viewportHeight - 300 // Assuming the context menu height is 100px
+    }
+    
     setShowContextMenu(false)
 
     setISChatInfo(false)
     setShowContextMenu(true)
-    setPageX(e.pageX)
-    setPageY(e.pageY)
+    
+    setPageX(x)
+    setPageY(y)
 
     setMessageID(id)
 
@@ -548,7 +571,7 @@ export const ChatProvider = ({ children }) => {
     setMessageType(messageType)
     setMessageName(name)
     setIsPin({ mID: id, isPin })
-  }
+  },[])
   // const pinMessageHandler = (id, isPin) => {
   //   const newMessage = [...message?.messages]
   //   const findPin = newMessage.find((item) => item.messageId === id)
@@ -735,7 +758,7 @@ export const ChatProvider = ({ children }) => {
     const findedReaction = newMessage.findIndex(
       (item) => item.userInfos.userid === userInfo.userid
     )
-   
+
     newMessage?.splice(findedReaction, 1)
     const { data, error: err } = await supabase
       .from('messages')
@@ -909,10 +932,7 @@ export const ChatProvider = ({ children }) => {
         setShowCheckBox,
         showCheckBox,
         clearHistory,
-        font,
-        setFont,
-        chatBg,
-        setChatBg,
+
         searchChat,
         setSearchChat,
         showPinAudio,
@@ -946,6 +966,10 @@ export const ChatProvider = ({ children }) => {
         setShowInfoMenu,
         showInfoMenu,
         setSenderID,
+        searchText,
+        setSearchText,
+        searchLoading,
+        setSearchLoading,
       }}
     >
       {children}
