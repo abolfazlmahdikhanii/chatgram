@@ -233,7 +233,7 @@ const {user}=useContext(UserContext)
           ? "[scale-z:1] scale-100 opacity-100 "
           : "[scale-z:0] scale-0 opacity-0"
       } fixed `}
-      style={{ left: `${pageX-100}px`, top: `${pageY}px` }}
+      style={{ left: `${pageX}px`, top: `${pageY}px` }}
       onMouseLeave={() => close()}
     >
       <div
