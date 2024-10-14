@@ -6,12 +6,26 @@ import useChangeThem from './CustomHooks/useChangeThem'
 import Auth from './Pages/Auth/Auth'
 import { supabase } from './superbase'
 import { UserContext, UserProvider } from './Context/UserContext'
-import { ToastContainer } from 'react-toastify'
+import { toast, ToastContainer } from 'react-toastify'
 
 const App = () => {
   const [them, setThem] = useChangeThem('light')
   const [session, setSession] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
+  const toastOptions = {
+    position: toast.POSITION.BOTTOM_CENTER,
+    autoClose: 1300,
+    
+    hideProgressBar: true,
+    closeOnClick: false,
+    pauseOnHover: false,
+    draggable: false,
+    progress: undefined,
+    theme: 'dark',
+    closeButton: false,
+    className:
+      'px-5 py-2.5 bg-slate-500/20 rounded-xl text-white backdrop-blur text-center',
+  }
   let element = null
   useEffect(() => {
     setThem(localStorage.getItem('them'))
@@ -19,6 +33,7 @@ const App = () => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
         setSession(session)
+        
       }
       setTimeout(() => {
         setIsLoading(false)
@@ -32,9 +47,9 @@ const App = () => {
 
       if (session) {
         setSession(session)
+        updateUserStatus(session?.user?.id)
 
         getProfile(session?.user?.id)
-        updateUserStatus(session?.user?.id)
       }
       setTimeout(() => {
         setIsLoading(false)
@@ -45,6 +60,12 @@ const App = () => {
       subscription.unsubscribe()
     }
   }, [setSession])
+  useEffect(()=>{
+    if(!navigator.onLine){
+      toast('You\'re Offline!', toastOptions)
+    }
+  },[])
+
   const getProfile = async (id) => {
     try {
       // Get user info
@@ -64,11 +85,14 @@ const App = () => {
     }
   }
 
-  const updateUserStatus = async (id) => {
+  const updateUserStatus = async (id, status) => {
     try {
       const { data, error } = await supabase
         .from('users')
-        .update({ userStatus: navigator.onLine ? 'online' : 'offline' })
+        .update({
+          userStatus:
+            navigator.onLine || status === 'online' ? 'online' : 'offline',
+        })
         .eq('userid', id)
         .select()
     } catch (error) {
