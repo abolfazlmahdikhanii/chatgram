@@ -100,7 +100,7 @@ const ChatInfo = ({ setChatInfo, setClose, show }) => {
       section.scrollIntoView({
         behavior: 'smooth',
         block: 'end',
-        // inline: 'nearest',
+        inline: 'nearest',
       })
     }
   }
@@ -305,7 +305,7 @@ const ChatInfo = ({ setChatInfo, setClose, show }) => {
             <div
               className={` ${
                 file && file?.length > 0 ? 'grid-cols-3' : ''
-              } gap-1.5   mt-6  overflow-hidden ${
+              } gap-4  mt-6  overflow-hidden ${
                 tab === 'Files'? 'grid' : 'hidden'
               }`}
             >
@@ -316,6 +316,7 @@ const ChatInfo = ({ setChatInfo, setClose, show }) => {
                     idType={content?.messageid}
                     src={content?.content}
                     mType={content?.messageType}
+                    name={content?.name}
                     // {...content}
                     messageId={content?.messageid}
                     autoPlay={false}
