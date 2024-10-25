@@ -167,14 +167,16 @@ const FileType = ({
     mFile = (
       <div>
         <FileIcon
-          type={name?name.split(".")[1]:src?.split('.')[1]}
+          type={name?name.split(".")[name.split(".").length-1]:src?.split('.')[src.split(".").length-1]}
           path={url ? url : src}
           message={true}
           from={from}
           isColor={isColor}
           isFile={false}
+          isChatInfo={isChatInfo}
           onContext={(e) => contextMenu(e, messageId, idType, isChatInfo)}
         />
+        
       </div>
     )
     const findedLink = file.find((item) => item.messageid === messageId)
@@ -186,11 +188,12 @@ const FileType = ({
   } else {
     mFile = (
       <FileItem
-      type={name?name.split(".")[1]:src?.split('.')[1]}
+      type={name?name.split(".")[name.split(".").length-1]:src?.split('.')[src.split(".").length-1]}
         src={url?url:src}
         size={size}
         message={true}
         from={from}
+        name={name}
         onRemove={() => removeMessages(messageId, idType)}
         onContext={(e) => contextMenu(e, messageId, idType, isChatInfo)}
         isColor={isColor}
