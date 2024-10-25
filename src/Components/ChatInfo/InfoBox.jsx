@@ -64,7 +64,7 @@ function InfoBox({ title, des,onCopy,style="" }) {
             break
     }
     return (
-        <div className="info-box" onClick={()=>onCopy(des)}>
+        <div className="info-box" onClick={()=>des!=="no content"?onCopy(des,title):null}>
             {/* head */}
             <div className="flex  gap-x-3">
             {icon}
