@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { memo, useContext, useEffect, useState } from 'react'
 import Box from '../UI/Box/Box'
 import Profile from '../Profile/Profile'
 import { IoCallSharp } from 'react-icons/io5'
@@ -79,30 +79,14 @@ const ChatInfo = ({ setChatInfo, setClose, show }) => {
 
   
 
-  const copyEmailHandler = async (email) => {
+  const handleCopy = async (content, type) => {
     try {
-      await navigator.clipboard.writeText(email)
-      toast(<CoustomToast message="Email" />, toastOptions)
+      await navigator.clipboard.writeText(content);
+      toast(<CoustomToast message={type} />, toastOptions);
     } catch (error) {
-      console.log(error)
+      console.error(error);
     }
-  }
-  const copyUsernameHandler = async (username) => {
-    try {
-      await navigator.clipboard.writeText(username)
-      toast(<CoustomToast message="Username" />, toastOptions)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-  const copyBioHandler = async (bio) => {
-    try {
-      await navigator.clipboard.writeText(bio)
-      toast(<CoustomToast message="Bio" />, toastOptions)
-    } catch (error) {
-      console.log(error)
-    }
-  }
+  };
 
   const gotoMeet = () => {
     setIsCall(true)
@@ -116,7 +100,7 @@ const ChatInfo = ({ setChatInfo, setClose, show }) => {
       section.scrollIntoView({
         behavior: 'smooth',
         block: 'end',
-        inline: 'nearest',
+        // inline: 'nearest',
       })
     }
   }
@@ -126,7 +110,7 @@ const ChatInfo = ({ setChatInfo, setClose, show }) => {
     
     <>
       <Box
-        style={`w-full transition-all duration-200 overflow-y-scroll h-full n-scroll max-h-[100vh] relative [scroll-width:none]`}
+        style={`w-full transition-all duration-200 overflow-y-scroll h-full n-scroll max-h-[100vh] xl:relative [scroll-width:none]  absolute  inset-0  md:w-[54%] md:right-0 md:left-[unset] xl:w-full`}
         context={(e) => {
           e.preventDefault()
           // setShowContextMenu(true)
@@ -135,7 +119,7 @@ const ChatInfo = ({ setChatInfo, setClose, show }) => {
       >
         {/* header */}
         <div className="sticky -top-4 bg-base-100 z-10  py-4 -mt-3 w-full px-2 transition-all duration-200 flex items-center justify-between ">
-          <p className="text-xl dark:text-white font-semibold text-gray-900">
+          <p className="text-xl dark:text-white font-semibold text-gray-900 ">
             Profile
           </p>
           <button
@@ -207,21 +191,21 @@ const ChatInfo = ({ setChatInfo, setClose, show }) => {
           <InfoBox
             title="Email"
             des={profileInfo?.email}
-            onCopy={copyEmailHandler}
+            onCopy={handleCopy}
             style="truncate max-w-[220px]"
           />
           {/* item-2 */}
           <InfoBox
             title="Username"
             des={profileInfo?.username || 'no content'}
-            onCopy={copyUsernameHandler}
+            onCopy={handleCopy}
           />
           {/* item-3 */}
           <InfoBox
             title="Bio"
             des={profileInfo?.bio || 'no content'}
             style="line-clamp-2"
-            onCopy={copyBioHandler}
+            onCopy={handleCopy}
           />
         </div>
 
@@ -382,15 +366,14 @@ const ChatInfo = ({ setChatInfo, setClose, show }) => {
               {voice && voice?.length > 0 ? (
                 voice.map((content) => (
                   <VoiceBox
-                    key={crypto.randomUUID()}
+                    key={content.messageid}
                     mid={content.messageid}
               
                     path={content?.content}
                     isFile={false}
                     setAudio={setAudio}
                     name={
-                      content?.senderid?.username ||
-                      content?.senderid?.email?.split('@')[0]
+                      content?.senderid?.username 
                     }
                     remove={clickRemoveHandler}
                     contextMenu={contextmenuInfoHandler}
@@ -420,4 +403,4 @@ const ChatInfo = ({ setChatInfo, setClose, show }) => {
   )
 }
 
-export default ChatInfo
+export default memo(ChatInfo)
