@@ -13,6 +13,7 @@ const SelectBox = ({
   onUploadImage,
   onUploadFile,
   setSelectedFile,
+
 }) => {
   const [showUploader, setShowUploader] = useState(false)
   const [showImageUploader, setShowImageUploader] = useState(false)
@@ -55,12 +56,15 @@ const SelectBox = ({
     let files = []
 
     for (let i = 0; i < e.target.files.length; i++) {
+
       files.push({
         id: crypto.randomUUID(),
         src: URL.createObjectURL(e.target.files[i]),
         size: e.target.files[i].size,
         name: e.target.files[i].name,
-        type: e.target.files[i]?.type.startsWith('audio/') ? 'mp3' : 'file',
+        type: "file",
+        senderid:user.userid,
+        sentat: new Date().getTime(),
       })
     }
     setSelectedFile(e.target.files)
