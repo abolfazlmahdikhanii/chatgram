@@ -1,4 +1,10 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import FileItem from '../FIleItem/FileItem'
 import Progress from '../UI/Progress/Progress'
 import AudioFile from '../AudioFIle/AudioFile'
@@ -26,7 +32,7 @@ const FileType = ({
   isChatInfo = false,
   contextMenu,
   senderID,
-  source
+  source,
 }) => {
   const {
     removeMessages,
@@ -99,7 +105,6 @@ const FileType = ({
     mType == 'audio/webm' ||
     mType?.includes('audio')
   ) {
-   
     mFile = (
       <AudioFile
         path={url}
@@ -112,19 +117,18 @@ const FileType = ({
     )
 
     const findedLink = voice.find((item) => item.messageid === messageId)
-    if (!findedLink&&url)
-    setVoice((prev) => [
-      ...prev,
-      {
-        content: url,
-        messageid: messageId,
-        messageType: mType,
-        name,
-        senderid: senderID,
-      },
-    ])
+    if (!findedLink && url)
+      setVoice((prev) => [
+        ...prev,
+        {
+          content: url,
+          messageid: messageId,
+          messageType: mType,
+          name,
+          senderid: senderID,
+        },
+      ])
   } else if (mType == 'img') {
-
     mFile = (
       <li
         className={` ${
@@ -154,17 +158,17 @@ const FileType = ({
       </li>
     )
     const findedLink = type.find((item) => item.messageid === messageId)
-    if (!findedLink&&url)
-    setType((prev) => [
-      ...prev,
-      { content:url, messageid: messageId, messageType: mType },
-    ])
+    if (!findedLink && url)
+      setType((prev) => [
+        ...prev,
+        { content: url, messageid: messageId, messageType: mType },
+      ])
   } else if (mType == 'file' && !isFile) {
     mFile = (
       <div>
         <FileIcon
-          type={mType}
-          path={src ? src : ''}
+          type={name?name.split(".")[1]:src?.split('.')[1]}
+          path={url ? url : src}
           message={true}
           from={from}
           isColor={isColor}
@@ -175,16 +179,15 @@ const FileType = ({
     )
     const findedLink = file.find((item) => item.messageid === messageId)
     if (!findedLink)
-    setFile((prev) => [
-      ...prev,
-      { content: src, messageid: messageId, messageType: mType },
-    ])
+      setFile((prev) => [
+        ...prev,
+        { content: src, messageid: messageId, messageType: mType },
+      ])
   } else {
     mFile = (
       <FileItem
-        name={name}
-        type={mType}
-        src={src}
+      type={name?name.split(".")[1]:src?.split('.')[1]}
+        src={url?url:src}
         size={size}
         message={true}
         from={from}
@@ -195,10 +198,10 @@ const FileType = ({
     )
     const findedLink = file.find((item) => item.messageid === messageId)
     if (!findedLink)
-    setFile((prev) => [
-      ...prev,
-      { content: src, messageid: messageId, messageType: mType },
-    ])
+      setFile((prev) => [
+        ...prev,
+        { content: src, messageid: messageId, messageType: mType },
+      ])
   }
   return (
     <>
