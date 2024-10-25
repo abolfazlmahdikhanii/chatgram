@@ -3,7 +3,7 @@ import Box from '../UI/Box/Box'
 import MessageItem from '../Messageitem/MessageItem'
 import { ChatContext } from '../../Context/ChatContext'
 import UserMenu from './UserMenu'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import StorySlider from '../StorySlider/StorySlider'
 import SearchBar from '../UI/SearchBar/SearchBar'
 import ColumnProfile from '../ColumnProfile/ColumnProfile'
@@ -30,8 +30,9 @@ const MessageList = () => {
     lastMessage,
     setForwardList,
     forwardList,
+    friendID
   } = useContext(ChatContext)
-
+  const match=useParams()
   const [isActiveSearch, setIsActiveSearch] = useState(false)
   const navigate = useNavigate()
   useEffect(() => {
@@ -50,10 +51,13 @@ const MessageList = () => {
         }
       )
       .subscribe()
+      return () => {
+        supabase.removeChannel(subscription);
+      };
   }, [])
   const contextMenuHandler = (e, id) => {
-    setShowMenu(false)
     e.preventDefault()
+    setShowMenu(false)
     setPageX(e.pageX)
     setPageY(e.pageY)
     setShowMenu(true)
@@ -116,7 +120,7 @@ const MessageList = () => {
   }
 
   return (
-    <Box style={'ml-3 overflow-hidden'}>
+    <Box style={`ml-3 overflow-hidden ${friendID?'hidden lg:block':'block'}`}>
       <SearchBar
         setActiveSearch={setIsActiveSearch}
         activeSearch={isActiveSearch}
