@@ -102,6 +102,10 @@ const Chat = () => {
 
     if (!friendID) navigate('/')
     // if (match?.id == user?.userid) fetchSavedMessages()
+
+    return () => {
+      setIsShowUpBtn(false)
+    }
   }, [match.id])
   useEffect(() => {
     getFriendinfo(friendID)
@@ -138,7 +142,7 @@ const Chat = () => {
             fetchMessages()
             updateMessageStatus()
             filterUnreadMessage()
-            if (!isScrolledUp) scrollToBottom()
+            if (!isScrolledUp && !payload.new.reactions) scrollToBottom()
             // groupMessageHandler(messages)
           } else if (
             (newMsg.senderid === user?.userid &&
@@ -147,12 +151,12 @@ const Chat = () => {
           ) {
             setMessages((prevMessages) => [...prevMessages, payload.new])
             lastMessage[match.id] = payload.new
-    
+
             setLastMessage(payload.new)
             // console.log(payload.new);
             fetchSavedMessages()
             updateMessageStatus()
-            if (!isScrolledUp) scrollToBottom()
+            if (!isScrolledUp && !payload.new.reactions) scrollToBottom()
             // groupMessageHandler(messages)
           }
         }
@@ -171,42 +175,47 @@ const Chat = () => {
     }
   }, [isScrolledUp])
   const fetchMessages = async () => {
-    
     try {
       if (match?.id == user?.userid) fetchSavedMessages()
-  
-        setIsLoad(true)
 
-        let { data: message, error } = await supabase
-          .from('messages')
-          .select(
-            '*,replayId(messageid,messageType,content,name,senderid,isDeleted),forward_from(email,bgProfile,username,userid),contact(email,username,bgProfile,avatar_url)'
-          )
-          .eq('chatID', match.id)
-          .eq('isDeleted', false)
-          .order('sentat', { ascending: true })
+      setIsLoad(true)
 
-        if (error) throw Error('Error fetching messages:', error)
-        setMessages((prev) => [...prev, message])
-        lastMessage[match.id] = message
-        setLastMessage(lastMessage)
-        groupMessageHandler(message)
-        getPinMessage(message)
-        setIsLoad(false)
-      
+      let { data: message, error } = await supabase
+        .from('messages')
+        .select(
+          `*,
+          replayId(messageid,messageType,content,name,senderid,isDeleted)
+          ,forward_from(email,bgProfile,username,userid),
+          contact(email,username,bgProfile,avatar_url)`
+        )
+        .eq('chatID', match.id)
+        .eq('isDeleted', false)
+        .order('sentat', { ascending: true })
+
+      if (error) throw Error('Error fetching messages:', error)
+      setMessages((prev) => [...prev, message])
+      lastMessage[match.id] = message
+      setLastMessage(lastMessage)
+      groupMessageHandler(message)
+      getPinMessage(message)
+      setIsLoad(false)
     } catch (error) {
       console.log(error)
     } finally {
       setIsLoad(false)
     }
-    
   }
   const fetchSavedMessages = async () => {
     try {
       setIsLoad(true)
       let { data: messages, error } = await supabase
         .from('messages')
-        .select('*')
+        .select(
+          `*,
+          replayId(messageid,messageType,content,name,senderid,isDeleted)
+          ,forward_from(email,bgProfile,username,userid),
+          contact(email,username,bgProfile,avatar_url)`
+        )
         .eq('recipientid', user.userid)
         .eq('senderid', user.userid)
         .order('sentat', { ascending: true })
@@ -376,7 +385,7 @@ const Chat = () => {
     const currentScrollTop = container.scrollTop
 
     // Check if the user has scrolled up by more than 20px
-    if (currentScrollTop < lastScrollTop - 20) {
+    if (currentScrollTop < isAtBottom) {
       setIsShowUpBtn(true)
     } else if (currentScrollTop >= lastScrollTop) {
       setIsShowUpBtn(false)
@@ -390,17 +399,17 @@ const Chat = () => {
   return (
     <MusicControlProvider>
       <div
-        className={`grid transition-all duration-200 ${
-          showChatInfo ? 'grid-cols-[1fr_30%]' : 'grid-cols-1'
-        }`}
+        className={`grid transition-all duration-200  ${
+          showChatInfo ? 'xl:grid-cols-[1fr_340px] grid-cols-1' : 'grid-cols-1'
+        } `}
       >
         <div
           className={`${
-            showChatInfo ? 'bg-[size:35%] ' : ''
+            showChatInfo ? 'lg:bg-[size:35%] ' : ''
           }  h-screen relative overflow-hidden    ${
             !chatBg || checkBgIsSvg(chatBg)
               ? 'bg-contain bg-repeat  [-webkit-background-origin:border] transition-colors duration-200'
-              : ' bg-[size:80vw_100vh]  bg-no-repeat transition-all duration-200 relative'
+              : ' lg:bg-[size:80vw_100vh] bg-[size:100vw_100vh]  bg-no-repeat transition-all duration-200 relative'
           } dark:stroke-[#fff] `}
           onContextMenu={(e) => e.preventDefault()}
           style={{
@@ -435,50 +444,46 @@ const Chat = () => {
               ref={messagesContainerRef}
               onScroll={handleScroll}
             >
-              {isLoad&&!groupedMessages?.length ? (
+              {isLoad && !groupedMessages?.length ? (
                 <>
                   <SkeletonLoaderMessage />
                   <SkeletonLoaderMessage size="md" />
                 </>
-             
-              
-              )
-              :
-             (
-              <>
-                {messages?.content !== '' &&
-                  groupedMessages?.map((group, i) => (
-                    // console.log(grouped[item])
+              ) : (
+                <>
+                  {messages?.content !== '' &&
+                    groupedMessages?.map((group, i) => (
+                      // console.log(grouped[item])
 
-                    <div key={i + 1 * 2}>
-                      {group.date === group.date && (
-                        <div
-                          className={`dark:bg-gray-500/20 backdrop-blur-lg px-4 py-1 w-fit text-sm rounded-lg mx-auto mt-2 mb-1 sticky top-2 dark:text-gray-50 text-blue-200 bg-gray-600/30 `}
-                        >
-                          {group.date}
-                        </div>
-                      )}
+                      <div key={i + 1 * 2}>
+                        {group.date === group.date && (
+                          <div
+                            className={`dark:bg-gray-500/20 backdrop-blur-lg px-4 py-1 w-fit text-sm rounded-lg mx-auto mt-2 mb-1 sticky top-2 dark:text-gray-50 text-blue-200 bg-gray-600/30 `}
+                          >
+                            {group.date}
+                          </div>
+                        )}
 
-                      {group.messages.map((item) => (
-                        <Message
-                          key={item.messageid}
-                          forwardInfo={item?.forward_from}
-                          forwardSelf={item?.forwardSelf}
-                          contact={item?.contact}
-                          src={item.src}
-                          replayData={item?.replayId}
-                          isSelected={checkMessage.includes(item.messageid)}
-                          chatId={match.id}
-                          messageType={
-                            item.messageType ? item.messageType : item.type
-                          }
-                          {...item}
-                        />
-                      ))}
-                    </div>
-                  ))}
-              </>
-                )}
+                        {group.messages.map((item) => (
+                          <Message
+                            key={item.messageid}
+                            forwardInfo={item?.forward_from}
+                            forwardSelf={item?.forwardSelf}
+                            contact={item?.contact}
+                            src={item.src}
+                            replayData={item?.replayId}
+                            isSelected={checkMessage.includes(item.messageid)}
+                            chatId={match.id}
+                            messageType={
+                              item.messageType ? item.messageType : item.type
+                            }
+                            {...item}
+                          />
+                        ))}
+                      </div>
+                    ))}
+                </>
+              )}
             </section>
             {/* pin message */}
             <section
@@ -570,4 +575,4 @@ const Chat = () => {
   )
 }
 
-export default Chat
+export default memo(Chat)
