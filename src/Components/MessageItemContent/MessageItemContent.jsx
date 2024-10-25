@@ -1,95 +1,94 @@
-import React, { useEffect, useState } from "react";
-import { FcDocument } from "react-icons/fc";
-import decodeMessage from "../../Utility/decodeMessage";
-import { supabase } from "../../superbase";
+import React, { useEffect, useState } from 'react';
+import { FcDocument } from 'react-icons/fc';
+import decodeMessage from '../../Utility/decodeMessage';
+import { supabase } from '../../superbase';
+
 const MessageItemContent = ({ message }) => {
-  console.log(message);
-  const isArrMessage = typeof message?.content instanceof Array;
-  const content = isArrMessage
-    ? message?.content[content.length - 1]
-    : message?.content;
-  const newMessage = content ? content[content?.length - 1] : content;
-  let messageContent = null;
-  if (message?.messageType === "img") {
-    messageContent = <ImgContent img={decodeMessage(message.content)} />;
-  } else if (message?.messageType === "video") {
-    messageContent = <VideoContent video={decodeMessage(newMessage)} />;
-  } else if(message?.messageType === "file") {
-    messageContent = <FileContent file={decodeMessage(newMessage)}  />;
-  }
-  else if(message?.messageType === "mp3") {
-      if(newMessage?.name!=="")messageContent = <FileContent file={newMessage}  />;
-      else messageContent = <FileContent file={newMessage} title={"Audio"} />;
-  }
+  const isArrayMessage = Array.isArray(message?.content);
+  const content = isArrayMessage ? message?.content[message.content.length - 1] : message?.content;
+  const decodedContent = decodeMessage(content);
+
+  const getMessageContent = () => {
+    switch (message?.messageType) {
+      case 'img':
+        return <ImgContent img={decodedContent} />;
+      case 'video':
+        return <VideoContent video={decodedContent} />;
+      case 'file':
+        return <FileContent file={decodedContent} />;
+      case 'mp3':
+      case 'audio/webm':
+        return <FileContent title="Audio" />;
+      default:
+        return null;
+    }
+  };
 
   return (
     <>
-      {message?.messageType === "text" || !decodeMessage(message?.content) ? (
-        <TextContent txt={decodeMessage(message?.content)} />
+      {message?.messageType === 'text' || !decodedContent ? (
+        <TextContent txt={decodedContent} />
       ) : (
-        <div className="flex items-center gap-2" dir="auto">{messageContent}</div>
+        <div className="flex items-center gap-2" dir="auto">
+          {getMessageContent()}
+        </div>
       )}
     </>
   );
 };
+
 const TextContent = ({ txt }) => {
-  return (
+  const isImageTag = txt?.includes('<img src="data');
+  return !isImageTag ? (
     <p
-      className="dark:text-gray-400 text-[13px] truncate max-w-[190px] w-full text-gray-500" dir="auto"
-      dangerouslySetInnerHTML={{
-        __html: txt,
-      }}
+      className="dark:text-gray-400 text-[13px] truncate max-w-[190px] w-full text-gray-500"
+      dir="auto"
+      dangerouslySetInnerHTML={{ __html: txt }}
     ></p>
+  ) : (
+    'media'
   );
 };
 
 const ImgContent = ({ img }) => {
-  const [url,setUrl]=useState('')
+  const [url, setUrl] = useState('');
 
   useEffect(() => {
-    if (img) downloadImage(img)
-  }, [img])
+    if (img) fetchImage(img);
+  }, [img]);
 
-  const downloadImage = async (path) => {
+  const fetchImage = async (path) => {
     try {
-      const { data, error } =await supabase.storage
-        .from('uploads')
-        .createSignedUrl(path,120)
-      if (error) throw error
-console.log(data);
-      
-      setUrl(data.signedUrl)
-      
+      const { data, error } = await supabase.storage.from('uploads').createSignedUrl(path, 120);
+      if (error) throw error;
+      setUrl(data.signedUrl);
     } catch (error) {
-      console.log(error.message)
+      console.error('Image fetch error:', error.message);
     }
-  }
+  };
+
   return (
     <>
-      <img className="w-4 h-4 rounded object-cover" src={url} alt="" />
+      <img className="w-4 h-4 rounded object-cover" src={url} alt="Image content" />
       <p className="text-sm">Album</p>
     </>
   );
 };
-const VideoContent = ({ video }) => {
-  return (
-    <>
-      <video className="w-4 h-4 object-cover rounded">
-        <source src={video?.src} />
-      </video>
-      <p className="text-sm">Album</p>
-    </>
-  );
-};
-const FileContent = ({ file,title }) => {
-  return (
-    <>
-      <p>
-        <FcDocument />
-      </p>
-      <p className="text-xs w-[100px] truncate">{file?.name?file?.name:title}</p>
-    </>
-  );
-};
+
+const VideoContent = ({ video }) => (
+  <>
+    <video className="w-4 h-4 object-cover rounded" controls>
+      <source src={video} />
+    </video>
+    <p className="text-sm">Album</p>
+  </>
+);
+
+const FileContent = ({ file, title }) => (
+  <>
+    <FcDocument />
+    <p className="text-xs w-[100px] truncate">{file?.name || title}</p>
+  </>
+);
 
 export default MessageItemContent;
