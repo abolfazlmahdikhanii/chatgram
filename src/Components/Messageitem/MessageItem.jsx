@@ -19,15 +19,8 @@ const MessageItem = ({ isSave, onContext, messagesArr, chats, chatID }) => {
 
   const { user } = useContext(UserContext)
 
-  // useEffect(()=>{
-  //  for (const item in lastMessage) {
-  //   if(item==chatID){
-  //     console.log(item);
-  //     setMessages(lastMessage[item])
-  //   }
-  //  }
-  // },[lastMessage])
-  console.log(chatID);
+  
+  
   useEffect(()=>{
     fetchMessages()
     filterUnreadMessage()
@@ -47,7 +40,7 @@ const MessageItem = ({ isSave, onContext, messagesArr, chats, chatID }) => {
           if (newMsg.chatID == chatID) {
           
       
-            setMessages(payload.new)
+            // setMessages(payload.new)
           
             // console.log(payload.new);
             fetchMessages()
@@ -96,13 +89,14 @@ const MessageItem = ({ isSave, onContext, messagesArr, chats, chatID }) => {
       minute: '2-digit',
     }).format(date)
   }
-  let icon = null
-
-  if (messages && messages[messages?.length - 1]?.status === 'read') {
-    icon = <PiChecksBold size={18} color="#818cf8" />
-  } else {
-    icon = <PiCheck size={16} color="#9ca3af" />
-  }
+  const getIcon = () => {
+    const lastMessageStatus = messages[messages?.length - 1]?.status;
+    return lastMessageStatus === 'read' ? (
+      <PiChecksBold size={18} color="#818cf8" />
+    ) : (
+      <PiCheck size={16} color="#9ca3af" />
+    );
+  };
 
   const showSearchMessage = () => {
     let dis = null
@@ -143,7 +137,7 @@ const MessageItem = ({ isSave, onContext, messagesArr, chats, chatID }) => {
               : 'Saved Messages'}
           </p>
           <div className='flex items-center gap-1.5'>
-          <p>{messages?.length>0&&icon}</p>
+          <p>{messages?.length>0&&getIcon()}</p>
           <p className="text-[11px] dark:text-gray-400 text-gray-600">
             {messages?.length > 0 &&
               formatTime(messages[messages.length - 1]?.date)}
@@ -162,11 +156,11 @@ const MessageItem = ({ isSave, onContext, messagesArr, chats, chatID }) => {
               }
             />
           
-            {unreadMessage?.length>0&&<NotifyNumber unread={unreadMessage.length} />}
+            {unreadMessage?.length>0&&<NotifyNumber unread={unreadMessage?.length} />}
           </div>
         ) : (
           <p className="-mt-1 text-sm font-normal dark:text-gray-400 text-gray-500">
-            {chats?.relation === 'me' ? 'online' : 'last seen recently'}
+            {chats?.userid === user?.userid ? 'online' : 'last seen recently'}
           </p>
         )}
       </div>
