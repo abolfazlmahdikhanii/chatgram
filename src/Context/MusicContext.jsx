@@ -24,7 +24,7 @@ export const MusicControlProvider = ({ children }) => {
 
   
     const playMusic = (song,container=containerBox) => {
-      
+
       if(currentSong!==song){
         setCurrentTimeMusic(0)
       }
@@ -65,7 +65,7 @@ export const MusicControlProvider = ({ children }) => {
           durationMusic,
           playBackRate,
           playbackRateMusic,
-       
+          setIsPlay
         }}
       >
         {children}
