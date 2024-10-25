@@ -76,8 +76,7 @@ const ChatForm = ({ setMessage }) => {
 
     return () => {
       if (inputRef.current && !emoji) inputRef.current.innerHTML = ''
-      // setReply(null)
-      // setForwardSelfMessage(null)
+    
     }
   }, [inputRef, text, emoji, record])
   useEffect(() => {
@@ -107,55 +106,7 @@ const ChatForm = ({ setMessage }) => {
     setFileProgress(100)
     return uploadFile
   }
-  // const handleUpload = async (files) => {
-  //   console.log(defaultOptions)
-  //   setFileProgress(0)
-  //   const uploadFile = []
-  //   const {
-  //     data: { session },
-  //     error,
-  //   } = await supabase.auth.getSession()
-  //   console.log(session)
-  //   for (const file of files) {
-  //     // supabase.storage
-  //     //   .from('uploads')
-  //     //   .createSignedUploadUrl(
-  //     //     `chats/${param.id}/${Date.now()}_${file.name}`,
-  //     //     60
-  //     //   )
-  //     //   .then((data) => {
-  //       const uploadEndpoint = `${supabase.storage.from('uploads').getPublicUrl('').publicURL}`;
-
-  //         const upload = new Upload(file, {
-  //           endpoint: uploadEndpoint,
-  //           retryDelays: [0, 1000, 3000, 5000],
-  //           headers: {
-  //             authorization: `Bearer ${session?.access_token}`,
-  //           },
-  //           metadata: {
-  //             filename: file.name,
-  //             filetype: file.type,
-  //             cacheControl: 3600,
-  //           },
-  //           overridePatchMethod: true,
-  //           onProgress: (bytesUploaded, bytesTotal) => {
-  //             setFileProgress(Math.round((bytesUploaded / bytesTotal) * 100))
-  //             console.log(Math.round((bytesUploaded / bytesTotal) * 100))
-  //           },
-  //           onSuccess: () => {
-  //             // setFileProgress(100)
-
-  //             // uploadFile.push(signedUrlData.path)
-  //           },
-  //           onError: (err) => {
-  //             console.log(err)
-  //           },
-  //         })
-  //         upload.start()
-  //       }
-
-  //   // return uploadFile
-  // }
+ 
 
   const handleUploadFile = async (files) => {
     // Replace with your actual file data
@@ -196,7 +147,7 @@ const ChatForm = ({ setMessage }) => {
   }
   const handleInputChange = (e) => {
     setContent(inputRef.current.innerHTML)
-    console.log(e.target.innerHTML.includes('<img src='))
+   
    
     if(e.target.innerHTML.startsWith('<img src=')){
       e.target.innerHTML=""
@@ -238,14 +189,14 @@ const ChatForm = ({ setMessage }) => {
           sendMessageHandler(text.innerHTML, replyMessage?.messageid)
           setShowReply(false)
           setReplyMessage(null)
-          // if(isEnterPressed)set(null)
+          
         }
         if (forwardSelfMessage) {
           forwardSelfClickHandler(forwardSelfMessage.id)
           sendMessageHandler(text.innerHTML)
           setShowSelfForward(false)
           setForwardSelfMessage(null)
-          // if(isEnterPressed)set("")
+      
         }
         if (!replyMessage && !forwardSelfMessage) {
           sendMessageHandler(text.innerHTML)
@@ -281,7 +232,7 @@ const ChatForm = ({ setMessage }) => {
     )
 
     if (typeof content !== 'string') {
-      console.log(content);
+    
       fileUrl = await handleAudioUpload(content)
       // setMessage(content[0], true)
     }
@@ -310,9 +261,12 @@ const ChatForm = ({ setMessage }) => {
     }
   }
   const uploadFileHandler = async (txt) => {
-    console.log(filesUpload)
     let fileUrl = ''
     if (filesUpload) {
+      const newFileUpload = filesUpload.map((item) => {
+        return { ...item, caption: txt }
+      })
+      setMessage(newFileUpload, true)
       fileUrl = await handleUploadFile(selectedFile)
       if (fileUrl) {
         for (let i = 0; i < fileUrl.length; i++) {
@@ -321,20 +275,17 @@ const ChatForm = ({ setMessage }) => {
               senderid: user.userid,
               recipientid: friendID,
               content: fileUrl[i],
-              messageType: filesUpload[i]?.name.split('.').pop(),
+              messageType: "file",
               status: 'send',
               chatID: param.id,
               name: filesUpload[i]?.name,
+              caption: txt,
             },
           ])
           if (error) console.log(error)
         }
       }
 
-      // const newFileUpload = filesUpload.map((item) => {
-      //   return { ...item, caption: txt }
-      // })
-      // sendMessageHandler(newFileUpload)
     }
   }
 
