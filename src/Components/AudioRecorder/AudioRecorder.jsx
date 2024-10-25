@@ -1,141 +1,151 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from 'react'
 
-import { AudioVisualizer, LiveAudioVisualizer } from "react-audio-visualize";
-import { FaPlay, FaPause } from "react-icons/fa";
-import { MdDeleteOutline } from "react-icons/md";
+import { AudioVisualizer, LiveAudioVisualizer } from 'react-audio-visualize'
+import { FaPlay, FaPause } from 'react-icons/fa'
+import { MdDeleteOutline } from 'react-icons/md'
+import AlertBox from '../UI/AlertBox/AlertBox'
 
-const AudioRecorders = ({ record = false, setRecord, setMessage }) => {
-  const [recording, setRecording] = useState(false);
-  const [paused, setPaused] = useState(false);
-  const [audioChunks, setAudioChunks] = useState([]);
-  const [mediaRecorder, setMediaRecorder] = useState(null);
-  const [audioStream, setAudioStream] = useState(null);
-  const [timer, setTimer] = useState(0);
-  const [audioUrl, setAudioUrl] = useState("");
-  const audios = [];
+const AudioRecorders = ({
+  record = false,
+  setRecord,
+  setMessage,
+  setShowAlert,
+}) => {
+  const [recording, setRecording] = useState(false)
+  const [paused, setPaused] = useState(false)
+  const [audioChunks, setAudioChunks] = useState([])
+  const [mediaRecorder, setMediaRecorder] = useState(null)
+  const [audioStream, setAudioStream] = useState(null)
+  const [timer, setTimer] = useState(0)
+  const [audioUrl, setAudioUrl] = useState('')
 
+  const audios = []
+
+  // Request audio permission and initialize MediaRecorder
   useEffect(() => {
-    navigator.mediaDevices
-      .getUserMedia({ audio: true,video:false })
-      .then((stream) => {
-        const chunks = [];
-        setAudioStream(stream);
-        const recorder = new MediaRecorder(stream);
+    const handlePermission = () => {
+      navigator.mediaDevices
+        .getUserMedia({ audio: true })
+        .then((stream) => {
+          const recorder = new MediaRecorder(stream)
+          const chunks = []
 
-        recorder.ondataavailable = (e) => {
-       
-          chunks.push(e.data);
-        };
+          recorder.ondataavailable = (e) => {
+            chunks.push(e.data)
+          }
 
+          recorder.onstop = () => {
+            const audioBlob = new Blob(chunks, { type: 'audio/webm' })
+            if (audioBlob.size !== 0) sendAudioHandler(audioBlob)
+          }
 
-        recorder.onstop = () => {
-
-         
-          const audioBlob = new Blob(chunks,{type:"audio/webm"});
-
-          
-      
- 
-        
-            if(audioBlob.size===0) return
-            sendAudioHandler(audioBlob);
-        
-        
-      
-        };
-
-        setMediaRecorder(recorder);
-      })
-      .catch((err) => setRecord(false));
-
+          setAudioStream(stream)
+          setMediaRecorder(recorder)
+        })
+        .catch((err) => {
+          setShowAlert(true)
+          setRecord(false)
+        })
+    }
+    handlePermission()
     return () => {
       if (audioStream) {
-        audioStream.getTracks().forEach((track) => track.stop());
+        audioStream.getTracks().forEach((track) => track.stop())
       }
-    };
-  }, [record]);
+    }
+  }, [record])
+  // Start recording when record is set to true
   useEffect(() => {
-    startRecordingHandler();
-  }, [record, mediaRecorder]);
+    if (record && mediaRecorder) startRecordingHandler()
+  }, [record, mediaRecorder])
+
+  // Timer effect that counts seconds when recording and not paused
+
   useEffect(() => {
-    let intervalId;
+    let intervalId
 
     if (recording && !paused) {
       intervalId = setInterval(() => {
-        setTimer((prevTimer) => prevTimer + 1);
-      }, 1000);
+        setTimer((prevTimer) => prevTimer + 1)
+      }, 1000)
     }
 
     return () => {
-      clearInterval(intervalId);
-    };
-  }, [recording, paused]);
+      clearInterval(intervalId)
+    }
+  }, [recording, paused])
 
+  // Handler to start recording
   const startRecordingHandler = () => {
     if (!recording && mediaRecorder) {
-      mediaRecorder.start();
-      setRecording(true);
-      setPaused(false);
-      setTimer(0);
+      mediaRecorder.start()
+      setRecording(true)
+      setPaused(false)
+      setTimer(0)
     }
-  };
+  }
 
+  // Toggle between pause and resume states
   const togglePauseResume = () => {
     if (recording && mediaRecorder) {
       if (!paused) {
-        mediaRecorder.pause();
-        setPaused(true);
+        mediaRecorder.pause()
+        setPaused(true)
       }
       if (paused) {
-        mediaRecorder.resume();
-        setPaused(false);
+        mediaRecorder.resume()
+        setPaused(false)
       }
     }
-  };
+  }
+
+  // Format the timer display
   const formatTimer = (time) => {
-    const second = time % 60;
-    const min = Math.floor(time / 60);
+    const second = time % 60
+    const min = Math.floor(time / 60)
 
     return `${min < 10 ? `0${min}` : `${min}`} : ${
       second < 10 ? `0${second}` : `${second}`
-    }`;
-  };
+    }`
+  }
+
+  // Stop recording and reset relevant states
   const stopRecording = () => {
     if (recording && mediaRecorder) {
-      mediaRecorder.stop();
-      setRecording(false);
-      setPaused(false);
-      setAudioChunks([]);
-      setTimer(0);
+      mediaRecorder.stop()
+      setRecording(false)
+      setPaused(false)
+      setAudioChunks([])
+      setTimer(0)
 
       if (audioStream) {
-        audioStream.getTracks().forEach((track) => track.stop());
+        audioStream.getTracks().forEach((track) => track.stop())
       }
     }
-  };
+  }
+
+  // Handle sending the recorded audio
+
   const sendAudioHandler = (url) => {
-    // stop and reset recorder
-  
     const audioMessage = {
       id: crypto.randomUUID(),
-      src: URL.createObjectURL(url),
+      src: url,
       size: url?.size,
-      name: "",
-      type: "mp3",
-    };
-    audios.push(url);
-    console.log(url);
+      name: '',
+      type: 'mp3',
+    }
+    audios.push(url)
+
     setRecord(false)
     // send
-    setMessage(audios);
-   
-  };
+    setMessage(url, null, URL.createObjectURL(url))
+  }
 
   return (
     <div className="flex items-stretch gap-4">
       <div
         className={`py-2 px-3 dark:bg-base-200   rounded-xl recorder-box  items-center bg-base-300/80  backdrop-blur-xl ${
-          record ? "flex" : "hidden"
+          record ? 'flex' : 'hidden'
         } `}
       >
         <div className="w-full flex items-center gap-5">
@@ -152,7 +162,7 @@ const AudioRecorders = ({ record = false, setRecord, setMessage }) => {
                 width={380}
                 height={40}
                 gap={4}
-                barColor={"#4f46e5"}
+                barColor={'#4f46e5'}
               />
             )}
           </div>
@@ -168,7 +178,9 @@ const AudioRecorders = ({ record = false, setRecord, setMessage }) => {
             </span>
           </p>
         </div>
-        {audioUrl && <audio src={URL.createObjectURL(audioUrl)} controls></audio>}
+        {audioUrl && (
+          <audio src={URL.createObjectURL(audioUrl)} controls></audio>
+        )}
       </div>
 
       {/* action */}
@@ -202,7 +214,7 @@ const AudioRecorders = ({ record = false, setRecord, setMessage }) => {
         </button>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default AudioRecorders;
+export default AudioRecorders
