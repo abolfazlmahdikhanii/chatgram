@@ -110,7 +110,7 @@ const Chat = () => {
   }, [match.id])
   useEffect(() => {
     getFriendinfo(friendID)
-  }, [friendID])
+  }, [match.id,friendID])
   useEffect(() => {
     // if (match?.id == user?.userid) {
     //   fetchSavedMessages()
