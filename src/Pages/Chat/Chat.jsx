@@ -37,6 +37,7 @@ import decodeMessage from '../../Utility/decodeMessage'
 import userNameSpliter from '../../Utility/userNameSpliter'
 import ProfileImage from '../../Components/ProfileImage/ProfileImage'
 import SkeletonLoaderMessage from '../../Components/UI/SkeletonLoaderMessage/SkeletonLoaderMessage'
+import EmptyMessage from '../../Components/EmptyMessage/EmptyMessage'
 
 const Chat = () => {
   const [showChatInfo, setShowChatInfo] = useState(false)
@@ -451,7 +452,7 @@ const Chat = () => {
                 </>
               ) : (
                 <>
-                  {messages?.content !== '' &&
+                  {messages?.content !== '' &&groupedMessages.length?
                     groupedMessages?.map((group, i) => (
                       // console.log(grouped[item])
 
@@ -481,7 +482,9 @@ const Chat = () => {
                           />
                         ))}
                       </div>
-                    ))}
+                    )):<div className='grid place-items-center h-full'>
+                      <EmptyMessage/>
+                      </div>}
                 </>
               )}
             </section>
