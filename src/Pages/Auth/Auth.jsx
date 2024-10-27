@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { supabase } from '../../superbase'
 
 const Auth = () => {
@@ -9,10 +9,23 @@ const Auth = () => {
   const [isNextPage, setIsNextPage] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
+  const [newCodeTime, setNewCodeTime] = useState(60)
+
+  useEffect(() => {
+    let interval = setInterval(() => {
+      if (isNextPage) {
+        setNewCodeTime((prev) => prev - 1)
+        if (newCodeTime === 0) clearInterval(interval)
+      }
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [isNextPage, newCodeTime])
 
   const registerUser = async (e) => {
     e.preventDefault()
     setIsLoading(true)
+    setNewCodeTime(60)
     try {
       const { error } = await supabase.auth.signInWithOtp({ email })
 
@@ -41,7 +54,7 @@ const Auth = () => {
       if (error) throw error
 
       // location.reload()
-     console.log(session);
+      console.log(session)
     } catch (error) {
       setError('invalid code')
     } finally {
@@ -102,7 +115,7 @@ const Auth = () => {
           </span>
         )}
       </h4>
-      <p className="dark:text-gray-300 text-[rgb(112,117,121)] text-lg mt-2 font-semibold text-center">
+      <p className="dark:text-gray-300 text-[rgb(112,117,121)] text-lg mt-2.5 font-semibold text-center">
         {!isNextPage ? (
           ' Please enter your email'
         ) : (
@@ -158,7 +171,7 @@ const Auth = () => {
           <button
             className="btn w-full btn-primary mt-6 h-[56px] text-lg relative disabled:bg-[#5616C5]/50"
             onClick={registerUser}
-            disabled={isLoading}
+            disabled={email===""||isLoading}
           >
             {!isLoading ? (
               'Next'
@@ -198,10 +211,19 @@ const Auth = () => {
               {!error ? 'Code' : error}
             </label>
           </div>
-
+          {newCodeTime < 1 ? (
+            <p className="text-sm text-blue-400 transition-all duration-300 hover:text-blue-300 cursor-pointer mt-6 mb-4 text-center" onClick={registerUser}>
+              resend new code
+            </p>
+          ) : (
+            <p className="text-sm text-gray-300  text-center mt-6 mb-4">
+              {newCodeTime} to request new code{' '}
+            </p>
+          )}
           <button
             className="btn w-full btn-primary mt-6 h-[56px] text-lg"
             onClick={handleVerifyOtp}
+            disabled={otp==""}
           >
             Submit
           </button>
