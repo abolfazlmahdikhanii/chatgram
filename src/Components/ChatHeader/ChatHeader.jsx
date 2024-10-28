@@ -7,7 +7,7 @@ import { TbSquareRoundedCheck } from 'react-icons/tb'
 import { ChatContext } from '../../Context/ChatContext'
 import { MdOutlineAccessTime } from 'react-icons/md'
 import { UserContext } from '../../Context/UserContext'
-import { useMatch, useParams } from 'react-router-dom'
+import { useMatch, useNavigate, useParams } from 'react-router-dom'
 import useTypingStatus from '../../CustomHooks/useTypingStatus'
 import { ThreeDots } from 'react-loader-spinner'
 import SkeletonLoaderProfile from '../UI/SkeletonLoaderProfile/SkeletonLoaderProfile'
@@ -34,6 +34,7 @@ const ChatHeader = ({
     chatId,
     clearHistory,
     checkMessage,
+    setFriendID
   } = useContext(ChatContext)
 
   return (
@@ -56,6 +57,7 @@ const ChatHeader = ({
           checkMessage={checkMessage}
           chatId={chatID}
           isMessage={isMessage}
+          setFriendID={setFriendID}
         />
       ) : (
         <HeaderPinMessage pinMessage={pinMessage} setShowPin={showPinHandler} />
@@ -80,15 +82,25 @@ const HeaderMessage = ({
   checkMessage,
   chatId,
   isMessage,
+  setFriendID
 }) => {
   const { user } = useContext(UserContext)
-
+   const navigate=useNavigate()
   return (
     <section className="px-5 flex items-center justify-between relative">
       {info ? (
         <div className="flex gap-4">
+          <button
+            className="p-2.5 rounded-full btn-ghost  grid place-items-center transition-all duration-200"
+            onClick={() => {
+              navigate("/")
+              setFriendID("")
+            }}
+          >
+            <AiOutlineArrowLeft size={20} />
+          </button>
           <Profile
-            path={info?.lavatar_url}
+            path={info?.avatar_url}
             userName={info?.username || info?.email.split('@')[0]}
             bgProfile={info?.bgProfile}
             relation={info?.relation}
