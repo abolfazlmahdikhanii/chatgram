@@ -68,7 +68,7 @@ const StoryItem = ({
           className="w-[65px] h-[65px] mask mask-squircle z-[5] relative grid place-items-center"
         >
           {profile?.avatar_url ? (
-            <img src={profile?.avatar_url} alt="story img" />
+            <img src={profile?.avatar_url} alt="story img" className='w-full h-full aspect-square' />
           ) : (
             <span className="text-2xl text-white font-bold">
               {userNameSpliter(
