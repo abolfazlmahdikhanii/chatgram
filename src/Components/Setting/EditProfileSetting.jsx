@@ -4,6 +4,7 @@ import Profile from '../Profile/Profile'
 import { ChatContext } from '../../Context/ChatContext'
 import { UserContext } from '../../Context/UserContext'
 import { supabase } from '../../superbase'
+import { data } from 'autoprefixer'
 
 const EditProfileSetting = ({ close, profile }) => {
   const { setChat, chat } = useContext(ChatContext)
@@ -15,27 +16,35 @@ const EditProfileSetting = ({ close, profile }) => {
   const [bio, setBio] = useState('')
   const [username, setUsername] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [isImageLoading, setIsImageLoading] = useState(false)
   const [errorContent, setErrorContent] = useState({})
   useEffect(() => {
     setUsername(user.username)
     setBio(user.bio)
     setName(user.name)
     setLastName(user.lastName)
+    setImgUploaded(user?.avatar_url)
   }, [])
 
   const updateProfileHandler = async (e) => {
     e.preventDefault()
     setIsLoading(true)
-    console.log(username);
+    console.log(username)
     try {
       const { data, error } = await supabase
         .from('users')
-        .update({username:username, name: name, lastName: lastName, bio: bio })
+        .update({
+          username: username,
+          name: name,
+          lastName: lastName,
+          bio: bio,
+          avatar_url: imgUploaded,
+        })
         .eq('userid', user.userid)
         .select()
       if (error) throw error
       setUser(data[0])
-      console.log(data)
+
       // close()
     } catch (error) {
       console.log(error)
@@ -44,29 +53,50 @@ const EditProfileSetting = ({ close, profile }) => {
     }
     // close edit profile
   }
-  
-  const userNameValidator=async(e)=>{
-    if(e.target.value.length>=5){
+  const uploadProfileImage = async (file) => {
 
-      let { data: users, error } = await supabase
-      .from('users')
-      .select('*')
-      .eq('username',e.target.value) 
-      if(users.length){
-        setErrorContent({msg:'This username is already occupied',type:'error'})
-        return false
-      }  
+    setIsImageLoading(true)
+    setImgUploaded(URL.createObjectURL(file))
+    const { data: signedUrlData, error: urlError } = await supabase.storage
+      .from('avatars')
+      .upload(`${user?.email.split('@')[0]}/${file.name}`, file,{
+        upsert: true
+      })
      
-        setErrorContent({msg:'This username is available',type:'success'}) 
-        return true
-      
-   
-    }
-    else{
-      setErrorContent({msg:'This username is too short',type:'error'})
+    if (urlError) {
+      setIsImageLoading(false)
+  
       return false
     }
-   
+    
+    
+    const { data: publicUrl } = supabase.storage
+      .from('avatars')
+      .getPublicUrl(`${user?.email.split('@')[0]}/${file.name}`)
+
+    setImgUploaded(publicUrl.publicUrl)
+    setIsImageLoading(false)
+  }
+  const userNameValidator = async (e) => {
+    if (e.target.value.length >= 5) {
+      let { data: users, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('username', e.target.value)
+      if (users.length) {
+        setErrorContent({
+          msg: 'This username is already occupied',
+          type: 'error',
+        })
+        return false
+      }
+
+      setErrorContent({ msg: 'This username is available', type: 'success' })
+      return true
+    } else {
+      setErrorContent({ msg: 'This username is too short', type: 'error' })
+      return false
+    }
   }
   return (
     <SettingContainer title="Edit Profile" onBack={close}>
@@ -84,37 +114,43 @@ const EditProfileSetting = ({ close, profile }) => {
             htmlFor="img-upload"
             className=" bg-gray-800/50 z-[1] absolute left-1/2  w-32 h-32 -translate-x-1/2 mask mask-squircle grid place-items-center group transition-all duration-200 cursor-pointer"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="36"
-              height="36"
-              fill="none"
-              viewBox="0 0 24 24"
-              className=" group-hover:scale-125 transition-all duration-200"
-            >
-              <path
-                stroke="#fff"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="1.5"
-                d="M6.76 22h10.48c2.76 0 3.86-1.69 3.99-3.75l.52-8.26A3.753 3.753 0 0018 6c-.61 0-1.17-.35-1.45-.89l-.72-1.45C15.37 2.75 14.17 2 13.15 2h-2.29c-1.03 0-2.23.75-2.69 1.66l-.72 1.45C7.17 5.65 6.61 6 6 6 3.83 6 2.11 7.83 2.25 9.99l.52 8.26C2.89 20.31 4 22 6.76 22zM10.5 8h3"
-              ></path>
-              <path
-                stroke="#fff"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="1.5"
-                d="M12 18c1.79 0 3.25-1.46 3.25-3.25S13.79 11.5 12 11.5s-3.25 1.46-3.25 3.25S10.21 18 12 18z"
-              ></path>
-            </svg>
-            <input
-              type="file"
-              id="img-upload"
-              className="hidden"
-              onChange={(e) =>
-                setImgUploaded(URL.createObjectURL(e.target.files[0]))
-              }
-            />
+            {isImageLoading ? (
+              <span className="loading loading-spinner w-[40px]    inline-block  z-1"></span>
+            ) : (
+              <>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="36"
+                  height="36"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  className=" group-hover:scale-125 transition-all duration-200"
+                >
+                  <path
+                    stroke="#fff"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="1.5"
+                    d="M6.76 22h10.48c2.76 0 3.86-1.69 3.99-3.75l.52-8.26A3.753 3.753 0 0018 6c-.61 0-1.17-.35-1.45-.89l-.72-1.45C15.37 2.75 14.17 2 13.15 2h-2.29c-1.03 0-2.23.75-2.69 1.66l-.72 1.45C7.17 5.65 6.61 6 6 6 3.83 6 2.11 7.83 2.25 9.99l.52 8.26C2.89 20.31 4 22 6.76 22zM10.5 8h3"
+                  ></path>
+                  <path
+                    stroke="#fff"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="1.5"
+                    d="M12 18c1.79 0 3.25-1.46 3.25-3.25S13.79 11.5 12 11.5s-3.25 1.46-3.25 3.25S10.21 18 12 18z"
+                  ></path>
+                </svg>
+                <input
+                  type="file"
+                  id="img-upload"
+                  className="hidden"
+                  accept='image/*'
+                  value={""}
+                  onChange={(e) => uploadProfileImage(e.target.files[0])}
+                />
+              </>
+            )}
           </label>
         </div>
         <div className="relative">
@@ -180,7 +216,7 @@ const EditProfileSetting = ({ close, profile }) => {
             htmlFor="bio"
             className={`lbl-focus  ${bio !== '' ? 'lbl-shown' : ''}`}
           >
-             Bio (optional)
+            Bio (optional)
           </label>
         </div>
 
@@ -213,7 +249,9 @@ const EditProfileSetting = ({ close, profile }) => {
             dir="auto"
             value={username}
             onChange={(e) => {
-              userNameValidator(e)?setUsername(e.target.value):setUsername('')
+              userNameValidator(e)
+                ? setUsername(e.target.value)
+                : setUsername('')
               e.target.value !== ''
                 ? setIsEnterWord(true)
                 : setIsEnterWord(false)
@@ -222,11 +260,21 @@ const EditProfileSetting = ({ close, profile }) => {
 
           <label
             htmlFor="username"
-            className={`lbl-focus  ${isEnterWord||username!=='' ? 'lbl-shown' : ''}`}
+            className={`lbl-focus  ${
+              isEnterWord || username !== '' ? 'lbl-shown' : ''
+            }`}
           >
             Username (optional)
           </label>
-          {errorContent.msg!==''&&<span className={`mt-2.5 inline-block px-2.5 text-xs ${errorContent.type==='error'?'text-red-500':'text-sky-500'}`}>{errorContent.msg}</span>}
+          {errorContent.msg !== '' && (
+            <span
+              className={`mt-2.5 inline-block px-2.5 text-xs ${
+                errorContent.type === 'error' ? 'text-red-500' : 'text-sky-500'
+              }`}
+            >
+              {errorContent.msg}
+            </span>
+          )}
         </div>
         <div className=" text-[#aaa]  pt-2 px-7 text-sm pb-5 font-medium leading-5 -mx-5 flex gap-3">
           <svg
@@ -254,34 +302,35 @@ const EditProfileSetting = ({ close, profile }) => {
             is <b>5</b> characters
           </span>
         </div>
-        {isEnterWord && (
-          <div className="relative">
-            <button
-              className="btn btn-success mask mask-squircle fixed bottom-7 ml-[245px] text-white grid place-items-center"
-              onClick={updateProfileHandler}
-              disabled={isLoading}
-            >
-              {!isLoading ? (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-6 h-6"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="m4.5 12.75 6 6 9-13.5"
-                  />
-                </svg>
-              ) : (
-                <span className="loading loading-spinner w-[20px]    inline-block"></span>
-              )}
-            </button>
-          </div>
-        )}
+        {isEnterWord ||
+          (imgUploaded && (
+            <div className="relative">
+              <button
+                className="btn btn-success mask mask-squircle fixed bottom-7 ml-[245px] text-white grid place-items-center"
+                onClick={updateProfileHandler}
+                disabled={isLoading}
+              >
+                {!isLoading ? (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-6 h-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="m4.5 12.75 6 6 9-13.5"
+                    />
+                  </svg>
+                ) : (
+                  <span className="loading loading-spinner w-[20px]    inline-block"></span>
+                )}
+              </button>
+            </div>
+          ))}
       </form>
     </SettingContainer>
   )
