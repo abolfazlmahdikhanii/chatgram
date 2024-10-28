@@ -22,7 +22,7 @@ const ProfileImage = ({
         } ${size === 'xs' && 'w-5 h-5 text-[9px]'} ${size === 'lg' && 'w-32 h-32 text-4xl'}`}
       >
         {src && !isSave ? (
-          <img src={src} alt="profile" className="w-full h-full" />
+          <img src={src} alt="profile" className="w-full h-full aspect-square  " />
         ) : (
           <div
             data-color={!isSave?bgProfile:'purple'}
@@ -35,7 +35,7 @@ const ProfileImage = ({
                 }
               </span>
             )}
-            {!src && isSave && (
+            { isSave && (
               <span>
                 <BsFillBookmarkFill size={sizes} color="#fff" />
               </span>
