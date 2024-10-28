@@ -14,7 +14,7 @@ const UserProfile = ({
 }) => {
   const { user } = useContext(UserContext)
 
-  console.log(chatID)
+  
   let profile = null
   if (chats) profile = chats
   if (saveChat) profile = saveChat
