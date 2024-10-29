@@ -1,20 +1,23 @@
 import React from 'react'
 import { FcDocument } from 'react-icons/fc'
 import decodeMessage from '../../Utility/decodeMessage'
+import Microlink from '@microlink/react'
 
 const TypeMessage = ({ dis,type,name, w }) => {
     let element = null
     if (dis) {
         if (type==='text') {
             element = (
-                <p
+                <div
                 dir='auto'
+                className='truncate w-[110px]'
                     dangerouslySetInnerHTML={{
                         __html: decodeMessage(dis),
                     }}
-                ></p>
+                ></div>
             )
         }
+     
         if (type === 'img') {
             element = (
                 <div>
@@ -61,12 +64,12 @@ const TypeMessage = ({ dis,type,name, w }) => {
                 </div>
             )
         }
-        if (type == 'mp3' || type == 'audio/webm' && name !== '') {
+        if (type == 'mp3' || type == 'audio/webm'||type?.includes('audio') && name !== '') {
             element = (
                 <p className="text-[14px] truncate w-[50%]">{name}</p>
             )
         }
-        if (type == 'mp3' || type == 'audio/webm'  && name === '') {
+        if (type == 'mp3' || type == 'audio/webm'||type?.includes('audio')  && name === '') {
             element = <p className="text-[14px] ">Voice Message</p>
         }
     }
