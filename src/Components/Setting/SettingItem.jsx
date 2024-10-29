@@ -69,12 +69,12 @@ const SettingItem = ({ icon, title, onSetting }) => {
       break
   }
   return (
-    <li className="text-white flex items-center justify-between px-[17px] py-4 bg-base-200 hover:bg-[#252C35] cursor-pointer rounded-lg transition-all duration-300 " onClick={onSetting}>
+    <li className="dark:text-white flex items-center justify-between px-[17px] py-4 dark:bg-base-200 dark:hover:bg-[#252C35] cursor-pointer rounded-lg transition-all duration-300 bg-base-200 hover:bg-gray-400/20 text-gray-700" onClick={onSetting}>
       <div className="flex items-center gap-6">
         <p>{ico}</p>
         <p>{title}</p>
       </div>
-      <p className="text-gray-200">
+      <p className="dark:text-gray-200 text-gray-600">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="21"
