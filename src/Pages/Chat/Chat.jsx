@@ -38,6 +38,7 @@ import userNameSpliter from '../../Utility/userNameSpliter'
 import ProfileImage from '../../Components/ProfileImage/ProfileImage'
 import SkeletonLoaderMessage from '../../Components/UI/SkeletonLoaderMessage/SkeletonLoaderMessage'
 import EmptyMessage from '../../Components/EmptyMessage/EmptyMessage'
+import { toastOptions } from '../../Utility/toastOption'
 
 const Chat = () => {
   const [showChatInfo, setShowChatInfo] = useState(false)
@@ -90,19 +91,12 @@ const Chat = () => {
   } = useContext(ChatContext)
   const { user, chatBg } = useContext(UserContext)
   let lastMessage = []
-  // useEffect(() => {
-  //     filterChat(match?.id)
-  //     findUserMessage(match?.id)
-  //     displayCheckBoxHandler(checkMessage)
-  //     groupMessageHandler(message?.messages)
-  // }, [match, pinMessage, message])
 
   useEffect(() => {
     fetchMessages()
     requestNotificationPermission()
 
     if (!friendID) navigate('/')
-    // if (match?.id == user?.userid) fetchSavedMessages()
 
     return () => {
       setIsShowUpBtn(false)
@@ -110,13 +104,9 @@ const Chat = () => {
   }, [match.id])
   useEffect(() => {
     getFriendinfo(friendID)
-  }, [match.id,friendID])
+  }, [match.id, friendID])
   useEffect(() => {
-    // if (match?.id == user?.userid) {
-    //   fetchSavedMessages()
-    // } else {
     fetchMessages()
-    // }
 
     updateMessageStatus()
     filterUnreadMessage()
@@ -136,15 +126,13 @@ const Chat = () => {
           if (newMsg.chatID == match?.id || !newMsg.length) {
             setMessages((prevMessages) => [...prevMessages, payload.new])
             lastMessage[match.id] = payload.new
-            console.log(payload.new)
 
             setLastMessage(payload.new)
-            // console.log(payload.new);
+
             fetchMessages()
             updateMessageStatus()
             filterUnreadMessage()
             if (!isScrolledUp && !payload.new.reactions) scrollToBottom()
-            // groupMessageHandler(messages)
           } else if (
             (newMsg.senderid === user?.userid &&
               newMsg.recipientid === user?.userid) ||
@@ -154,7 +142,7 @@ const Chat = () => {
             lastMessage[match.id] = payload.new
 
             setLastMessage(payload.new)
-            // console.log(payload.new);
+
             fetchSavedMessages()
             updateMessageStatus()
             if (!isScrolledUp && !payload.new.reactions) scrollToBottom()
@@ -166,7 +154,7 @@ const Chat = () => {
 
     // Cleanup subscription on unmount
     return () => {
-      // supabase&&supabase.removeSubscription(subscription)
+      supabase.removeChannel(subscription)
     }
   }, [match.id])
   useEffect(() => {
@@ -201,34 +189,29 @@ const Chat = () => {
       getPinMessage(message)
       setIsLoad(false)
     } catch (error) {
-      console.log(error)
+      toast(error, toastOptions)
     } finally {
       setIsLoad(false)
     }
   }
   const fetchSavedMessages = async () => {
-    try {
-      setIsLoad(true)
-      let { data: messages, error } = await supabase
-        .from('messages')
-        .select(
-          `*,
+    setIsLoad(true)
+    let { data: messages, error } = await supabase
+      .from('messages')
+      .select(
+        `*,
           replayId(messageid,messageType,content,name,senderid,isDeleted)
           ,forward_from(email,bgProfile,username,userid),
           contact(email,username,bgProfile,avatar_url)`
-        )
-        .eq('recipientid', user.userid)
-        .eq('senderid', user.userid)
-        .order('sentat', { ascending: true })
+      )
+      .eq('recipientid', user.userid)
+      .eq('senderid', user.userid)
+      .order('sentat', { ascending: true })
 
-      if (error) throw Error('Error fetching messages:', error)
+    if (!error) {
       setMessages(messages)
 
       groupMessageHandler(messages)
-      setIsLoad(false)
-    } catch (error) {
-      console.log(error)
-    } finally {
       setIsLoad(false)
     }
   }
@@ -237,53 +220,39 @@ const Chat = () => {
       .from('messages')
       .select('*')
       .eq('chatID', match?.id)
-      .neq('senderid', user.userid)
+      .neq('senderid', user?.userid)
       .eq('status', 'send')
 
-    if (error) console.error('Error fetching messages:', error)
-    setUnreadMessage(messages)
+    if (!error) setUnreadMessage(messages)
   }
   const updateMessageStatus = async () => {
-    try {
-      let { data, error } = await supabase
-        .from('messages')
-        .update({ status: 'read' })
-        .eq('senderid', friendID)
-        .eq('chatID', match?.id)
-        .eq('status', 'send')
-        .select()
+    let { data, error } = await supabase
+      .from('messages')
+      .update({ status: 'read' })
+      .eq('senderid', friendID)
+      .eq('chatID', match?.id)
+      .eq('status', 'send')
+      .select()
 
-      if (error) throw error
-      setMessages(data)
-    } catch (error) {
-      console.log(error)
-    }
+    if (!error) setMessages(data)
   }
   const getFriendinfo = async (id) => {
-    try {
-      let { data: users, error } = await supabase
-        .from('users')
-        .select('*')
-        .eq('userid', id)
-        .single()
-      if (error) throw error
-      setProfileInfo(users)
-    } catch (error) {
-      console.log(error)
-    }
+    let { data: users, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('userid', id)
+      .single()
+    if (!error) setProfileInfo(users)
   }
   const getSenderinfo = async (id) => {
-    try {
+    
       let { data: users, error } = await supabase
         .from('users')
         .select('*')
         .eq('userid', id)
         .single()
-      if (error) throw error
-      return users
-    } catch (error) {
-      console.log(error)
-    }
+      if (!error) return users
+    
   }
   const deleteChat = () => {
     DeleteChat(match.id)
@@ -452,7 +421,7 @@ const Chat = () => {
                 </>
               ) : (
                 <>
-                  {messages?.content !== '' &&groupedMessages.length?
+                  {messages?.content !== '' && groupedMessages.length ? (
                     groupedMessages?.map((group, i) => (
                       // console.log(grouped[item])
 
@@ -482,9 +451,12 @@ const Chat = () => {
                           />
                         ))}
                       </div>
-                    )):<div className='grid place-items-center h-full'>
-                      <EmptyMessage/>
-                      </div>}
+                    ))
+                  ) : (
+                    <div className="grid place-items-center h-full">
+                      <EmptyMessage />
+                    </div>
+                  )}
                 </>
               )}
             </section>
