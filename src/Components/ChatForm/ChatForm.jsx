@@ -76,7 +76,6 @@ const ChatForm = ({ setMessage }) => {
 
     return () => {
       if (inputRef.current && !emoji) inputRef.current.innerHTML = ''
-    
     }
   }, [inputRef, text, emoji, record])
   useEffect(() => {
@@ -106,8 +105,6 @@ const ChatForm = ({ setMessage }) => {
     setFileProgress(100)
     return uploadFile
   }
- 
-
   const handleUploadFile = async (files) => {
     // Replace with your actual file data
     const uploadFile = []
@@ -140,28 +137,23 @@ const ChatForm = ({ setMessage }) => {
       )
 
     if (urlError) {
-      console.log(urlError);
+      console.log(urlError)
       return false
     }
     return signedUrlData.path
   }
   const handleInputChange = (e) => {
     setContent(inputRef.current.innerHTML)
-   
-   
-    if(e.target.innerHTML.startsWith('<img src=')){
-      e.target.innerHTML=""
-     
+
+    if (e.target.innerHTML.startsWith('<img src=')) {
+      e.target.innerHTML = ''
     }
     if (e.target.innerText !== '') {
       updateTypingStatus(true)
-    
     } else {
       updateTypingStatus(false)
     }
-
   }
-
   const updateTypingStatus = async (isTyping) => {
     await supabase
       .from('typing_status')
@@ -189,14 +181,12 @@ const ChatForm = ({ setMessage }) => {
           sendMessageHandler(text.innerHTML, replyMessage?.messageid)
           setShowReply(false)
           setReplyMessage(null)
-          
         }
         if (forwardSelfMessage) {
           forwardSelfClickHandler(forwardSelfMessage.id)
           sendMessageHandler(text.innerHTML)
           setShowSelfForward(false)
           setForwardSelfMessage(null)
-      
         }
         if (!replyMessage && !forwardSelfMessage) {
           sendMessageHandler(text.innerHTML)
@@ -214,7 +204,7 @@ const ChatForm = ({ setMessage }) => {
       }
     }
   }
-  const sendMessageHandler = async (content, replay = null,url) => {
+  const sendMessageHandler = async (content, replay = null, url) => {
     let fileUrl = ''
 
     if (!content || content === '&nbsp;') return
@@ -222,9 +212,9 @@ const ChatForm = ({ setMessage }) => {
       [
         {
           senderid: user.userid,
-          content:typeof content === 'string'?strToByte(content):null,
-          src:typeof content !== 'string'?url:null,
-          messageType:typeof content === 'string'? 'text':'audio/wav',
+          content: typeof content === 'string' ? strToByte(content) : null,
+          src: typeof content !== 'string' ? url : null,
+          messageType: typeof content === 'string' ? 'text' : 'audio/wav',
           sentat: new Date(),
         },
       ],
@@ -232,7 +222,6 @@ const ChatForm = ({ setMessage }) => {
     )
 
     if (typeof content !== 'string') {
-    
       fileUrl = await handleAudioUpload(content)
       // setMessage(content[0], true)
     }
@@ -244,14 +233,14 @@ const ChatForm = ({ setMessage }) => {
         content: typeof content !== 'string' ? fileUrl : content,
         messageType: typeof content !== 'string' ? content.type : 'text',
         status: 'send',
-        chatID: param.id!==user?.userid?param.id:null,
+        chatID: param.id !== user?.userid ? param.id : null,
         replayId: replay,
       },
     ])
     if (error) console.log(error)
     updateTypingStatus(false)
   }
-  const editContentHandler = (e) => {
+  const editContentHandler = useCallback((e) => {
     e.preventDefault()
     if (inputRef.current.innerHTML !== '') {
       editHandler(inputRef.current.innerHTML, editContent?.messageid, param.id)
@@ -259,7 +248,7 @@ const ChatForm = ({ setMessage }) => {
       setText('')
       setEditContent(null)
     }
-  }
+  }, [])
   const uploadFileHandler = async (txt) => {
     let fileUrl = ''
     if (filesUpload) {
@@ -275,7 +264,7 @@ const ChatForm = ({ setMessage }) => {
               senderid: user.userid,
               recipientid: friendID,
               content: fileUrl[i],
-              messageType: "file",
+              messageType: 'file',
               status: 'send',
               chatID: param.id,
               name: filesUpload[i]?.name,
@@ -285,7 +274,6 @@ const ChatForm = ({ setMessage }) => {
           if (error) console.log(error)
         }
       }
-
     }
   }
 
@@ -335,26 +323,32 @@ const ChatForm = ({ setMessage }) => {
       {!record ? (
         <>
           <div className="flex flex-col w-full relative">
-            <EditBox
-              edit={editContent}
-              setEdit={setEditContent}
-              input={inputRef}
-            />
-            <ReplyBox
-              reply={showReply}
-              setShowReply={setShowReply}
-              replyMessage={replyMessage}
-              input={inputRef}
-              user={user}
-              info={profileInfo}
-            />
-            <ForwardBox
-              forwardSelf={showSelfForward}
-              setShowForwardSelf={setForwardSelfMessage}
-              forwardMessage={forwardSelfMessage}
-              input={inputRef}
-              forwardHandler={forwardSelfClickHandler}
-            />
+            {editContent && (
+              <EditBox
+                edit={editContent}
+                setEdit={setEditContent}
+                input={inputRef}
+              />
+            )}
+            {showReply && (
+              <ReplyBox
+                reply={showReply}
+                setShowReply={setShowReply}
+                replyMessage={replyMessage}
+                input={inputRef}
+                user={user}
+                info={profileInfo}
+              />
+            )}
+            {forwardSelfMessage && (
+              <ForwardBox
+                forwardSelf={showSelfForward}
+                setShowForwardSelf={setForwardSelfMessage}
+                forwardMessage={forwardSelfMessage}
+                input={inputRef}
+                forwardHandler={forwardSelfClickHandler}
+              />
+            )}
             <div className="form-box ">
               <div className="flex items-center gap-0.5 w-full relative">
                 <button
@@ -403,16 +397,13 @@ const ChatForm = ({ setMessage }) => {
                       ? submitFormHandler(e)
                       : null
                     e.key === 'Space'
-                      ? setContent(prev=>prev+=" ")
+                      ? setContent((prev) => (prev += ' '))
                       : null
-                      
+
                     // e.key === "Backspace"&&edit ? setEdit(e.target.innerText) : edit;
                     setContent(inputRef.current.innerHTML)
-                    console.log(inputRef.current.innerHTML);
+                    console.log(inputRef.current.innerHTML)
                   }}
-                  
-                 
-                
                 >
                   {emoji &&
                     emoji?.map((item, i) => (
@@ -476,19 +467,22 @@ const ChatForm = ({ setMessage }) => {
           />
         )}
       </div>
-      <SelectBox
-        show={showUploader}
-        close={closeUploader}
-        setImages={setImagesUpload}
-        images={imagesUpload}
-        filesUpload={filesUpload}
-        setFilesUpload={setFilesUpload}
-        onUploadImage={uploadImageHandler}
-        onUploadFile={uploadFileHandler}
-        setSelectedFile={setSelectedFile}
-   
-      />
-        {showAlert && (
+      {showUploader ? (
+        <SelectBox
+          show={showUploader}
+          close={closeUploader}
+          setImages={setImagesUpload}
+          images={imagesUpload}
+          filesUpload={filesUpload}
+          setFilesUpload={setFilesUpload}
+          onUploadImage={uploadImageHandler}
+          onUploadFile={uploadFileHandler}
+          setSelectedFile={setSelectedFile}
+        />
+      ) : (
+        <div></div>
+      )}
+      {showAlert && (
         <AlertBox
           title="Unable to Send Voice Message"
           dis="There has been a problem with recording audio. Please check your microphone access."
@@ -503,7 +497,6 @@ const ChatForm = ({ setMessage }) => {
 export default ChatForm
 
 const EditBox = ({ edit, setEdit, input }) => {
-  console.log(edit)
   return (
     <div
       className={`form-box rounded-b-none  transition-all duration-300 absolute top-0 ${
@@ -570,16 +563,6 @@ const ReplyBox = ({ reply, setShowReply, replyMessage, input, user, info }) => {
         </p>
         <div className="flex gap-0.5 ml-5 ">
           <p className="w-[2px] bg-indigo-700 mr-1"></p>
-
-          {/* {(replyMessage?.messageDis &&
-            replyMessage?.messageDis[0]?.type === 'img') ||
-          replyMessage?.messageDis[0]?.type === 'video' ||
-          replyMessage?.messageDis[0]?.type === 'mp3' ? (
-            <TypeMessage
-              dis={replyMessage?.messageDis}
-              w={'w-9 ml-2 aspect-square'}
-            />
-          ) : null} */}
 
           <div className="flex flex-col  gap-0.5  px-4 w-[100%]">
             <p className="text-[15px] text-indigo-400 font-medium" dir="auto">
