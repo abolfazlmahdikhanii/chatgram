@@ -160,7 +160,6 @@ export const ChatProvider = ({ children }) => {
   const [replyMessage, setReplyMessage] = useState(null)
   const [audio, setAudio] = useState()
   const [isChatInfo, setISChatInfo] = useState(false)
-
   const [searchChat, setSearchChat] = useState([])
   const [searchText, setSearchText] = useState('')
   const [searchLoading, setSearchLoading] = useState(false)
@@ -174,129 +173,6 @@ export const ChatProvider = ({ children }) => {
     src: null,
   })
 
-  const filterChat = (id) => {
-    let findChat = chatInfo.map((item) =>
-      item.senderid.userid !== id ? item.recipientid : item.senderid
-    )
-    setChatId(id)
-    setProfileInfo(findChat[0])
-  }
-  const findUserMessage = (id) => {
-    const findedMessage = chat?.find((user) => user.id == id)
-    setUserMessage(findedMessage)
-  }
-  const findChat = (chatArr, id) => chatArr.find((item) => item.id == id)
-  const sendMessageHandler = (txt, replyMessage = null) => {
-    const chats = [...chat]
-
-    const { userName, bgProfile, id, profileImg, relation, messages } = chats[0]
-    const message = {
-      messageId: crypto.randomUUID(),
-      messageDis: txt,
-      reaction: null,
-      to: userMessage?.userName,
-      date: new Date(),
-      from: {
-        userName,
-        bgProfile,
-        id,
-        profileImg,
-        relation,
-        date: new Date(),
-      },
-      read: false,
-      send: true,
-      check: false,
-      edited: false,
-      pin: false,
-      replyData: replyMessage,
-    }
-    const newChat = [...chat]
-
-    const findedChat = findChat(newChat, chatId)
-
-    findedChat.messages.push(message)
-
-    setChat(newChat)
-  }
-  const removeMessages = (id, idFile) => {
-    setMessageID(null)
-
-    const newChat = [...chat]
-
-    const findedChat = findChat(newChat, chatId)
-    const newMessge = findedChat?.messages
-
-    const findMessage = newMessge?.find((item) => item?.messageId === messageID)
-
-    if (typeof findMessage?.messageDis === 'string') {
-      removeMessageText(id, newChat, findedChat, newMessge)
-      // if(findMessage.pin){
-      //     console.log(findMessage)
-      //     findMessage.pin = false
-      // const filterPin = pinMessage.filter((item) => item.pin)
-
-      // setPinMessage(filterPin)
-      // }
-    } else {
-      removeMessageFile(id, idFile)
-      // if(findMessage.pin){
-      //     findMessage.pin = false
-      // const filterPin = pinMessage.filter((item)=>item.pin===true)
-
-      // setPinMessage(filterPin)
-      // }
-    }
-  }
-  // remove message type===file
-  const removeMessageFile = (id, idType) => {
-    const newChat = [...chat]
-
-    const findedChat = findChat(newChat, chatId)
-    const newMessge = findedChat?.messages
-
-    const findMessage = newMessge?.find((item) => item?.messageId === id)
-
-    const filterMessage = findMessage?.messageDis?.findIndex(
-      (item) => item?.id === idType
-    )
-    const filterAudioMessage = findMessage?.messageDis?.find(
-      (item) => item?.src === audio
-    )
-    if (filterAudioMessage) setAudio(null)
-
-    findMessage?.messageDis?.splice(filterMessage, 1)
-    findMessage.pin = false
-
-    const filterPin = pinMessage.filter((item) => item.pin)
-    console.log(filterPin)
-
-    setPinMessage(filterPin)
-    findedChat.messages = newMessge.filter(
-      (item) => item?.messageDis.length !== 0
-    )
-
-    setChat(newChat)
-  }
-  // const removeMessageText = (id, chat, findedChat, newMessage) => {
-  //   const findMessage = newMessage?.find(
-  //     (item) => item.messageId === id && item?.messageDis
-  //   )
-  //   findMessage.messageDis = ''
-  //   findMessage.pin = false
-
-  //   const filterPin = pinMessage.filter(
-  //     (item) => item.pin && item?.messageDis !== ''
-  //   )
-
-  //   setPinMessage(filterPin)
-  //   findedChat.messages = newMessage.filter(
-  //     (item) => item.messageDis !== '' || item.messageDis.length < 0
-  //   )
-
-  //   findedChat.messages.messageDis = findMessage
-  //   setChat(chat)
-  // }
   const deleteMessage = async (id, chatId) => {
     const { data, error } = await supabase
       .from('messages')
@@ -317,15 +193,6 @@ export const ChatProvider = ({ children }) => {
       if (deleteError) console.log(deleteError)
     }, 300)
   }
-  const forwardSelfMessageHandler = (id) => {
-    const newMessage = [...message?.messages]
-
-    const findForwardMessage = newMessage.find((item) => item.messageId === id)
-
-    setForwardSelfMessage({ ...findForwardMessage, ...message })
-
-    setShowSelfForward(true)
-  }
 
   const ForwardHandler = (isCheck = false) => {
     setShowContextMenu(false)
@@ -335,62 +202,6 @@ export const ChatProvider = ({ children }) => {
   const ForwardContactHandler = () => {
     setForwardContact(true)
     setShowForwardModal(true)
-  }
-  // forward
-  const forward = (arr) => {
-    const { id, bgProfile, profileImg, relation, userName } = arr
-
-    return { id, bgProfile, profileImg, relation, userName }
-  }
-
-  const isCheckForward = (newChat, findedChat, userId, type = 'forward') => {
-    const findUserForward = newChat?.find((user) => user.id === userId)
-
-    let copiedItems = null
-    if (type === 'forward') {
-      findedChat.forEach((item) => {
-        item.check = false
-      })
-      copiedItems = findedChat.map((item) => ({
-        ...item,
-
-        forward: forward(userMessage),
-      }))
-    } else if (type === 'forwardSelf') {
-      findedChat.forEach((item) => {
-        item.check = false
-        item.messageId = crypto.randomUUID()
-      })
-      copiedItems = findedChat.map((item) => ({
-        ...item,
-
-        forwardSelf: forward(userMessage),
-      }))
-    }
-
-    findUserForward.messages.push(...copiedItems)
-  }
-  const notCheckForward = (newChat, findedChat, userId, type = 'forward') => {
-    const findUserForward = newChat?.find((user) => user.id === userId)
-
-    const { replyData, check = false, ...chatData } = findedChat
-
-    if (type === 'forwardSelf') {
-      findUserForward.messages.push({
-        ...chatData,
-        check,
-        messageId: crypto.randomUUID(),
-        forwardSelf: forward(userMessage),
-      })
-    } else if (type === 'forward') {
-      console.log(forward(userMessage))
-      findUserForward.messages.push({
-        ...chatData,
-        check,
-
-        forward: forward(userMessage),
-      })
-    }
   }
 
   const forwardClickHandler = async (
@@ -473,30 +284,7 @@ export const ChatProvider = ({ children }) => {
     setCheckMessage([])
     setShowCheckBox(false)
   }
-  // forward
-  const forwardSelfClickHandler = (userId) => {
-    let newFindChat = null
-    const newChat = [...chat]
 
-    setCheckMessage([])
-    // find user for forward message
-    const findUserForward = newChat?.find((user) => user.id === userId)
-    const newMessages = [...userMessage.messages]
-
-    if (!checkForward) {
-      newFindChat = newMessages.find((item) => item?.messageId === messageID)
-
-      if (findChat) {
-        notCheckForward(newChat, newFindChat, userId, 'forwardSelf')
-      }
-    } else {
-      newFindChat = newMessages.filter((item) => item?.check)
-
-      isCheckForward(newChat, newFindChat, userId, 'forwardSelf')
-    }
-
-    setChat(newChat)
-  }
   // forwardContact
   const forwardContactClickHandler = async (userId) => {
     try {
@@ -527,68 +315,47 @@ export const ChatProvider = ({ children }) => {
     }
   }
 
-  const contextmenuHandler =useCallback( (
-    e,
-    id,
-    senderid,
-    messageType,
-    content,
-    name,
-    isPin
-  ) => {
-    e.preventDefault()
-    e.stopPropagation()
-    const { clientX, clientY } = event
+  const contextmenuHandler = useCallback(
+    (e, id, senderid, messageType, content, name, isPin) => {
+      e.preventDefault()
+      e.stopPropagation()
+      const { clientX, clientY } = event
 
-    // Set initial position
-    let x = clientX
-    let y = clientY
+      // Set initial position
+      let x = clientX
+      let y = clientY
 
-    const viewportWidth = window.innerWidth
-    const viewportHeight = window.innerHeight
+      const viewportWidth = window.innerWidth
+      const viewportHeight = window.innerHeight
 
-    // Adjust the position if it goes beyond the viewport
-    if (clientX + 250 > viewportWidth) {
-      x = viewportWidth - 250 // Assuming the context menu width is 150px
-    }
-    if (clientY + 300 > viewportHeight) {
-      y = viewportHeight - 300 // Assuming the context menu height is 100px
-    }
-    
-    setShowContextMenu(false)
+      // Adjust the position if it goes beyond the viewport
+      if (clientX + 250 > viewportWidth) {
+        x = viewportWidth - 250 // Assuming the context menu width is 150px
+      }
+      if (clientY + 300 > viewportHeight) {
+        y = viewportHeight - 300 // Assuming the context menu height is 100px
+      }
 
-    setISChatInfo(false)
-    setShowContextMenu(true)
-    
-    setPageX(x)
-    setPageY(y)
+      setShowContextMenu(false)
 
-    setMessageID(id)
+      setISChatInfo(false)
+      setShowContextMenu(true)
 
-    // setMessageIDFile(idFile)
-    setMessageContent(content)
-    setSenderID(senderid)
-    setMessageType(messageType)
-    setMessageName(name)
-    setIsPin({ mID: id, isPin })
-  },[])
-  // const pinMessageHandler = (id, isPin) => {
-  //   const newMessage = [...message?.messages]
-  //   const findPin = newMessage.find((item) => item.messageId === id)
+      setPageX(x)
+      setPageY(y)
 
-  //   console.log(findPin)
-  //   if (!findPin.pin && pinMessage.length <= 4) {
-  //     setIsPin(true)
-  //     findPin.pin = true
-  //     setPinMessage((prev) => [...prev, findPin])
-  //   } else {
-  //     setIsPin(false)
-  //     findPin.pin = false
-  //     const filterPin = pinMessage.filter((item) => item.pin)
+      setMessageID(id)
 
-  //     setPinMessage(filterPin)
-  //   }
-  // }
+      // setMessageIDFile(idFile)
+      setMessageContent(content)
+      setSenderID(senderid)
+      setMessageType(messageType)
+      setMessageName(name)
+      setIsPin({ mID: id, isPin })
+    },
+    []
+  )
+
   const pinMessageHandler = async (id, chatId, pin) => {
     if (pin.mID === id && !pin.isPin && pinMessage.length <= 4) {
       const { data: pin, error: pinError } = await supabase
@@ -625,11 +392,6 @@ export const ChatProvider = ({ children }) => {
     }
   }
   const replyMessageHandler = (id, content, type, name, senderid) => {
-    // const newMessage = [...message?.messages]
-
-    // const findReplyMessage = newMessage.find((item) => item.messageId === id)
-    // const user = 'Abolfazl'
-    // setReplyMessage({ ...findReplyMessage, user })
     setReplyMessage({
       messageid: id,
       content,
@@ -664,81 +426,57 @@ export const ChatProvider = ({ children }) => {
     setCheckMessage([])
     setShowCheckBox(false)
   }
-
   const reactionEmojiHandler = async (emojiId, msgId, chatID, userInfo) => {
-    let { data: emoji, error } = await supabase
+    const { data: emojiData, error: fetchError } = await supabase
       .from('messages')
-      .select('*')
-      .eq('chatID', chatID)
+      .select('reactions')
       .eq('messageid', msgId)
 
-    if (error) return
-    const messages = emoji[0]?.reactions
-    console.log(emoji?.reactions)
-    if (!messages?.length || messages?.userInfos?.userid == userInfo?.userid) {
-      const { data, error: err } = await supabase
-        .from('messages')
-        .update({
-          reactions: [
-            {
-              emojiId,
-              userInfos: {
-                userid: userInfo.userid,
-                username: userInfo.username,
-                email: userInfo.email,
-                profile: userInfo.avatar_url,
-                bgProfile: userInfo.bgProfile,
-              },
-            },
-          ],
-        })
-        .eq('chatID', chatID)
-        .eq('messageid', msgId)
-        .select()
-      if (err) console.log(err)
-    } else if (messages[0]) {
-      console.log(emoji)
-      if (messages[0]?.userInfos?.userid !== userInfo?.userid) {
-        const { data, error: err } = await supabase
+    if (fetchError) {
+      console.error(fetchError)
+      return
+    }
+
+    const reactions = emojiData[0]?.reactions || []
+    const existingReaction = reactions.find(
+      (reaction) => reaction.userInfos.userid === userInfo.userid
+    )
+
+    // Define the user's reaction object for reuse
+    const userReaction = {
+      emojiId,
+      userInfos: {
+        userid: userInfo.userid,
+        username: userInfo.username,
+        email: userInfo.email,
+        profile: userInfo.avatar_url,
+        bgProfile: userInfo.bgProfile,
+      },
+    }
+
+    try {
+      // Add reaction if no reactions exist or if the user hasn’t reacted yet
+      if (!existingReaction) {
+        await supabase
           .from('messages')
-          .update({
-            reactions: [
-              messages[0],
-              {
-                emojiId,
-                userInfos: {
-                  userid: userInfo.userid,
-                  username: userInfo.username,
-                  email: userInfo.email,
-                  profile: userInfo.avatar_url,
-                  bgProfile: userInfo.bgProfile,
-                },
-              },
-            ],
-          })
-          .eq('chatID', chatID)
+          .update({ reactions: [...reactions, userReaction] })
           .eq('messageid', msgId)
           .select()
-        if (err) console.log(err)
       }
-      if (messages[0]?.userInfos?.userid === userInfo?.userid) {
-        const newMessage = [...messages]
-        const findedReaction = newMessage.find(
-          (item) => item.userInfos.userid === userInfo.userid
-        )
-        findedReaction.emojiId = emojiId
-        const { data, error: err } = await supabase
+      // Update the user's existing reaction
+      else {
+        existingReaction.emojiId = emojiId
+        await supabase
           .from('messages')
-          .update({
-            reactions: newMessage,
-          })
-          .eq('chatID', chatID)
+          .update({ reactions })
           .eq('messageid', msgId)
           .select()
-        if (err) console.log(err)
       }
+    } catch (updateError) {
+      console.error(updateError)
     }
   }
+
   const removeReactionEmojiHandler = async (
     messageid,
     chatID,
@@ -748,7 +486,7 @@ export const ChatProvider = ({ children }) => {
     let { data: emoji, error } = await supabase
       .from('messages')
       .select('*')
-      .eq('chatID', chatID)
+      // .eq('chatID', chatID)
       .eq('messageid', messageid)
 
     if (error) return
@@ -765,7 +503,7 @@ export const ChatProvider = ({ children }) => {
       .update({
         reactions: newMessage,
       })
-      .eq('chatID', chatID)
+      // .eq('chatID', chatID)
       .eq('messageid', messageid)
       .select()
     if (err) console.log(err)
@@ -787,17 +525,6 @@ export const ChatProvider = ({ children }) => {
   // edit message type===text
   const selectEditTextMessageHandler = (id, content, type, name) => {
     setEditContent({ messageid: id, content, messageType: type, name })
-    // try {
-    //   let { data: messages, error } = await supabase
-    //     .from('messages')
-    //     .select('*')
-    //     .eq('messageid', id)
-    //     .single()
-    //   if (error) throw error
-
-    // } catch (error) {
-    //   console.log(error)
-    // }
   }
   const clickRemoveHandler = () => {
     setShowAlert(true)
@@ -835,10 +562,27 @@ export const ChatProvider = ({ children }) => {
   const contextmenuInfoHandler = (e, id, idFile = null, isInfo = false) => {
     e.preventDefault()
     e.stopPropagation()
+
+    const { clientX, clientY } = event
+
+    // Set initial position
+    let x = clientX
+    let y = clientY
+
+    const viewportWidth = window.innerWidth
+    const viewportHeight = window.innerHeight
+
+    // Adjust the position if it goes beyond the viewport
+    if (clientX + 250 > viewportWidth) {
+      x = viewportWidth - 250 // Assuming the context menu width is 150px
+    }
+    if (clientY + 300 > viewportHeight) {
+      y = viewportHeight - 300 // Assuming the context menu height is 100px
+    }
     setShowContextMenu(false)
 
-    setPageX(e.pageX)
-    setPageY(e.pageY)
+    setPageX(x)
+    setPageY(y)
     setShowInfoMenu((prev) => !prev)
     setMessageID(id)
     setMessageIDFile(idFile)
@@ -862,24 +606,18 @@ export const ChatProvider = ({ children }) => {
         chat,
         chatId,
         profileInfo,
-        sendMessageHandler,
         messageID,
         messageIDFile,
         contextmenuHandler,
-        filterChat,
-        findChat,
         ForwardHandler,
-        findUserMessage,
         pinMessage,
         showPin,
         userMessage,
         pinMessageHandler,
         unpinHandler,
         forwardSelfMessage,
-        removeMessages,
         forwardClickHandler,
         forwardContactClickHandler,
-        forwardSelfClickHandler,
         ForwardContactHandler,
         checkMessageHandler,
         checkMessage,
@@ -932,7 +670,6 @@ export const ChatProvider = ({ children }) => {
         setShowCheckBox,
         showCheckBox,
         clearHistory,
-
         searchChat,
         setSearchChat,
         showPinAudio,
