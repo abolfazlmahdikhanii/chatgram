@@ -1,4 +1,6 @@
 /** @type {import('tailwindcss').Config} */
+import animations from '@midudev/tailwind-animations'
+
 export default {
     content: [
         "./index.html",
@@ -13,7 +15,7 @@ export default {
     },
 
 
-    plugins: [require('daisyui')],
+    plugins: [require('daisyui'),animations],
     daisyui: {
         themes: ['light', 'dark'],
       },
