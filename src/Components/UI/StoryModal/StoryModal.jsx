@@ -19,6 +19,7 @@ import { UserContext } from '../../../Context/UserContext'
 import userNameSpliter from '../../../Utility/userNameSpliter'
 import { relativeTimeFormat } from '../../../Utility/helper'
 import { toast } from 'react-toastify'
+import { toastOptions } from '../../../Utility/toastOption'
 import Profile from '../../Profile/Profile'
 
 const StoryModal = ({ show, currentUserStory, close, friends }) => {
@@ -42,19 +43,7 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
   const [userLikeStory, setUserLikeStory] = useState([])
   const [storyInfoTab, setStoryInfoTab] = useState('views')
   const [isShowStoryInfo, setIsShowStoryInfo] = useState(false)
-  const toastOptions = {
-    position: toast.POSITION.BOTTOM_CENTER,
-    autoClose: 1200,
-    hideProgressBar: true,
-    closeOnClick: false,
-    pauseOnHover: false,
-    draggable: false,
-    progress: undefined,
-    theme: 'dark',
-    closeButton: false,
-    className:
-      'px-5 py-2.5 bg-slate-500/20 rounded-xl text-white backdrop-blur text-center',
-  }
+  
   useEffect(() => {
     getStory()
     checkFriendHasStory()
@@ -239,7 +228,6 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
         .select('*,userid(*)')
         .eq('storyid', sid)
       if (error) throw Error
-      console.log(storyviews)
       setUserViewStory(storyviews)
     } catch (error) {
       console.log(error)
@@ -252,7 +240,7 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
         .select('*,userid(*)')
         .eq('storyid', sid)
       if (error) throw Error
-      console.log(storyReaction)
+
       setUserLikeStory(storyReaction)
     } catch (error) {
       console.log(error)
