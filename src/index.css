@@ -208,6 +208,9 @@
     .file-icon--3 {
         @apply before:bg-[linear-gradient(45deg,rgba(0,0,0,0.3)_50%,#2A323C_50%)] dark:before:bg-[linear-gradient(45deg,rgba(0,0,0,0.3)_50%,#2A323C_50%)] w-[65px]  h-[70px];
     }
+    .file-icon--4 {
+        @apply before:bg-[linear-gradient(45deg,rgba(0,0,0,0.3)_50%,#2A323C_50%)] dark:before:bg-[linear-gradient(45deg,rgba(0,0,0,0.3)_50%,#1D232A_50%)] w-[65px]  h-[70px];
+    }
     .grid-1 {
         @apply flex  items-center w-full gap-y-3 flex-wrap-reverse justify-between gap-x-2.5;
     }
