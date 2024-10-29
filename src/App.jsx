@@ -7,6 +7,7 @@ import Auth from './Pages/Auth/Auth'
 import { supabase } from './superbase'
 import { UserContext, UserProvider } from './Context/UserContext'
 import { toast, ToastContainer } from 'react-toastify'
+import { ChatProvider } from './Context/ChatContext'
 
 const App = () => {
   const [them, setThem] = useChangeThem('light')
@@ -115,7 +116,7 @@ const App = () => {
     )
   } else if (!session) {
     element = <Auth />
-  } else element = <Layout />
+  } else element = <ChatProvider><Layout /></ChatProvider>
 
   return (
     <UserProvider>
