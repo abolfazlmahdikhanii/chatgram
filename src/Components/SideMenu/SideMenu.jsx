@@ -5,22 +5,23 @@ import ThemSwitch from '../UI/ThemSwitch/ThemSwitch'
 import ProfileImage from '../ProfileImage/ProfileImage'
 import { ChatContext } from '../../Context/ChatContext'
 import { UserContext } from '../../Context/UserContext'
+import { useParams } from 'react-router-dom'
 
 
 const SideMenu = ({ showSetting }) => {
-  const { chat } = useContext(ChatContext)
+  const { chat,friendID } = useContext(ChatContext)
   const { user } = useContext(UserContext)
-
+  const match=useParams()
 
  
 
   return (
-    <Box>
+    <Box style={`${friendID?'hidden lg:block':'block'}`}>
       <section className="side-menu ">
         {/* top */}
         <div>
           {/* logo */}
-          <div className="w-[80px] h-[80px]">
+          <div  className="w-[80px] h-[80px]  ">
             <img
               src="../../../src/assets/images/logo.png"
               alt="logo"
