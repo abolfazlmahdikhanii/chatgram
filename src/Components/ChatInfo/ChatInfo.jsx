@@ -18,6 +18,7 @@ import { UserContext } from '../../Context/UserContext'
 import { supabase } from '../../superbase'
 import decodeMessage from '../../Utility/decodeMessage'
 import { createPortal } from 'react-dom'
+import { toastOptions } from '../../Utility/toastOption'
 
 const ChatInfo = ({ setChatInfo, setClose, show }) => {
   const {
@@ -52,19 +53,7 @@ const ChatInfo = ({ setChatInfo, setClose, show }) => {
   const [message, setMessage] = useState([])
   const navigate = useNavigate()
   const match = useParams()
-  const toastOptions = {
-    position: toast.POSITION.BOTTOM_CENTER,
-    autoClose: 1200,
-    hideProgressBar: true,
-    closeOnClick: false,
-    pauseOnHover: false,
-    draggable: false,
-    progress: undefined,
-    theme: 'dark',
-    closeButton: false,
-    className:
-      'px-5 py-2.5 bg-slate-500/20 rounded-xl text-white backdrop-blur',
-  }
+ 
 
   useEffect(() => {
 
