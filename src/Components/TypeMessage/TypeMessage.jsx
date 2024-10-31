@@ -1,9 +1,25 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { FcDocument } from 'react-icons/fc'
 import decodeMessage from '../../Utility/decodeMessage'
 import Microlink from '@microlink/react'
+import { supabase } from '../../superbase'
 
 const TypeMessage = ({ dis,type,name, w }) => {
+    const [url,setUrl]=useState("")
+    useEffect(() => {
+        if (type === 'img' ||
+          type === 'video') fetchImage(dis);
+      }, [dis]);
+    
+      const fetchImage = async (path) => {
+        try {
+          const { data, error } = await supabase.storage.from('uploads').createSignedUrl(path, 120);
+          if (error) throw error;
+          setUrl(data.signedUrl);
+        } catch (error) {
+          console.error('Image fetch error:', error.message);
+        }
+      };
     let element = null
     if (dis) {
         if (type==='text') {
@@ -27,7 +43,7 @@ const TypeMessage = ({ dis,type,name, w }) => {
                         } h-full mask mask-squircle `}
                     >
                         <img
-                            src={decodeMessage(dis)}
+                            src={!url?decodeMessage(dis):url}
                             alt=""
                             className="w-full h-full object-cover"
                         />
@@ -44,7 +60,7 @@ const TypeMessage = ({ dis,type,name, w }) => {
                         } h-full mask mask-squircle`}
                     >
                         <video
-                            src={decodeMessage(dis)}
+                           src={!url?decodeMessage(dis):url}
                             alt=""
                             className="w-full h-full object-cover"
                         />
