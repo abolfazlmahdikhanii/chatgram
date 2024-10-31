@@ -144,7 +144,7 @@ const Chat = () => {
             setLastMessage(payload.new)
 
             fetchSavedMessages()
-            updateMessageStatus()
+            updateSavedMessageStatus()
             if (!isScrolledUp && !payload.new.reactions) scrollToBottom()
             // groupMessageHandler(messages)
           }
@@ -165,7 +165,10 @@ const Chat = () => {
   }, [isScrolledUp])
   const fetchMessages = async () => {
     try {
-      if (match?.id == user?.userid) fetchSavedMessages()
+      if (match?.id == user?.userid) {
+        fetchSavedMessages()
+        updateSavedMessageStatus()
+      }
 
       setIsLoad(true)
 
@@ -231,6 +234,17 @@ const Chat = () => {
       .update({ status: 'read' })
       .eq('senderid', friendID)
       .eq('chatID', match?.id)
+      .eq('status', 'send')
+      .select()
+
+    if (!error) setMessages(data)
+  }
+  const updateSavedMessageStatus = async () => {
+    let { data, error } = await supabase
+      .from('messages')
+      .update({ status: 'read' })
+      .eq('senderid', match?.id)
+      .eq('recipientid', match?.id)
       .eq('status', 'send')
       .select()
 
