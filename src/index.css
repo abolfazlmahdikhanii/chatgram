@@ -198,6 +198,9 @@
     .file-item {
         @apply flex gap-3 transition-all duration-300 hover:bg-gray-300/40 dark:hover:bg-gray-700/30 select-none cursor-pointer py-2 rounded-lg overflow-hidden pr-5;
     }
+    .file-item-1 {
+        @apply flex gap-3 transition-all duration-300 select-none cursor-pointer py-2 rounded-lg overflow-hidden pr-5;
+    }
     .file-icon {
         @apply flex items-center justify-center px-3 rounded-xl relative before:absolute before:w-6 before:h-6 before:inline-block dark:before:bg-[linear-gradient(45deg,rgba(0,0,0,0.3)_50%,#1D232A_50%)] before:-top-0.5 before:-right-0.5 before:rounded-sm w-[68px]  h-[81px] before:bg-[linear-gradient(45deg,rgba(0,0,0,0.3)_50%,#eee_50%)];
     }
@@ -206,7 +209,7 @@
         @apply before:bg-[linear-gradient(45deg,rgba(0,0,0,0.3)_50%,#641AE6_50%)] dark:before:bg-[linear-gradient(45deg,rgba(0,0,0,0.3)_50%,#641AE6_50%)] w-[65px]  h-[70px];
     }
     .file-icon--3 {
-        @apply before:bg-[linear-gradient(45deg,rgba(0,0,0,0.3)_50%,#2A323C_50%)] dark:before:bg-[linear-gradient(45deg,rgba(0,0,0,0.3)_50%,#2A323C_50%)] w-[65px]  h-[70px];
+        @apply before:bg-[linear-gradient(45deg,rgba(0,0,0,0.3)_50%,rgb(249_250_251)_50%)] dark:before:bg-[linear-gradient(45deg,rgba(0,0,0,0.3)_50%,rgb(55_65_81)_50%)] w-[65px]  h-[70px];
     }
     .file-icon--4 {
         @apply before:bg-[linear-gradient(45deg,rgba(0,0,0,0.3)_50%,#2A323C_50%)] dark:before:bg-[linear-gradient(45deg,rgba(0,0,0,0.3)_50%,#1D232A_50%)] w-[65px]  h-[70px];
