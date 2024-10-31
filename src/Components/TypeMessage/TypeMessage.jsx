@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { FcDocument } from 'react-icons/fc'
 import decodeMessage from '../../Utility/decodeMessage'
-import Microlink from '@microlink/react'
 import { supabase } from '../../superbase'
 
 const TypeMessage = ({ dis,type,name, w }) => {
