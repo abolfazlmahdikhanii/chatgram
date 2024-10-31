@@ -272,7 +272,7 @@ const ChatInfo = ({ setChatInfo, setClose, show }) => {
                   <FileType
                     key={crypto.randomUUID()}
                     idType={content?.messageid}
-                    path={content?.content}
+                    chatInfoUrl={content?.content}
                     mType={content?.messageType}
                     // {...content}
                     messageId={content?.messageid}
