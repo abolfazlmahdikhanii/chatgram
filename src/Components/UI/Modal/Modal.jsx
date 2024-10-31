@@ -21,12 +21,11 @@ const Modal = ({ userID }) => {
     forwardList,
     checkMessage,
     multiForwardClickHandler,
-
   } = useContext(ChatContext)
-  const {user}=useContext(UserContext)
+  const { user } = useContext(UserContext)
   const [chatFilter, setChatFilter] = useState('')
-  const forwardUserList=[{meID:user},...forwardList]
- 
+  const forwardUserList = [{ meID: user }, ...forwardList]
+
   return (
     <>
       <Backdrop show={showFrowardModal} />
@@ -57,19 +56,27 @@ const Modal = ({ userID }) => {
 
           <ul className="  w-full  flex flex-col gap-0.5">
             {forwardList?.length > 0 &&
-           forwardUserList?.map((item,i) => (
+              forwardUserList?.map((item, i) => (
                 <UserProfile
-                key={i+1}
-             
-                  chats={item?.senderid?.userid==user?.userid?{...item?.recipientid}:{...item?.senderid}}
-                  saveChat={item?.meID?.userid==user?.userid?{...item.meID}:null}
-                  chatID={item?.requestid?item.requestid:null}
+                  key={i + 1}
+                  chats={
+                    item?.senderid?.userid == user?.userid
+                      ? { ...item?.recipientid }
+                      : { ...item?.senderid }
+                  }
+                  saveChat={
+                    item?.meID?.userid == user?.userid ? { ...item.meID } : null
+                  }
+                  chatID={item?.requestid ? item.requestid : null}
                   fromChatID={userID}
                   user={user}
                   {...item}
-                  onForward={!checkMessage.length?forwardClickHandler:multiForwardClickHandler}
+                  onForward={
+                    !checkMessage.length
+                      ? forwardClickHandler
+                      : multiForwardClickHandler
+                  }
                   forwardContact={forwardContact}
-           
                 />
               ))}
           </ul>
