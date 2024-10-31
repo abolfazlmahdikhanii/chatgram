@@ -14,7 +14,6 @@ const UserProfile = ({
 }) => {
   const { user } = useContext(UserContext)
 
-  
   let profile = null
   if (chats) profile = chats
   if (saveChat) profile = saveChat
@@ -46,7 +45,7 @@ const UserProfile = ({
           {profile?.username || profile?.email?.split('@')[0]}
         </p>
         <p className="text-[15px] dark:text-gray-400 text-gray-600">
-          {user?.userid!== profile?.userid
+          {user?.userid !== profile?.userid
             ? activeStatus
             : 'forward here to save'}
         </p>
