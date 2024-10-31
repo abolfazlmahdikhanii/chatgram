@@ -5,10 +5,9 @@ import data from '@emoji-mart/data/sets/14/apple.json'
 import { MdOutlineEdit } from 'react-icons/md'
 import { IoMdClose } from 'react-icons/io'
 import { TiArrowForwardOutline } from 'react-icons/ti'
-import { Upload, DefaultHttpStack, defaultOptions } from 'tus-js-client'
 
 import BtnAction from '../UI/BtnAction/BtnAction'
-import BtnUploader from '../BtnUploader/BtnUploader'
+
 import ContentWrapper from '../ContentWrapper/ContentWrapper'
 import SelectBox from '../UI/SelectBox/SelectBox'
 import AudioRecorders from '../AudioRecorder/AudioRecorder'
@@ -22,6 +21,7 @@ import { useParams } from 'react-router-dom'
 import { strToByte } from '../../Utility/helper'
 import decodeMessage from '../../Utility/decodeMessage'
 import AlertBox from '../UI/AlertBox/AlertBox'
+import Uploader from '../Uploader/Uploader'
 
 const ChatForm = ({ setMessage }) => {
   const [text, setText] = useState('')
@@ -39,6 +39,8 @@ const ChatForm = ({ setMessage }) => {
   const [content, setContent] = useState('')
   const [showAlert, setShowAlert] = useState(false)
   const [showPastUploader, setShowPastUploader] = useState(false)
+  const [showUploaderFileModal, setShowUploaderFileModal] = useState(false)
+  const [showImageUploaderModal, setShowImageUploaderModal] = useState(false)
   const { user } = useContext(UserContext)
   const param = useParams()
 
@@ -83,64 +85,177 @@ const ChatForm = ({ setMessage }) => {
     updateTypingStatus(false)
   }, [])
 
+  // const handleUpload = async (files) => {
+  //   setFileProgress(0)
+  //   const uploadFile = []
+  //   for (const file of files) {
+  //     const { data: signedUrlData, error: urlError } = await supabase.storage
+  //       .from('uploads')
+  //       .upload(`chats/${param.id}/${Date.now()}_${file.name}`, file, {
+  //         onUploadProgress: (progressEvent) => {
+  //           const progress = Math.round(
+  //             (progressEvent.loaded * 100) / progressEvent.total
+  //           )
+  //           setFileProgress(progress)
+  //           console.log(progress)
+  //         },
+  //       })
+
+  //     if (urlError) {
+  //       console.log(urlError)
+  //       return false
+  //     }
+
+  //     uploadFile.push(signedUrlData.path)
+  //   }
+  //   // setFileProgress(100)
+  //   return uploadFile
+  // }
   const handleUpload = async (files) => {
-    setFileProgress(0)
     const uploadFile = []
     for (const file of files) {
-      const { data: signedUrlData, error: urlError } = await supabase.storage
-        .from('uploads')
-        .upload(`chats/${param.id}/${Date.now()}_${file.name}`, file, {
-          onUploadProgress: (event) => {
-            const percent = Math.round((event.loaded * 100) / event.total)
-            setUploadProgress(percent)
-          },
-        })
+      const filePath = `chats/${param.id}/${Date.now()}_${file.name}`
 
-      if (urlError) {
-        return false
+      // Generate a signed URL for the upload
+      const { data, error } = await supabase.storage
+        .from('uploads')
+        .createSignedUploadUrl(filePath)
+
+      if (error || !data?.signedUrl) {
+        console.error('Error creating upload URL:', error?.message)
+        return
       }
 
-      uploadFile.push(signedUrlData.path)
+      const url = data.signedUrl
+
+      // Use XMLHttpRequest to track upload progress
+      const xhr = new XMLHttpRequest()
+
+      xhr.open('PUT', url, true)
+      xhr.setRequestHeader('Content-Type', file.type)
+
+      xhr.upload.onprogress = (event) => {
+        if (event.lengthComputable) {
+          const progress = Math.round((event.loaded / event.total) * 100)
+          setFileProgress(progress) // Update the progress state
+        }
+      }
+
+      xhr.onload = async () => {
+        if (xhr.status === 200) {
+          console.log('File uploaded successfully')
+        } else {
+          console.error('Upload failed')
+        }
+      }
+
+      xhr.onerror = () => {
+        console.error('Upload error')
+      }
+
+      xhr.send(file) // Send the file
+      uploadFile.push(data.path)
     }
-    setFileProgress(100)
+    // setFileProgress(100)
     return uploadFile
   }
   const handleUploadFile = async (files) => {
     // Replace with your actual file data
     const uploadFile = []
-
+    setFileProgress(0)
     for (const file of files) {
-      const { data: signedUrlData, error: urlError } = await supabase.storage
+      const filePath = `chats/${param.id}/${crypto.randomUUID()}.${file?.name
+        .split('.')
+        .pop()}`
+      // Generate a signed URL for the upload
+      const { data, error } = await supabase.storage
         .from('uploads')
-        .upload(
-          `chats/${param.id}/${crypto.randomUUID()}.${file?.name
-            .split('.')
-            .pop()}`,
-          file
-        )
+        .createSignedUploadUrl(filePath)
 
-      if (urlError) {
-        return false
-      } else {
-        uploadFile.push(signedUrlData.path)
+      if (error || !data?.signedUrl) {
+        console.error('Error creating upload URL:', error?.message)
+        return
       }
+
+      const url = data.signedUrl
+
+      // Use XMLHttpRequest to track upload progress
+      const xhr = new XMLHttpRequest()
+
+      xhr.open('PUT', url, true)
+      xhr.setRequestHeader('Content-Type', file.type)
+
+      xhr.upload.onprogress = (event) => {
+        if (event.lengthComputable) {
+          const progress = Math.round((event.loaded / event.total) * 100)
+          setFileProgress(progress) // Update the progress state
+        }
+      }
+
+      xhr.onload = async () => {
+        if (xhr.status === 200) {
+          console.log('File uploaded successfully')
+        } else {
+          console.error('Upload failed')
+        }
+      }
+
+      xhr.onerror = () => {
+        console.error('Upload error')
+      }
+
+      xhr.send(file) // Send the file
+      uploadFile.push(data.path)
     }
 
     return uploadFile
   }
   const handleAudioUpload = async (file) => {
-    const { data: signedUrlData, error: urlError } = await supabase.storage
-      .from('uploads')
-      .upload(
-        `chats/${param.id}/${Date.now()}_${crypto.randomUUID()}.wav`,
-        file
-      )
+    setFileProgress(0)
+    const filePath = `chats/${
+      param.id
+    }/${Date.now()}_${crypto.randomUUID()}.webm`
 
-    if (urlError) {
-      console.log(urlError)
-      return false
+    // Generate a signed URL for the upload
+    const { data, error } = await supabase.storage
+      .from('uploads')
+      .createSignedUploadUrl(filePath)
+
+    if (error || !data?.signedUrl) {
+      console.error('Error creating upload URL:', error?.message)
+      return
     }
-    return signedUrlData.path
+
+    const url = data.signedUrl
+
+    // Use XMLHttpRequest to track upload progress
+    const xhr = new XMLHttpRequest()
+
+    xhr.open('PUT', url, true)
+    xhr.setRequestHeader('Content-Type', file.type)
+
+    xhr.upload.onprogress = (event) => {
+      if (event.lengthComputable) {
+        const progress = Math.round((event.loaded / event.total) * 100)
+        setFileProgress(progress) // Update the progress state
+      }
+    }
+
+    xhr.onload = async () => {
+      if (xhr.status === 200) {
+        console.log('File uploaded successfully')
+      } else {
+        console.error('Upload failed')
+      }
+    }
+
+    xhr.onerror = () => {
+      console.error('Upload error')
+    }
+
+    xhr.send(file) // Send the file
+
+    return data.path
   }
   const handleInputChange = (e) => {
     setContent(inputRef.current.innerHTML)
@@ -285,6 +400,7 @@ const ChatForm = ({ setMessage }) => {
       })
       setMessage(newImageUpload, true)
       fileUrl = await handleUpload(selectedFile)
+      
       if (fileUrl) {
         for (let i = 0; i < fileUrl.length; i++) {
           const { data, error } = await supabase.from('messages').insert([
@@ -312,6 +428,12 @@ const ChatForm = ({ setMessage }) => {
     setTimeout(() => {
       setShowUploader(false)
     }, 200)
+  }
+  // remove file
+  const removeFileHandler = (id) => {
+    const filterdFile = filesUpload.filter((file) => file.id !== id)
+    setFilesUpload(filterdFile)
+    if (!filterdFile.length) setShowUploader(false)
   }
 
   return (
@@ -417,7 +539,26 @@ const ChatForm = ({ setMessage }) => {
               </div>
 
               {/* action */}
-              <BtnUploader click={setShowUploader} />
+              <button
+                className="dark:text-gray-400 grid place-items-center text-gray-600"
+                onClick={() => setShowUploader(true)}
+              >
+                <svg
+                  width={24}
+                  height={24}
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M8 12h8M12 16V8M9 22h6c5 0 7-2 7-7V9c0-5-2-7-7-7H9C4 2 2 4 2 9v6c0 5 2 7 7 7z"
+                    stroke="currentColor"
+                    strokeWidth={1.5}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
             </div>
           </div>
           <div className="h-[53px] mask mask-squircle ">
@@ -467,21 +608,30 @@ const ChatForm = ({ setMessage }) => {
           />
         )}
       </div>
-      {showUploader ? (
-        <SelectBox
-          show={showUploader}
-          close={closeUploader}
-          setImages={setImagesUpload}
+
+      <SelectBox
+        show={showUploader}
+        close={closeUploader}
+        setImages={setImagesUpload}
+        setFilesUpload={setFilesUpload}
+        setShowUploaderFileModal={setShowUploaderFileModal}
+        setShowImageUploaderModal={setShowImageUploaderModal}
+        setSelectedFile={setSelectedFile}
+      />
+
+      {showImageUploaderModal || showUploaderFileModal ? (
+        <Uploader
+          showImage={showImageUploaderModal}
+          showFile={showUploaderFileModal}
+          closeImage={() => setShowImageUploaderModal(false)}
+          closeFile={() => setShowUploaderFileModal(false)}
           images={imagesUpload}
-          filesUpload={filesUpload}
-          setFilesUpload={setFilesUpload}
+          files={filesUpload}
+          remove={removeFileHandler}
           onUploadImage={uploadImageHandler}
           onUploadFile={uploadFileHandler}
-          setSelectedFile={setSelectedFile}
         />
-      ) : (
-        <div></div>
-      )}
+      ) : null}
       {showAlert && (
         <AlertBox
           title="Unable to Send Voice Message"
