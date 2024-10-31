@@ -23,7 +23,7 @@ const formWaveSurferOptions = (ref, isColor) => ({
   partialRender: true,
 })
 
-const AudioFile = ({ path, size, name, onRemove, isColor, setAudio }) => {
+const AudioFile = ({ path, size, name, onRemove, isColor, setAudio,progress,url,onDownload,isCompletedUploaded }) => {
   const [isPlaying, setIsPlaying] = useState(true)
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
@@ -103,7 +103,7 @@ const AudioFile = ({ path, size, name, onRemove, isColor, setAudio }) => {
   }
 
   return (
-    <li className="file-item relative w-full h-fit min-w-[300px] px-2 py-3 gap-2">
+    <li className="file-item-1 relative w-full h-fit min-w-[300px] px-2 py-3 gap-2 ">
       <button
         className={`btn btn-square ${
           isColor ? 'bg-gray-200 text-primary' : ''
@@ -130,7 +130,8 @@ const AudioFile = ({ path, size, name, onRemove, isColor, setAudio }) => {
         {/* <audio src={path} ref={audioRef} className="track"></audio> */}
         <div className="flex items-center self-end gap-2">
           <p className="text-[11px]">{formatSize(size)}</p>
-          <ProgressFile onRemove={onRemove} />
+          <ProgressFile progress={progress}  onDownload={onDownload} isCompletedUploaded={isCompletedUploaded} />
+        
         </div>
       </div>
     </li>
