@@ -12,6 +12,7 @@ import Video from '../Video/Video'
 import FileIcon from '../UI/FIleIcon/FileIcon'
 import { ChatContext } from '../../Context/ChatContext'
 import { supabase } from '../../superbase'
+import ProgressFile from '../UI/ProgressFile/ProgressFile'
 
 const FileType = ({
   mType,
@@ -33,6 +34,8 @@ const FileType = ({
   contextMenu,
   senderID,
   source,
+  chatInfoUrl,
+  date,
 }) => {
   const {
     removeMessages,
@@ -50,15 +53,28 @@ const FileType = ({
   } = useContext(ChatContext)
 
   let mFile = null
-  const [url, setUrl] = useState('')
-
+  const [url, setUrl] = useState(chatInfoUrl ? chatInfoUrl : '')
+  const [fileSize, setFileSize] = useState(0)
   useEffect(() => {
     if (src) download(src)
-  }, [])
+  }, [src])
 
+  useEffect(() => {
+    const fetchFileSize = async () => {
+      try {
+        const response = await fetch(url)
+        const blob = await response.blob()
+        setFileSize(blob.size) // Size in bytes
+      } catch (error) {
+        console.error('Error fetching file size:', error)
+      }
+    }
+
+    fetchFileSize()
+  }, [url])
   const download = useCallback(async (path) => {
     const groupFile = []
-
+    console.log(path)
     // if (findItem(messageId)) return false
     supabase.storage
       .from('uploads')
@@ -68,21 +84,46 @@ const FileType = ({
         fr.addEventListener('load', (ev) => {
           setUrl(ev.target.result)
         })
-        fr.readAsDataURL(res.data)
+        if (res.data) {
+          fr.readAsDataURL(res.data)
+        }
       })
       .catch((err) => {
         console.log(err)
       })
   }, [])
+  // const download = async (path) => {
+  //   const groupFile = []
+
+  //   // if (findItem(messageId)) return false
+  //   const {data,error}=await supabase.storage
+  //     .from('uploads')
+  //     .createSignedUrl(path,120,{
+  //       // download:true,
+  //       transform:{
+  //         quality:0.7
+  //       }
+  //     })
+  //     if(!error)setUrl(data.signedUrl)
+
+  // }
   // const findItem = (id) => {
   //   return url.find((item) => item.messageID === id)
   // }
-
+  const handleDownload = async (url, src) => {
+    const fileName = src.split('/').pop()
+    const link = document.createElement('a')
+    link.href = url
+    link.download = fileName || 'ChatGram_File' // Suggest "Chat Files" folder in filename
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link) // Request permission to save the file
+  }
   if (mType == 'video') {
     mFile = (
       <Video
         contextMenu={contextMenu}
-        progress={progress}
+        progress={fileProgress}
         messageId={messageId}
         idType={idType}
         src={url}
@@ -91,7 +132,13 @@ const FileType = ({
         isChatInfo={isChatInfo}
         setShowPreview={setShowPreview}
         from={from}
+        date={date}
+        fileName={src?.split('/').pop()}
         caption={caption}
+        onErrorVideo={(e) => (e.currentTarget.src = src)}
+        isCompletedUploaded={url}
+        onDownload={() => handleDownload(url, src)}
+        name={name}
       />
     )
     const findedLink = type.find((item) => item.messageid === messageId)
@@ -107,12 +154,16 @@ const FileType = ({
   ) {
     mFile = (
       <AudioFile
-        path={url}
-        size={size}
+        path={path ? path : url}
+        url={url}
+        size={fileSize}
+        progress={fileProgress}
         name={name}
         onRemove={() => removeMessages(messageId, idType)}
         isColor={isColor}
         setAudio={setAudio}
+        isCompletedUploaded={url}
+        onDownload={() => handleDownload(url, src)}
       />
     )
 
@@ -136,10 +187,28 @@ const FileType = ({
         } overflow-hidden inline-block rounded-xl basis-[40%]  dark:bg-gray-200/20 flex-grow flex-1 relative bg-gray-400/20`}
         onContextMenu={(e) => contextMenu(e, messageId, idType, isChatInfo)}
       >
-        <Progress
-          size={fileProgress}
-          onRemove={() => removeMessages(messageId, idType)}
-        />
+        {!url && <Progress size={fileProgress} />}
+        {url && (
+          <button
+            className={` mask mask-squircle w-7 h-7 grid place-items-center dark:text-white  rounded-lg self-end  dark:bg-base-100/40 border-[4px] border-transparent cursor-pointer  transition-all duration-300 bg-base-300/60 text-gray-600 dark:hover:bg-base-100 hover:bg-base-300 absolute top-1 right-1`}
+            onClick={() => handleDownload(url, src)}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-3.5 h-3.5"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"
+              />
+            </svg>
+          </button>
+        )}
         <img
           src={path ? path : url}
           alt=""
@@ -150,10 +219,15 @@ const FileType = ({
               type: 'img',
               from,
               src: url,
+              url: src,
               messageId,
               caption,
+              fileName: src?.split('/').pop(),
+              date,
+              name,
             })
           }
+          // onError={(e) => (e.target.src = path)}
         />
       </li>
     )
@@ -167,7 +241,11 @@ const FileType = ({
     mFile = (
       <div>
         <FileIcon
-          type={name?name.split(".")[name.split(".").length-1]:src?.split('.')[src.split(".").length-1]}
+          type={
+            name
+              ? name.split('.')[name.split('.').length - 1]
+              : src?.split('.')[src.split('.').length - 1]
+          }
           path={url ? url : src}
           message={true}
           from={from}
@@ -176,7 +254,6 @@ const FileType = ({
           isChatInfo={isChatInfo}
           onContext={(e) => contextMenu(e, messageId, idType, isChatInfo)}
         />
-        
       </div>
     )
     const findedLink = file.find((item) => item.messageid === messageId)
@@ -188,15 +265,22 @@ const FileType = ({
   } else {
     mFile = (
       <FileItem
-      type={name?name.split(".")[name.split(".").length-1]:src?.split('.')[src.split(".").length-1]}
-        src={url?url:src}
-        size={size}
+        type={
+          name
+            ? name.split('.')[name.split('.').length - 1]
+            : src?.split('.')[src.split('.').length - 1]
+        }
+        src={url ? url : src}
+        size={fileSize}
         message={true}
         from={from}
         name={name}
         onRemove={() => removeMessages(messageId, idType)}
         onContext={(e) => contextMenu(e, messageId, idType, isChatInfo)}
         isColor={isColor}
+        progress={fileProgress}
+        isCompletedUploaded={url}
+        onDownload={() => handleDownload(url, src)}
       />
     )
     const findedLink = file.find((item) => item.messageid === messageId)
