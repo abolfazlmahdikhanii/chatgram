@@ -1,11 +1,13 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import TypeMessage from '../TypeMessage/TypeMessage'
 import { HashLink } from 'react-router-hash-link'
 import { ChatContext } from '../../Context/ChatContext'
 
+
 const ReplayBox = (props) => {
-  
   const {profileInfo}=useContext(ChatContext)
+  
+
   return (
     <HashLink
     to={!props?.replayData.isDeleted && `#${props?.replayData.messageid}`}
