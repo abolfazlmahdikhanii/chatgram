@@ -66,7 +66,7 @@ const Auth = () => {
       {/* Header */}
       <div className="w-[200px] h-[200px] relative mb-5">
         <img
-          src="../../../src/assets/images/logo.png"
+          src="./logo.png"
           alt=""
           className="w-[350px] h-[350px] object-cover absolute -top-6"
         />
