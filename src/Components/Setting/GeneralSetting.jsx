@@ -27,52 +27,52 @@ const GeneralSetting = ({ close }) => {
     },
     {
       id: crypto.randomUUID(),
-      src: 'public/images/chat-bg/bg-6.jpg',
+      src: '/images/chat-bg/bg-6.jpg',
     },
     {
       id: crypto.randomUUID(),
-      src: 'public/images/chat-bg/bg-7.jpg',
+      src: '/images/chat-bg/bg-7.jpg',
     },
     {
       id: crypto.randomUUID(),
-      src: 'public/images/chat-bg/bg-8.jpg',
+      src: '/images/chat-bg/bg-8.jpg',
     },
     {
       id: crypto.randomUUID(),
-      src: 'public/images/chat-bg/bg-9.jpg',
+      src: '/images/chat-bg/bg-9.jpg',
     },
    
     {
       id: crypto.randomUUID(),
-      src: 'public/images/chat-bg/pattern-1.svg',
+      src: '/images/chat-bg/pattern-1.svg',
     },
     {
       id: crypto.randomUUID(),
-      src: 'public/images/chat-bg/pattern-10.svg',
+      src: '/images/chat-bg/pattern-10.svg',
     },
     {
       id: crypto.randomUUID(),
-      src: 'public/images/chat-bg/pattern-12.svg',
+      src: '/images/chat-bg/pattern-12.svg',
     },
     {
       id: crypto.randomUUID(),
-      src: 'public/images/chat-bg/pattern-27.svg',
+      src: '/images/chat-bg/pattern-27.svg',
     },
     {
       id: crypto.randomUUID(),
-      src: 'public/images/chat-bg/pattern-28.svg',
+      src: '/images/chat-bg/pattern-28.svg',
     },
     {
       id: crypto.randomUUID(),
-      src: 'public/images/chat-bg/pattern-29.svg',
+      src: '/images/chat-bg/pattern-29.svg',
     },
     {
       id: crypto.randomUUID(),
-      src: 'public/images/chat-bg/pattern-32.svg',
+      src: '/images/chat-bg/pattern-32.svg',
     },
     {
       id: crypto.randomUUID(),
-      src: 'public/images/chat-bg/pattern-9.svg',
+      src: '/images/chat-bg/pattern-9.svg',
     },
   ]
 
