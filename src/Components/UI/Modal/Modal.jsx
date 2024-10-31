@@ -4,8 +4,9 @@ import Backdrop from '../Backdrop/Backdrop'
 
 import ForwardList from '../../ForwardList/ForwardList'
 import { ChatContext } from '../../../Context/ChatContext'
-import UserProfile from '../../userProfile/userProfile'
+import UserProfile from '../../UserProfile/UserProfile'
 import { UserContext } from '../../../Context/UserContext'
+
 const Modal = ({ userID }) => {
   const {
     showFrowardModal,
@@ -59,7 +60,7 @@ const Modal = ({ userID }) => {
            forwardUserList?.map((item,i) => (
                 <UserProfile
                 key={i+1}
-                  // key={item?.senderid?.userid==user?.userid||item?.recipientid?.userid==user?.userid||item?.meID?.userid==user?.userid?user?.userid:item?.senderid?.userid}
+             
                   chats={item?.senderid?.userid==user?.userid?{...item?.recipientid}:{...item?.senderid}}
                   saveChat={item?.meID?.userid==user?.userid?{...item.meID}:null}
                   chatID={item?.requestid?item.requestid:null}
@@ -68,12 +69,7 @@ const Modal = ({ userID }) => {
                   {...item}
                   onForward={!checkMessage.length?forwardClickHandler:multiForwardClickHandler}
                   forwardContact={forwardContact}
-                //   onForward={() => {
-                //     !forwardContact
-                //       ? forwardClickHandler(item?.requestid)
-                //       : forwardContactClickHandler(item.id)
-                //     setForwardContact(false)
-                //   }}
+           
                 />
               ))}
           </ul>
