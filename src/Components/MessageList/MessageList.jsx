@@ -171,7 +171,7 @@ const MessageList = () => {
               ) : (
                 <>
                   <div className="w-full overflow-hidden space-y-2 h-screen overflow-y-auto  ">
-                    {friends.length ? (
+                    
                       <>
                         <MessageItem
                           chats={user}
@@ -197,18 +197,7 @@ const MessageList = () => {
                           ))}
                         </>
                       </>
-                    ) : (
-                      <div className="h-full w-[63%] grid place-items-center my-2 mx-auto">
-                        <img
-                          src="../../../src/assets/images/nofound.svg"
-                          className="w-full h-auto object-contain"
-                          alt=""
-                        />
-                        <p className="dark:text-gray-400 text-gray-500 -mt-16">
-                          No Friends !{' '}
-                        </p>
-                      </div>
-                    )}
+                   
                   </div>
                   <UserMenu
                     show={showMenu}
@@ -254,13 +243,13 @@ const MessageList = () => {
                       />
                     ))
                   ) : (
-                    <div className="h-full w-[63%] grid place-items-center my-2 mx-auto">
+                    <div className="h-[250px] w-[63%] grid place-items-center my-2 mx-auto">
                       <img
                         src="../../../src/assets/images/nofound.svg"
-                        className="w-full h-auto object-contain"
+                        className="w-full h-full object-contain"
                         alt=""
                       />
-                      <p className="dark:text-gray-400 text-gray-500 -mt-16">
+                      <p className="dark:text-gray-400 text-gray-500 mt-3">
                         No Friends !{' '}
                       </p>
                     </div>
