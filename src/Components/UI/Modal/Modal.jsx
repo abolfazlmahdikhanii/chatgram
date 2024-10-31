@@ -24,8 +24,8 @@ const Modal = ({ userID }) => {
   } = useContext(ChatContext)
   const {user}=useContext(UserContext)
   const [chatFilter, setChatFilter] = useState('')
-  const forwardUserLiat=[{meID:user},...forwardList]
-  console.log(forwardUserLiat);
+  const forwardUserList=[{meID:user},...forwardList]
+ 
   return (
     <>
       <Backdrop show={showFrowardModal} />
@@ -56,12 +56,13 @@ const Modal = ({ userID }) => {
 
           <ul className="  w-full  flex flex-col gap-0.5">
             {forwardList?.length > 0 &&
-           forwardUserLiat?.map((item) => (
+           forwardUserList?.map((item,i) => (
                 <UserProfile
-                  key={item?.userid}
+                key={i+1}
+                  // key={item?.senderid?.userid==user?.userid||item?.recipientid?.userid==user?.userid||item?.meID?.userid==user?.userid?user?.userid:item?.senderid?.userid}
                   chats={item?.senderid?.userid==user?.userid?{...item?.recipientid}:{...item?.senderid}}
                   saveChat={item?.meID?.userid==user?.userid?{...item.meID}:null}
-                  chatID={item?.requestid}
+                  chatID={item?.requestid?item.requestid:null}
                   fromChatID={userID}
                   user={user}
                   {...item}
