@@ -248,6 +248,7 @@ const Message = ({
                 caption={caption}
                 senderID={senderid}
                 name={name}
+                date={sentat}
               />
             </>
           </ul>
