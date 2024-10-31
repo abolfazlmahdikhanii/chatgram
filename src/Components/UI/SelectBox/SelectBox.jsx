@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { memo, useContext, useEffect, useState } from 'react'
 import Uploader from '../../Uploader/Uploader'
 import { useParams } from 'react-router-dom'
 import { UserContext } from '../../../Context/UserContext'
@@ -6,18 +6,14 @@ import { UserContext } from '../../../Context/UserContext'
 const SelectBox = ({
   show,
   close,
-  filesUpload,
   setImages,
   setFilesUpload,
-  images,
-  onUploadImage,
-  onUploadFile,
   setSelectedFile,
-
+  setShowUploaderFileModal,
+  setShowImageUploaderModal
 }) => {
 
-  const [showUploader, setShowUploader] = useState(false)
-  const [showImageUploader, setShowImageUploader] = useState(false)
+
   const {user}=useContext(UserContext)
   const checkIsimageOrIsVideo = (type) => {
     if (type === 'video/mp4' || type === 'video/webm') {
@@ -33,7 +29,7 @@ const SelectBox = ({
   // uploader image
   const uploadImageHandler = (e) => {
     let images = []
-
+    console.log("");
     for (let i = 0; i < e?.target.files?.length; i++) {
       images.push({
         id: crypto.randomUUID(),
@@ -49,7 +45,7 @@ const SelectBox = ({
     setImages(images)
 
     if (e.target.files?.length > 0) {
-      setShowImageUploader(true)
+      setShowImageUploaderModal(true)
     }
   }
   // upload file
@@ -72,18 +68,13 @@ const SelectBox = ({
     setFilesUpload(files)
 
     if (e.target.files?.length > 0) {
-      setShowUploader(true)
+      setShowUploaderFileModal(true)
     }
   }
 
-  // remove file
-  const removeFileHandler = (id) => {
-    const filterdFile = filesUpload.filter((file) => file.id !== id)
-    setFilesUpload(filterdFile)
-    if (!filterdFile.length) setShowUploader(false)
-  }
+
   return (
-    <>
+
       <div
         className={`select-box ${
           show ? 'scale-100 opacity-100 ' : 'scale-0 opacity-0 '
@@ -165,19 +156,9 @@ const SelectBox = ({
         </label>
       </div>
 
-      <Uploader
-        showImage={showImageUploader}
-        showFile={showUploader}
-        closeImage={() => setShowImageUploader(false)}
-        closeFile={() => setShowUploader(false)}
-        images={images}
-        files={filesUpload}
-        remove={removeFileHandler}
-        onUploadFile={onUploadFile}
-        onUploadImage={onUploadImage}
-      />
-    </>
+    
+    
   )
 }
 
-export default SelectBox
+export default memo(SelectBox)
