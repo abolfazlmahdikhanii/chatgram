@@ -1,4 +1,4 @@
-import React, { useState,useRef, useContext } from "react";
+import React, { useState,useRef, useContext, memo } from "react";
 import { UserContext } from "../../../Context/UserContext";
 
 const FileIcon = ({ type,path=null,message=false,from,isColor,isFile,onContext,isChatInfo }) => {
@@ -6,10 +6,6 @@ const {user}=useContext(UserContext)
 
   let color = null;
   let fileColor=null;
-console.log(type);
-
-
-
 
 
   const imgFormarts = ["svg", "jpg", "png", "jpeg", "webp", "gif"];
@@ -32,10 +28,10 @@ console.log(type);
       color = "bg-indigo-500";
       break;
   }
-  if(from===user.userid||isColor){
+  if(from===user.userid){
   fileColor="file-icon--2"
   }
-  else if(from!==user.userid&&!isChatInfo){
+  else if(from!==user.userid){
     fileColor="file-icon--3"
   }
   else if(isChatInfo){
@@ -63,4 +59,4 @@ console.log(type);
   );
 };
 
-export default FileIcon;
+export default memo(FileIcon);
