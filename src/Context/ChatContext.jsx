@@ -707,6 +707,9 @@ export const ChatProvider = ({ children }) => {
         setSearchText,
         searchLoading,
         setSearchLoading,
+        setMessageContent,
+        setMessageName,
+        setMessageType
       }}
     >
       {children}
