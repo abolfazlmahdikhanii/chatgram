@@ -15,6 +15,7 @@ const Uploader = ({
     onUploadFile,
 
 }) => {
+   
     return (
         <div>
             <Backdrop show={showFile ? showFile : showImage} />
