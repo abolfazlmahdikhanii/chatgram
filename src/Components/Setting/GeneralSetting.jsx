@@ -7,23 +7,23 @@ const GeneralSetting = ({ close }) => {
   const images = [
     {
       id: crypto.randomUUID(),
-      src: 'public/images/chat-bg/bg-1.jpg',
+      src: '/images/chat-bg/bg-1.jpg',
     },
     {
       id: crypto.randomUUID(),
-      src: 'public/images/chat-bg/bg-2.jpg',
+      src: '/images/chat-bg/bg-2.jpg',
     },
     {
       id: crypto.randomUUID(),
-      src: 'public/images/chat-bg/bg-3.jpg',
+      src: '/images/chat-bg/bg-3.jpg',
     },
     {
       id: crypto.randomUUID(),
-      src: 'public/images/chat-bg/bg-4.jpg',
+      src: '/images/chat-bg/bg-4.jpg',
     },
     {
       id: crypto.randomUUID(),
-      src: 'public/images/chat-bg/bg-5.jpg',
+      src: '/images/chat-bg/bg-5.jpg',
     },
     {
       id: crypto.randomUUID(),
