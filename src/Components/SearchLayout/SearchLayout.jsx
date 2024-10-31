@@ -72,7 +72,7 @@ const SearchLayout = ({ chatData, setActiveSearch }) => {
             ) : (
               <div className="h-full w-[65%] grid place-items-center my-[65px] mx-auto">
                 <img
-                  src="../../../src/assets/images/Search.svg"
+                  src="./images/Search.svg"
                   className="w-full h-full"
                   alt=""
                 />

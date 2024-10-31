@@ -245,7 +245,7 @@ const MessageList = () => {
                   ) : (
                     <div className="h-[250px] w-[63%] grid place-items-center my-2 mx-auto">
                       <img
-                        src="../../../src/assets/images/nofound.svg"
+                        src="./images/nofound.svg"
                         className="w-full h-full object-contain"
                         alt=""
                       />

@@ -399,8 +399,8 @@ const Chat = () => {
           style={{
             backgroundImage: `url(${
               chatBg
-                ? `../../../src/assets/images/chat-bg/${chatBg}`
-                : '../../../src/assets/images/bg-pattern.svg'
+                ? `./images/chat-bg/${chatBg}`
+                : './images/bg-pattern.svg'
             })`,
           }}
         >

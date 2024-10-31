@@ -23,7 +23,7 @@ const SideMenu = ({ showSetting }) => {
           {/* logo */}
           <div  className="w-[80px] h-[80px]  ">
             <img
-              src="../../../src/assets/images/logo.png"
+              src="./logo.png"
               alt="logo"
               className="w-full h-full object-cover"
             />
