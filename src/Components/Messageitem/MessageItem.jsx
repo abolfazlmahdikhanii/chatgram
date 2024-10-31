@@ -19,12 +19,10 @@ const MessageItem = ({ isSave, onContext, messagesArr, chats, chatID }) => {
 
   const { user } = useContext(UserContext)
 
-  
-  
-  useEffect(()=>{
+  useEffect(() => {
     fetchMessages()
     filterUnreadMessage()
-  },[lastMessage])
+  }, [lastMessage])
   useEffect(() => {
     fetchMessages()
 
@@ -36,16 +34,17 @@ const MessageItem = ({ isSave, onContext, messagesArr, chats, chatID }) => {
         { event: '*', schema: 'public', table: 'messages' },
         (payload) => {
           const newMsg = payload.new
-          console.log(newMsg);
+          console.log(newMsg)
           if (newMsg.chatID == chatID) {
-          
-      
             // setMessages(payload.new)
-          
+
             // console.log(payload.new);
             fetchMessages()
             filterUnreadMessage()
             // groupMessageHandler(messages)
+          }
+          if (newMsg.chatID == null) {
+            fetchSavedMessages()
           }
         }
       )
@@ -53,36 +52,55 @@ const MessageItem = ({ isSave, onContext, messagesArr, chats, chatID }) => {
 
     // Cleanup subscription on unmount
     return () => {
-      // supabase.removeSubscription(subscription)
+      supabase.removeChannel(subscription)
     }
   }, [])
-  
+
   const fetchMessages = async () => {
+    
+      if (chatID == user?.userid) fetchSavedMessages()
+
+    
+
+      let { data: message, error } = await supabase
+        .from('messages')
+        .select(
+          `*`
+        )
+        .eq('chatID', chatID)
+        .eq('isDeleted', false)
+        .order('sentat', { ascending: true })
+
+      if (error) throw Error('Error fetching messages:', error)
+        setMessages(message)
+   
+    
+  }
+  const fetchSavedMessages = async () => {
+    let { data: messages, error } = await supabase
+      .from('messages')
+      .select(`*`)
+      .eq('recipientid', user.userid)
+      .eq('senderid', user.userid)
+      .order('sentat', { ascending: true })
+
+    if (!error) {
+      setMessages(messages)
+    }
+  }
+  const filterUnreadMessage = async () => {
     let { data: messages, error } = await supabase
       .from('messages')
       .select('*')
       .eq('chatID', chatID)
-      .order('sentat', { ascending: false })
-      .limit(1)
+      .neq('senderid', user.userid)
+      .eq('status', 'send')
+
     if (error) console.error('Error fetching messages:', error)
-
-    
-  
-    setMessages(messages)
-
-  }
-  const filterUnreadMessage=async()=>{
-    let { data: messages, error } = await supabase
-    .from('messages')
-    .select('*')
-    .eq('chatID', chatID)
-    .neq('senderid',user.userid)
-    .eq('status','send')
-
-  
-  if (error) console.error('Error fetching messages:', error)
     setUnreadMessage(messages)
   }
+  
+ 
   const formatTime = (date) => {
     return new Intl.DateTimeFormat('tr', {
       hour: '2-digit',
@@ -90,13 +108,13 @@ const MessageItem = ({ isSave, onContext, messagesArr, chats, chatID }) => {
     }).format(date)
   }
   const getIcon = () => {
-    const lastMessageStatus = messages[messages?.length - 1]?.status;
+    const lastMessageStatus = messages[messages?.length - 1]?.status
     return lastMessageStatus === 'read' ? (
       <PiChecksBold size={18} color="#818cf8" />
     ) : (
       <PiCheck size={16} color="#9ca3af" />
-    );
-  };
+    )
+  }
 
   const showSearchMessage = () => {
     let dis = null
@@ -115,7 +133,9 @@ const MessageItem = ({ isSave, onContext, messagesArr, chats, chatID }) => {
   return (
     <NavLink
       to={`/chat/${chatID}`}
-      className={({isActive})=>`message-item relative  ${isActive?'message-item--active ':''}`}
+      className={({ isActive }) =>
+        `message-item relative  ${isActive ? 'message-item--active ' : ''}`
+      }
       onContextMenu={onContext}
       onClick={() => setFriendID(chats?.userid)}
     >
@@ -136,13 +156,12 @@ const MessageItem = ({ isSave, onContext, messagesArr, chats, chatID }) => {
               ? chats?.username || chats?.email?.split('@')[0]
               : 'Saved Messages'}
           </p>
-          <div className='flex items-center gap-1.5'>
-          <p>{messages?.length>0&&getIcon()}</p>
-          <p className="text-[11px] dark:text-gray-400 text-gray-600">
-            {messages?.length > 0 &&
-              formatTime(messages[messages.length - 1]?.date)}
-          </p>
-        
+          <div className="flex items-center gap-1.5">
+            <p>{messages?.length > 0 && getIcon()}</p>
+            <p className="text-[11px] dark:text-gray-400 text-gray-600">
+              {messages?.length > 0 &&
+                formatTime(messages[messages.length - 1]?.date)}
+            </p>
           </div>
         </div>
         {/* bottom */}
@@ -155,8 +174,10 @@ const MessageItem = ({ isSave, onContext, messagesArr, chats, chatID }) => {
                   : messages[messages.length - 1]
               }
             />
-          
-            {unreadMessage?.length>0&&<NotifyNumber unread={unreadMessage?.length} />}
+
+            {unreadMessage?.length > 0 && (
+              <NotifyNumber unread={unreadMessage?.length} />
+            )}
           </div>
         ) : (
           <p className="-mt-1 text-sm font-normal dark:text-gray-400 text-gray-500">
