@@ -17,6 +17,7 @@ const EditProfileSetting = ({ close, profile }) => {
   const [username, setUsername] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [isImageLoading, setIsImageLoading] = useState(false)
+  const [isSelectedImage, setIsSelectedImage] = useState(null)
   const [errorContent, setErrorContent] = useState({})
   useEffect(() => {
     setUsername(user.username)
@@ -56,6 +57,7 @@ const EditProfileSetting = ({ close, profile }) => {
   const uploadProfileImage = async (file) => {
 
     setIsImageLoading(true)
+    setIsSelectedImage(file)
     setImgUploaded(URL.createObjectURL(file))
     const { data: signedUrlData, error: urlError } = await supabase.storage
       .from('avatars')
@@ -76,6 +78,7 @@ const EditProfileSetting = ({ close, profile }) => {
 
     setImgUploaded(publicUrl.publicUrl)
     setIsImageLoading(false)
+    setIsSelectedImage(null)
   }
   const userNameValidator = async (e) => {
     if (e.target.value.length >= 5) {
@@ -147,7 +150,10 @@ const EditProfileSetting = ({ close, profile }) => {
                   className="hidden"
                   accept='image/*'
                   value={""}
-                  onChange={(e) => uploadProfileImage(e.target.files[0])}
+                  onChange={(e) => {
+                    uploadProfileImage(e.target.files[0])
+
+                  }}
                 />
               </>
             )}
@@ -303,10 +309,10 @@ const EditProfileSetting = ({ close, profile }) => {
           </span>
         </div>
         {isEnterWord ||
-          (imgUploaded && (
+          isSelectedImage && (
             <div className="relative">
               <button
-                className="btn btn-success mask mask-squircle fixed bottom-7 ml-[245px] text-white grid place-items-center"
+                className="btn btn-success mask mask-squircle fixed bottom-7 ml-[210px] md:ml-[245px] text-white grid place-items-center"
                 onClick={updateProfileHandler}
                 disabled={isLoading}
               >
@@ -330,7 +336,7 @@ const EditProfileSetting = ({ close, profile }) => {
                 )}
               </button>
             </div>
-          ))}
+          )}
       </form>
     </SettingContainer>
   )
