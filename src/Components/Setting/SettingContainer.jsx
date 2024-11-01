@@ -8,6 +8,9 @@ const SettingContainer = ({ title, onBack, children }) => {
   const logOutHandler=async()=>{
     const { error } = await supabase.auth.signOut()
       if(error) return
+
+      localStorage.removeItem('profile')
+      location.reload()
   }
   return (
     <Box style={'ml-3 overflow-hidden'}>

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { supabase } from '../../superbase'
+import { toast } from 'react-toastify'
+import { toastOptions } from '../../Utility/toastOption'
 
 const Auth = () => {
   const [email, setEmail] = useState('')
@@ -10,6 +12,9 @@ const Auth = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const [newCodeTime, setNewCodeTime] = useState(60)
+  const [isValid, setIsValid] = useState(true);
+
+  const emailRegex = /^((?!\.)[\w-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/gim;
 
   useEffect(() => {
     let interval = setInterval(() => {
@@ -23,19 +28,21 @@ const Auth = () => {
   }, [isNextPage, newCodeTime])
 
   const registerUser = async (e) => {
+    
     e.preventDefault()
+    if(!isValid) return false
     setIsLoading(true)
     setNewCodeTime(60)
     try {
       const { error } = await supabase.auth.signInWithOtp({ email })
 
       if (error) {
-        throw error
+        throw Error('Check your email and try again')
       }
 
       setIsNextPage(true)
     } catch (error) {
-      console.log(error)
+      toast.error(error,toastOptions)
     } finally {
       setIsLoading(false)
     }
@@ -88,7 +95,7 @@ const Auth = () => {
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
               onClick={() => setIsNextPage(false)}
-              className="text-gray-400 transition-all duration-300 hover:text-white cursor-pointer"
+              className="text-gray-400 transition-all duration-300 hover:text-white cursor-pointer z-10"
             >
               <path
                 d="M13.26 3.59997L5.04997 12.29C4.73997 12.62 4.43997 13.27 4.37997 13.72L4.00997 16.96C3.87997 18.13 4.71997 18.93 5.87997 18.73L9.09997 18.18C9.54997 18.1 10.18 17.77 10.49 17.43L18.7 8.73997C20.12 7.23997 20.76 5.52997 18.55 3.43997C16.35 1.36997 14.68 2.09997 13.26 3.59997Z"
@@ -143,9 +150,11 @@ const Auth = () => {
               id="email"
               dir="auto"
               autoComplete="off"
+              required
               value={email}
               onChange={(e) => {
-                setEmail(e.target.value)
+              setEmail(e.target.value)
+              setIsValid(emailRegex.test(e.target.value));
                 e.target.value !== ''
                   ? setIsEmailEnterWord(true)
                   : setIsEmailEnterWord(false)
@@ -174,7 +183,7 @@ const Auth = () => {
           <button
             className="btn w-full btn-primary mt-6 h-[56px] text-lg relative disabled:bg-[#5616C5]/50"
             onClick={registerUser}
-            disabled={email===""||isLoading}
+            disabled={email===""||!isValid||isLoading}
           >
             {!isLoading ? (
               'Next'
