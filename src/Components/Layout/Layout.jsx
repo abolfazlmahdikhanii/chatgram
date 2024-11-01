@@ -76,7 +76,7 @@ const Layout = () => {
         className={`  ${
           friendID
             ? 'grid-cols-1 lg:grid-cols-[95px_340px_1fr]'
-            : 'grid-cols-[80px_1fr] md:grid-cols-[80px_300px_1fr] lg:grid-cols-[95px_340px_1fr]'
+            : 'grid-cols-[65px_1fr] md:grid-cols-[80px_300px_1fr] lg:grid-cols-[95px_340px_1fr]'
         }
      h-screen grid  overflow-hidden`}
       >
