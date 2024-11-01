@@ -111,7 +111,7 @@ const App = () => {
         ariaLabel="tail-spin-loading"
         radius="1"
         wrapperStyle={{}}
-        wrapperClass="fixed top-1/2 left-1/2"
+        wrapperClass="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
       />
     )
   } else if (!session) {
