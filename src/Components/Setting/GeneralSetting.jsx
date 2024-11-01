@@ -287,7 +287,7 @@ const GeneralSetting = ({ close }) => {
           </div>
         </div>
         <p className="border-[7px] border-base-200 w-[150%] -mx-[30px]"></p>
-        <p className="text-[#8774E1] text-[17px] font-semibold py-5 sticky -top-2 bg-base-100 z-10">
+        <p className="text-[#8774E1] text-[17px] font-semibold py-5  bg-base-100 z-10">
           Chat Wallpaper
         </p>
         <div className="grid grid-cols-3 gap-x-3 my-2 gap-y-4 ">
@@ -309,6 +309,7 @@ const GeneralSetting = ({ close }) => {
                   setChatBg(splited[splited?.length - 1])
                   setIsChange(true)
                 }}
+                
               />
             </label>
           ))}
