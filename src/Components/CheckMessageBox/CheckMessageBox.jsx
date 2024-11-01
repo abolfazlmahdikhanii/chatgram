@@ -12,23 +12,23 @@ const CheckMessageBox = ({chatId}) => {
   
   }
   return (
-    <div className={`check-message flex items-center justify-between`}>        
+    <div className={`check-message flex items-center justify-between w-full `}>        
 
   {/* close */}
-  <div className='flex items-center gap-1'>
-    <button className='btn btn-md btn-circle btn-ghost  grid place-items-center' onClick={()=>{
+  <div className='flex items-center gap-1.5'>
+    <button className='btn btn-sm md:btn-md btn-circle btn-ghost  grid place-items-center' onClick={()=>{
       setCheckMessage([])
       setShowCheckBox(false)
       }}>
         <AiOutlineClose size={21}/>
     </button>
-    <p className='dark:text-white font-semibold text-gray-800'>{checkMessage.length} {checkMessage.length<=1?'Message':'Messages'}</p>
+    <p className='dark:text-white font-semibold text-gray-800 md:text-base text-sm whitespace-nowrap'>{checkMessage.length} {checkMessage.length<=1?'Message':'Messages'}</p>
   </div>
 {/* btn */}
-  <div className=' flex items-center gap-2 pr-2'>
+  <div className=' flex items-center md:gap-2 md:pr-2'>
 
 {/* forward */}
-<button className=' hover:bg-[rgba(170,170,170,0.20)] dark:hover:bg-[rgba(170,170,170,0.08)] text-gray-600 check-message--btn dark:text-white disabled:text-gray-500' onClick={()=>ForwardHandler(true)} disabled={checkMessage.length>0?false:true}>
+<button className=' hover:bg-[rgba(170,170,170,0.20)] dark:hover:bg-[rgba(170,170,170,0.08)] text-gray-600 check-message--btn dark:text-white disabled:text-gray-500 ' onClick={()=>ForwardHandler(true)} disabled={checkMessage.length>0?false:true}>
     <TiArrowForwardOutline size={26}/>
     <p className=' font-semibold capitalize text-base '>Forward</p>
 </button>

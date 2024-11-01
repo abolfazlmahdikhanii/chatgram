@@ -20,63 +20,60 @@ const AudioRecorders = ({
   const [audioUrl, setAudioUrl] = useState('')
 
   const audios = []
+  const [isMobileView, setIsMobileView] = useState(false); // New state for responsiveness
 
-  // Request audio permission and initialize MediaRecorder
+  // Function to check the screen size and set isMobileView accordingly
+  const handleResize = () => {
+    setIsMobileView(window.matchMedia('(max-width: 768px)').matches);
+  };
+
+  // Add event listener to handle screen size change
   useEffect(() => {
-    const handlePermission = () => {
-      navigator.mediaDevices
-        .getUserMedia({ audio: true })
-        .then((stream) => {
-          const recorder = new MediaRecorder(stream)
-          const chunks = []
-
-          recorder.ondataavailable = (e) => {
-            chunks.push(e.data)
-          }
-
-          recorder.onstop = () => {
-            const audioBlob = new Blob(chunks, { type: 'audio/webm' })
-            if (audioBlob.size !== 0) sendAudioHandler(audioBlob)
-          }
-
-          setAudioStream(stream)
-          setMediaRecorder(recorder)
+    handleResize(); // Initial check
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  useEffect(() => {
+    const requestAudioPermission = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
         })
-        .catch((err) => {
-          setShowAlert(true)
-          setRecord(false)
-        })
-    }
-    handlePermission()
-    return () => {
-      if (audioStream) {
-        audioStream.getTracks().forEach((track) => track.stop())
+        const recorder = new MediaRecorder(stream)
+
+        recorder.ondataavailable = (e) => handleDataAvailable(e.data)
+        recorder.onstop = handleStop
+
+        setAudioStream(stream)
+        setMediaRecorder(recorder)
+      } catch (error) {
+        setShowAlert(true)
+        setRecord(false)
       }
     }
-  }, [record])
+
+    requestAudioPermission()
+    return () => audioStream?.getTracks().forEach((track) => track.stop())
+  }, [])
+
   // Start recording when record is set to true
   useEffect(() => {
-    if (record && mediaRecorder) startRecordingHandler()
+    if (record && mediaRecorder) {
+      startRecording()
+    }
   }, [record, mediaRecorder])
 
-  // Timer effect that counts seconds when recording and not paused
-
+  // Update timer while recording and not paused
   useEffect(() => {
-    let intervalId
-
+    let interval
     if (recording && !paused) {
-      intervalId = setInterval(() => {
-        setTimer((prevTimer) => prevTimer + 1)
-      }, 1000)
+      interval = setInterval(() => setTimer((prev) => prev + 1), 1000)
     }
-
-    return () => {
-      clearInterval(intervalId)
-    }
+    return () => clearInterval(interval)
   }, [recording, paused])
 
-  // Handler to start recording
-  const startRecordingHandler = () => {
+  // Handlers
+  const startRecording = () => {
     if (!recording && mediaRecorder) {
       mediaRecorder.start()
       setRecording(true)
@@ -85,91 +82,83 @@ const AudioRecorders = ({
     }
   }
 
-  // Toggle between pause and resume states
   const togglePauseResume = () => {
-    if (recording && mediaRecorder) {
-      if (!paused) {
-        mediaRecorder.pause()
-        setPaused(true)
-      }
+    if (mediaRecorder) {
       if (paused) {
         mediaRecorder.resume()
         setPaused(false)
+      } else {
+        mediaRecorder.pause()
+        setPaused(true)
       }
     }
   }
 
-  // Format the timer display
-  const formatTimer = (time) => {
-    const second = time % 60
-    const min = Math.floor(time / 60)
-
-    return `${min < 10 ? `0${min}` : `${min}`} : ${
-      second < 10 ? `0${second}` : `${second}`
-    }`
-  }
-
-  // Stop recording and reset relevant states
   const stopRecording = () => {
-    if (recording && mediaRecorder) {
+    if (mediaRecorder && recording) {
       mediaRecorder.stop()
       setRecording(false)
       setPaused(false)
-      setAudioChunks([])
       setTimer(0)
-
-      if (audioStream) {
-        audioStream.getTracks().forEach((track) => track.stop())
-      }
+      audioStream?.getTracks().forEach((track) => track.stop())
     }
   }
 
-  // Handle sending the recorded audio
-
-  const sendAudioHandler = (url) => {
-    const audioMessage = {
-      id: crypto.randomUUID(),
-      src: url,
-      size: url?.size,
-      name: '',
-      type: 'mp3',
+  const handleDataAvailable = (data) => {
+    const audioBlob = new Blob([data], { type: 'audio/webm' })
+    if (audioBlob.size) {
+      sendAudioHandler(audioBlob)
     }
-    audios.push(url)
+  }
 
+  const handleStop = () => {
+    // Called when mediaRecorder stops
+  }
+
+  const sendAudioHandler = (blob) => {
+    setMessage(blob, null, URL.createObjectURL(blob))
     setRecord(false)
-    // send
-    setMessage(url, null, URL.createObjectURL(url))
+  }
+
+  // Helper: Format timer
+  const formatTimer = (time) => {
+    const minutes = Math.floor(time / 60)
+      .toString()
+      .padStart(2, '0')
+    const seconds = (time % 60).toString().padStart(2, '0')
+    return `${minutes}:${seconds}`
   }
 
   return (
-    <div className="flex items-stretch gap-4">
+    <div className="flex items-center gap-1 md:gap-4 w-full">
       <div
-        className={`py-2 px-3 dark:bg-base-200   rounded-xl recorder-box  items-center bg-base-300/80  backdrop-blur-xl ${
+        className={`py-2 px-3 dark:bg-base-200 w-full  rounded-xl recorder-box  items-center bg-base-300/80 overflow-hidden  backdrop-blur-xl ${
           record ? 'flex' : 'hidden'
         } `}
       >
-        <div className="w-full flex items-center gap-5">
+        <div className="w-full flex items-center md:gap-5 gap-2">
           <button
             className="bg-indigo-600 py-2.5 px-[18px] text-white h-12 rounded-xl mask-squircle mask"
             onClick={togglePauseResume}
           >
             {!paused ? <FaPause /> : <FaPlay />}
           </button>
-          <div className="w-[390px]">
+          <div className="md:w-[340px] w-[100%]">
             {mediaRecorder && (
               <LiveAudioVisualizer
                 mediaRecorder={mediaRecorder}
-                width={380}
+                width={isMobileView?'100%':340}
                 height={40}
                 gap={4}
                 barColor={'#4f46e5'}
+                className="md:w-[350px]"
               />
             )}
           </div>
         </div>
-        <div className="ml-7 flex items-center gap-7 pr-3">
+        <div className="md:ml-7 flex items-center md:gap-7 md:pr-3 ">
           <p className="flex gap-2.5 items-center ">
-            <span className="relative flex h-4 w-4">
+            <span className="relative md:flex h-4 w-4 hidden">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-300 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-4 w-4 bg-red-500"></span>
             </span>
@@ -184,10 +173,13 @@ const AudioRecorders = ({
       </div>
 
       {/* action */}
-      <div className="flex items-center gap-2.5 ml-1">
+      <div className="flex items- gap-1 md:gap-2.5 md:ml-1">
         <button
-          className="bg-neutral py-1  text-white  rounded-xl mask-squircle mask h-full px-[14px]"
-          onClick={() => setRecord(false)}
+          className="bg-neutral py-1 btn  text-white  rounded-xl mask-squircle mask h-full px-[14px]"
+          onClick={() => {
+            setRecord(false)
+            setRecording(false)
+          }}
         >
           <MdDeleteOutline size={26} color="#dc2626" />
         </button>

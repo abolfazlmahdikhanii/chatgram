@@ -17,17 +17,17 @@ const ProfileImage = ({
   return (
     <div className="avatar">
       <div
-        className={`mask mask-squircle ${
+        className={`mask mask-squircle grid place-items-center ${
           size !== 'm' && size !== 'xs' && size !== 'lg' ? 'w-11 h-11' : ''
-        } ${size === 'm' && 'w-14 h-14 text-lg'} ${
-          size === 'xs' && 'w-5 h-5 text-[9px]'
-        } ${size === 'lg' && 'w-32 h-32 text-4xl'}`}
+        } ${size === 'm' ? 'w-14 h-14 text-lg':''} ${
+          size === 'xs' ? 'w-5 h-5 text-[9px]':''
+        } ${size === 'lg' ? 'w-32 h-32 text-4xl':''}`}
       >
         {src && !isSave ? (
           <img
             src={src}
             alt="profile"
-            className="w-full h-full aspect-square"
+            className="w-full h-full aspect-square object-cover"
             onError={e=>e.currentTarget.src="./avatar.png"}
           
           />
@@ -36,7 +36,7 @@ const ProfileImage = ({
             data-color={!isSave ? bgProfile : 'purple'}
             className={`grid place-items-center text-white h-full font-bold w-full  `}
           >
-            {src===null && !isSave && (
+            {!src && !isSave && (
               <span>{userName && userNameSpliter(userName)}</span>
             )}
             {isSave && (

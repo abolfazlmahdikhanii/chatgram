@@ -132,7 +132,7 @@ const Chat = () => {
             fetchMessages()
             updateMessageStatus()
             filterUnreadMessage()
-            if (!isScrolledUp && !payload.new.reactions) scrollToBottom()
+            if (!isScrolledUp && !payload.new.reactions||!payload.new.isForward||!payload.new.isPin) scrollToBottom()
           } else if (
             (newMsg.senderid === user?.userid &&
               newMsg.recipientid === user?.userid) ||
@@ -145,7 +145,7 @@ const Chat = () => {
 
             fetchSavedMessages()
             updateSavedMessageStatus()
-            if (!isScrolledUp && !payload.new.reactions) scrollToBottom()
+            if (!isScrolledUp && !payload.new.reactions||!payload.new.isForward||!payload.new.isPin) scrollToBottom()
             // groupMessageHandler(messages)
           }
         }
@@ -209,11 +209,12 @@ const Chat = () => {
       )
       .eq('recipientid', user.userid)
       .eq('senderid', user.userid)
+      .eq('isDeleted',false)
       .order('sentat', { ascending: true })
 
     if (!error) {
       setMessages(messages)
-
+      getPinMessage(messages)
       groupMessageHandler(messages)
       setIsLoad(false)
     }
@@ -304,12 +305,12 @@ const Chat = () => {
   }
   const getPinMessage = (arr) => {
     const filteredPin = arr?.filter((message) => message?.isPin)
-    console.log(filteredPin)
+    
     setPinMessage(filteredPin)
   }
   const closePinBox = () => {
     const pinArr = message?.messages?.filter(
-      (item) => item.pin && chatId == match.id
+      (item) => item.pin && chatId == match.id||item.senderid==match.id
     )
     pinArr.forEach((item) => {
       item.pin = false
@@ -476,7 +477,7 @@ const Chat = () => {
             </section>
             {/* pin message */}
             <section
-              className={`h-[90%]  overflow-y-auto  flex flex-col  mt-1 mb-1.5 transition-all duration-200 ease-linear w-full${
+              className={`h-[90%]  overflow-y-auto  flex flex-col  mt-1 mb-20 transition-all duration-200 ease-linear w-full ${
                 pinMessage && showPin
                   ? 'translate-x-0 flex'
                   : 'translate-x-full hidden'
@@ -485,7 +486,7 @@ const Chat = () => {
               {pinMessage &&
                 pinMessage.map((item, i) => (
                   <Message
-                    key={crypto.randomUUID()}
+                    key={item.messageid}
                     forwardSelf={item?.forwardSelf}
                     contact={item?.contact}
                     {...item}
@@ -502,7 +503,7 @@ const Chat = () => {
                 <CheckMessageBox chatId={match.id} />
               )
             ) : (
-              <UnpinBtn chatID={match.id} />
+              <UnpinBtn chatID={match.id!==user?.userid?match.id:null} senderId={match.id==user?.userid?match.id:null}  />
             )}
             {/* menu */}
 
@@ -547,7 +548,7 @@ const Chat = () => {
               </button>
             </div>
           </main>
-          {showAlert && <Dialog chatId={match.id} />}
+          {showAlert && <Dialog chatId={match.id!==user?.userid?match.id:null} senderId={match.id==user?.userid?match.id:null} />}
         </div>
 
         {showChatInfo && (

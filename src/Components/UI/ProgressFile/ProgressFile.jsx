@@ -6,7 +6,7 @@ const ProgressFile = ({ size, progress, onRemove,onDownload, isCompletedUploaded
     <>
       {!isCompletedUploaded ? (
         <div
-          className={`radial-progress  rounded-lg self-end  bg-base-100/40 border-[4px] dark:text-white text-gray-700 border-transparent cursor-pointer -mr-5 mt-1  ${
+          className={`radial-progress  rounded-lg self-end  bg-base-100/40 border-[4px] dark:text-white text-gray-700 border-transparent cursor-pointer -mr-2 md:-mr-2 mt-1  ${
             progress >= 100 ? 'hidden' : ''
           }`}
           style={{
@@ -32,7 +32,7 @@ const ProgressFile = ({ size, progress, onRemove,onDownload, isCompletedUploaded
         </div>
       ) : (
         <div
-          className={` mask mask-squircle w-7 h-7 grid place-items-center dark:text-white  rounded-lg self-end  dark:bg-base-100/40 border-[4px] border-transparent cursor-pointer  transition-all duration-300 bg-base-300/60 text-gray-600 dark:hover:bg-base-100  -mr-5 mt-1 hover:bg-base-300`}
+          className={` mask mask-squircle w-7 h-7 grid place-items-center dark:text-white  rounded-lg self-end  dark:bg-base-100/40 border-[4px] border-transparent cursor-pointer  transition-all duration-300 bg-base-300/60 text-gray-600 dark:hover:bg-base-100  -mr-2 md:-mr-2 mt-1 hover:bg-base-300`}
           onClick={onDownload}
         >
           <svg

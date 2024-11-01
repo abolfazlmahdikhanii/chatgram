@@ -8,7 +8,7 @@ const AlertBox = ({showAlert,setShowAlert,title,dis}) => {
     <Backdrop show={showAlert} />
     <dialog
       id="my_modal_1"
-      className={`modal modal-box modal-bottom sm:modal-middle  justify-items-start [overflow-y:hidden] px-0  -translate-x-1/2 left-1/2 pt-0 mt-0 h-fit top-1/2 -translate-y-1/2 overflow-x-hidden w-[45%] ${
+      className={`modal modal-box modal-bottom sm:modal-middle  justify-items-start [overflow-y:hidden] px-0  -translate-x-1/2 left-1/2 pt-0 mt-0 h-fit top-1/2 -translate-y-1/2 overflow-x-hidden w-11/12 md:w-[45%] ${
         showAlert ? 'pointer-events-auto visible opacity-100 ' : ''
       }`}
     >

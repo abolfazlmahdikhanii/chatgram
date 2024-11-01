@@ -6,7 +6,7 @@ import { ChatContext } from '../../../Context/ChatContext'
 import { UserContext } from '../../../Context/UserContext'
 import { supabase } from '../../../superbase'
 
-const Dialog = ({ chatId }) => {
+const Dialog = ({ chatId,senderId }) => {
   const {
     showAlert,
     setShowAlert,
@@ -50,7 +50,7 @@ const Dialog = ({ chatId }) => {
       <Backdrop show={showAlert} />
       <dialog
         id="my_modal_1"
-        className={`modal modal-box modal-bottom sm:modal-middle  justify-items-start [overflow-y:hidden] px-0  -translate-x-1/2 left-1/2 pt-0 mt-0 h-fit top-1/2 -translate-y-1/2 overflow-x-hidden w-[25%] ${
+        className={`modal modal-box modal-bottom sm:modal-middle  justify-items-start [overflow-y:hidden] px-0  -translate-x-1/2 left-1/2 pt-0 mt-0 h-fit top-1/2 -translate-y-1/2 overflow-x-hidden w-11/12 md:w-[25%] ${
           showAlert ? 'pointer-events-auto visible opacity-100 ' : ''
         }`}
       >
@@ -97,7 +97,7 @@ const Dialog = ({ chatId }) => {
                     : ' hover:bg-[rgba(135,116,225,0.08)] text-[#8774e1]'
                 }`}
                 onClick={() => {
-                  pinMessageHandler(messageID, chatId,isPin)
+                  pinMessageHandler(messageID, chatId,isPin,senderId)
                   setShowAlert(false)
                 }}
               >

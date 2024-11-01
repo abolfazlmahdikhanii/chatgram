@@ -89,7 +89,7 @@ const ModalPreviewImg = () => {
       <div
         className={`fixed top-0 left-0 w-full h-full z-30 ${
           show
-            ? 'scale-100 opacity-100 translate-x-8'
+            ? 'scale-100 opacity-100 md:translate-x-8'
             : 'scale-0 opacity-0 translate-x-0'
         } `}
       >
@@ -107,8 +107,8 @@ const ModalPreviewImg = () => {
             />
 
             <div>
-              <p className="dark:text-white font-semibold text-lg text-gray-800">
-                {from?.userName}
+              <p className="dark:text-white font-semibold text-lg text-gray-800 w-[220px] truncate md:w-full">
+                {profileInfo?.username||profileInfo?.email.split('@')[0]}
               </p>
               <p className="dark:text-gray-400 flex items-center gap-1.5 text-gray-500">
                 <span dir="auto">{formatMonth(date && date)}</span>
@@ -118,9 +118,9 @@ const ModalPreviewImg = () => {
             </div>
           </div>
           {/* right */}
-          <div className="flex items-center gap-x-4 relative">
-            <div className="flex items-center gap-5 px-6 py-2 border dark:border-gray-500/40 rounded-xl z-10 border-gray-300">
-              <button onClick={() => handleDownload(src, fileName)}>
+          <div className="flex md:items-center md:gap-x-4 relative flex-col-reverse md:flex-row ">
+            <div className={`flex items-center gap-5 px-6 py-2 border dark:border-gray-500/40 rounded-xl z-10 border-gray-300 text-gray-500 dark:text-gray-400  ${type==="video"?'absolute top-11 -right-0.5':'fixed bottom-4 right-4'}`}>
+              <button  onClick={() => handleDownload(src, fileName)}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="19"

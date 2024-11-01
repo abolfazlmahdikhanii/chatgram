@@ -57,7 +57,7 @@ const FileType = ({
   const [fileSize, setFileSize] = useState(0)
   useEffect(() => {
     if (src) download(src)
-  }, [src])
+  }, [path])
 
   useEffect(() => {
     const fetchFileSize = async () => {
@@ -74,7 +74,7 @@ const FileType = ({
   }, [url])
   const download = useCallback(async (path) => {
     const groupFile = []
-    console.log(path)
+  
     // if (findItem(messageId)) return false
     supabase.storage
       .from('uploads')
@@ -126,7 +126,7 @@ const FileType = ({
         progress={fileProgress}
         messageId={messageId}
         idType={idType}
-        src={url}
+        src={path?path:url}
         onRemove={removeMessages}
         autoPlay={autoPlay}
         isChatInfo={isChatInfo}
@@ -135,7 +135,7 @@ const FileType = ({
         date={date}
         fileName={src?.split('/').pop()}
         caption={caption}
-        onErrorVideo={(e) => (e.currentTarget.src = src)}
+        onErrorVideo={(e) => (e.currentTarget.src = path)}
         isCompletedUploaded={url}
         onDownload={() => handleDownload(url, src)}
         name={name}
@@ -227,7 +227,7 @@ const FileType = ({
               name,
             })
           }
-          // onError={(e) => (e.target.src = path)}
+          onError={(e) => (e.target.src = url)}
         />
       </li>
     )

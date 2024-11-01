@@ -137,7 +137,7 @@ const VideoPlayer = ({ src, setIsPiPActive, isPiPActive }) => {
                 <video
                     src={src}
                     alt=""
-                    className="w-auto h-full  rounded-xl  object-cover min-w-[45%]"
+                    className="w-auto h-full  rounded-xl  object-cover  aspect-auto min-w-[50%]"
                     type="video/mp4"
                     ref={videoRef}
                     onTimeUpdate={() =>
@@ -152,7 +152,7 @@ const VideoPlayer = ({ src, setIsPiPActive, isPiPActive }) => {
                 </video>
             </div>
             {/* controls */}
-            <div className="absolute bottom-12 bg-base-200/80 left-1/2 z-10  gap-5 backdrop-blur-xl px-6 py-5  rounded-xl w-[50%] mx-auto -translate-x-1/2 space-y-5">
+            <div className="absolute bottom-9 md:bottom-12 bg-base-200/80 left-1/2 z-10  gap-5 backdrop-blur-xl px-6 py-5  rounded-xl w-[97%] md:w-[50%] mx-auto -translate-x-1/2 space-y-5">
                 {/* row */}
                 <div className="flex items-center justify-between w-full">
                     <div className="flex items-center gap-3">
@@ -209,7 +209,7 @@ const VideoPlayer = ({ src, setIsPiPActive, isPiPActive }) => {
                             step={0.01}
                             value={volume}
                             onChange={volumeChangeHandler}
-                            className="range range-xs range-error"
+                            className="range range-xs range-error md:w-full w-[90px]"
                         />
                     </div>
 
@@ -284,7 +284,7 @@ const VideoPlayer = ({ src, setIsPiPActive, isPiPActive }) => {
                         min={0}
                         max={duration}
                         value={currentTime}
-                        className="range range-primary range-md w-[83%]"
+                        className="range range-primary range-md md:w-[83%] w-[65%]"
                         onChange={(e) => seekHandler(e)}
                     />
                     <p className="text-xs flex items-end justify-end">

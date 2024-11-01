@@ -79,7 +79,7 @@ const ChatForm = ({ setMessage }) => {
     return () => {
       if (inputRef.current && !emoji) inputRef.current.innerHTML = ''
     }
-  }, [inputRef, text, emoji, record])
+  }, [inputRef, text, emoji])
   useEffect(() => {
     inputRef.current.innerHTML = ''
     updateTypingStatus(false)
@@ -322,7 +322,7 @@ const ChatForm = ({ setMessage }) => {
   const sendMessageHandler = async (content, replay = null, url) => {
     let fileUrl = ''
 
-    if (!content || content === '&nbsp;') return
+    if (!content || content === '&nbsp;'||content==="</br>") return
     setMessage(
       [
         {
@@ -381,7 +381,7 @@ const ChatForm = ({ setMessage }) => {
               content: fileUrl[i],
               messageType: 'file',
               status: 'send',
-              chatID: param.id,
+              chatID: param.id !== user?.userid ? param.id : null,
               name: filesUpload[i]?.name,
               caption: txt,
             },
@@ -410,7 +410,7 @@ const ChatForm = ({ setMessage }) => {
               content: fileUrl[i],
               messageType: imagesUpload[i]?.type,
               status: 'send',
-              chatID: param.id,
+              chatID: param.id !== user?.userid ? param.id : null,
               caption: txt,
             },
           ])

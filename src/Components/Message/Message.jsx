@@ -177,7 +177,7 @@ const Message = ({
         }
         className={`chat-bubble relative break-words px-3 group 
           transition-all duration-200 min-w-[110px] ${isForward ? 'hover:mx-6' : ''}
-          ${isDeleted ? 'blur-lg' : ''} ${
+          ${isDeleted ? 'blur-lg hidden ' : ''} ${
             reactions?.length > 0 ? 'min-w-[140px]' : ''
           } ${
             (senderid === user.userid && user.userid !== recipientid) ||

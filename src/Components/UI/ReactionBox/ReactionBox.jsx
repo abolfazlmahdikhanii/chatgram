@@ -2,6 +2,8 @@ import React from 'react'
 import Profile from '../../Profile/Profile'
 
 const ReactionBox = ({ reaction, setReaction }) => {
+  const {username,email,avatar_url,bgProfile}=reaction?.userInfos
+  
   return (
     <div
       className=" bg-gray-300/30  px-2 py-1 mx-1.5  rounded-lg flex items-center justify-between my-2.5 w-[65px] ml-auto backdrop-blur-md cursor-pointer border-2 border-gray-500"
@@ -10,12 +12,12 @@ const ReactionBox = ({ reaction, setReaction }) => {
       <div>
         <Profile
           size="xs"
-          path={reaction?.userInfos?.avatar_url}
+          path={avatar_url}
           userName={
-            reaction?.userInfos?.username ||
-            reaction?.userInfos?.email?.split('@')[0]
+            username ||
+            email.split('@')[0]
           }
-          bgProfile={reaction?.userInfos?.bgProfile}
+          bgProfile={bgProfile}
         />
       </div>
       <div className="">

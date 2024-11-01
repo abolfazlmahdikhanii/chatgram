@@ -178,7 +178,7 @@ export const ChatProvider = ({ children }) => {
       .from('messages')
       .update({ isDeleted: true })
       .eq('messageid', id)
-      .eq('chatID', chatId)
+      // .eq('chatID', chatId)
       .select()
     if (error) console.log(error)
 
@@ -356,39 +356,82 @@ export const ChatProvider = ({ children }) => {
     []
   )
 
-  const pinMessageHandler = async (id, chatId, pin) => {
-    if (pin.mID === id && !pin.isPin && pinMessage.length <= 4) {
-      const { data: pin, error: pinError } = await supabase
-        .from('messages')
-        .update({ isPin: true })
-        .eq('messageid', id)
-        .eq('chatID', chatId)
-        .select()
-      if (pinError) console.log(pinError)
-      setIsPin(true)
+  const pinMessageHandler = async (id, chatId = null, pin, senderid) => {
+    if (chatId) {
+      if (pin.mID === id && !pin.isPin && pinMessage.length <= 4) {
+        const { data: pin, error: pinError } = await supabase
+          .from('messages')
+          .update({ isPin: true })
+          .eq('messageid', id)
+          .eq('chatId', chatId)
+
+          .select()
+        if (pinError) console.log(pinError)
+        setIsPin(true)
+      } else {
+        const { data: pin, error: pinError } = await supabase
+          .from('messages')
+          .update({ isPin: false })
+          .eq('messageid', id)
+          .eq('chatId', chatId)
+
+          .select()
+        if (pinError) console.log(pinError)
+        setIsPin(false)
+      }
     } else {
-      const { data: pin, error: pinError } = await supabase
-        .from('messages')
-        .update({ isPin: false })
-        .eq('messageid', id)
-        .eq('chatID', chatId)
-        .select()
-      if (pinError) console.log(pinError)
-      setIsPin(false)
+      if (pin.mID === id && !pin.isPin && pinMessage.length <= 4) {
+        const { data: pin, error: pinError } = await supabase
+          .from('messages')
+          .update({ isPin: true })
+          .eq('messageid', id)
+          .eq('senderid', senderid)
+
+          .select()
+        if (pinError) console.log(pinError)
+        setIsPin(true)
+      } else {
+        const { data: pin, error: pinError } = await supabase
+          .from('messages')
+          .update({ isPin: false })
+          .eq('messageid', id)
+          .eq('senderid', senderid)
+
+          .select()
+        if (pinError) console.log(pinError)
+        setIsPin(false)
+      }
     }
   }
-  const unpinHandler = async (chatID) => {
-    try {
-      const { data, error } = await supabase
-        .from('messages')
-        .update({ isPin: false })
-        .eq('chatID', chatID)
-        .select()
-      if (error) throw error
-      setPinMessage([])
-      setShowPin(false)
-    } catch (error) {
-      console.log(error)
+  const unpinHandler = async (chatID, senderid) => {
+    if (chatID) {
+      try {
+        const { data, error } = await supabase
+          .from('messages')
+          .update({ isPin: false })
+          .eq('chatID', chatID)
+
+          .select()
+        if (error) throw error
+        setPinMessage([])
+        setShowPin(false)
+      } catch (error) {
+        console.log(error)
+      }
+    } else {
+      try {
+        const { data, error } = await supabase
+          .from('messages')
+          .update({ isPin: false })
+          .eq('senderid', senderid)
+
+          .select()
+        if (error) throw error
+        setPinMessage([])
+        setShowPin(false)
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
   const replyMessageHandler = (id, content, type, name, senderid) => {
@@ -419,7 +462,7 @@ export const ChatProvider = ({ children }) => {
       const { error } = await supabase
         .from('messages')
         .delete()
-        .eq('chatID', chatId)
+        // .eq('chatID', chatId)
         .eq('messageid', checked)
       if (error) console.log(error)
     }
@@ -511,7 +554,6 @@ export const ChatProvider = ({ children }) => {
 
   const DeleteChat = async (id) => {
     try {
-      console.log(id)
       const { error } = await supabase
         .from('friendrequests')
         .delete()
@@ -709,7 +751,7 @@ export const ChatProvider = ({ children }) => {
         setSearchLoading,
         setMessageContent,
         setMessageName,
-        setMessageType
+        setMessageType,
       }}
     >
       {children}

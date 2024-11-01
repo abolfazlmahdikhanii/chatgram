@@ -103,7 +103,7 @@ const AudioFile = ({ path, size, name, onRemove, isColor, setAudio,progress,url,
   }
 
   return (
-    <li className="file-item-1 relative w-full h-fit min-w-[300px] px-2 py-3 gap-2 ">
+    <li className="file-item-1 relative min-w-[220px] w-full h-fit md:min-w-[300px] px-2 py-3 gap-2 ">
       <button
         className={`btn btn-square ${
           isColor ? 'bg-gray-200 text-primary' : ''
