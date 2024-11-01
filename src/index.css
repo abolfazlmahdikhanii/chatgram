@@ -233,7 +233,7 @@
         @apply [display:none!important];
     }
     .check-message {
-        @apply py-3 px-2 bg-base-200 rounded-xl recorder-box   w-10/12 mx-auto  mb-24 flex gap-3.5 h-[60px] max-w-lg items-center relative ;
+        @apply py-3 px-2 bg-base-200 md:rounded-xl recorder-box   w-10/12 mx-auto mb-20  md:mb-24 flex gap-3.5 h-[60px] max-w-lg items-center relative ;
     }
     .check-message--btn {
         @apply flex items-center gap-3 transition-all duration-300 px-4 py-2 rounded-xl w-auto;
@@ -242,7 +242,7 @@
         @apply dark:bg-base-200 flex items-center justify-between py-1.5 rounded-xl w-full px-3  backdrop-blur-xl bg-base-300/80;
     }
     .unpin-btn {
-        @apply capitalize font-semibold dark:text-white py-4 px-8 rounded-xl bg-base-100 -mt-32 mb-28 w-fit mx-auto  z-[1] hover:bg-base-200 transition-all duration-200 active:scale-90 cursor-pointer text-gray-700;
+        @apply capitalize font-semibold dark:text-white py-4 px-8 rounded-xl bg-base-100 -mt-20 md:-mt-32 mb-20 md:mb-28 w-11/12 md:w-fit mx-auto  z-[1] hover:bg-base-200 transition-all duration-200 active:scale-90 cursor-pointer text-gray-700 text-center;
     }
 
     [data-text-color='violet'] {
