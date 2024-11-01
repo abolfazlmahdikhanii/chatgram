@@ -93,6 +93,7 @@ const StoryCreator = ({ show, userId, close }) => {
     setFileUpload(null)
     setStoryLink(null)
     setQuote(null)
+    setFileSrc(null)
   }
   return (
     <>
@@ -100,12 +101,12 @@ const StoryCreator = ({ show, userId, close }) => {
       <div
         className={`fixed top-0 left-0 w-full h-full z-30 ${
           show
-            ? 'scale-100 opacity-100 translate-x-8'
+            ? 'scale-100 opacity-100 md:translate-x-8'
             : 'scale-0 opacity-0 translate-x-0'
         } `}
       >
         {/* header */}
-        <section className="flex items-center justify-end  w-11/12 mx-auto py-5 my-3">
+        <section className="flex items-center justify-end w-[95%]  md:w-11/12 mx-auto py-5 my-3">
           {/* right */}
           <div className="flex items-center gap-x-4 relative ">
             {fileSrc?.src && (

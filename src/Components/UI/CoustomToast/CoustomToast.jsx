@@ -2,7 +2,7 @@ import React from 'react'
 import { IoCopyOutline } from "react-icons/io5";
 const CoustomToast = ({message}) => {
   return (
-    <div className='flex items-center gap-3 -3xl '>
+    <div className='flex items-center gap-3 -3xl  '>
     <p>
        <IoCopyOutline size={22}/>
     </p>

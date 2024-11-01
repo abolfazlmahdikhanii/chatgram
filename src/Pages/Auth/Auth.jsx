@@ -68,15 +68,18 @@ const Auth = () => {
         <img
           src="./logo.png"
           alt=""
-          className="w-[350px] h-[350px] object-cover absolute -top-6"
+          className="md:w-[350px] md:h-[350px] w-[340px] h-[340px] object-cover absolute -top-6"
         />
       </div>
-      <h4 className="dark:[color:#fff_!important] text-gray-800 text-3xl  font-bold ">
+      <h4 className="dark:[color:#fff_!important] text-gray-800 text-[27px] md:text-3xl  font-bold ">
         {!isNextPage ? (
           'Sign in to Chatgram'
         ) : (
-          <span className="flex items-center gap-4">
+          <span className="flex items-center gap-4 ">
+            <span className='md:w-full max-w-[260px] truncate'>
+
             {email}
+            </span>
 
             <svg
               width="28"
@@ -115,16 +118,16 @@ const Auth = () => {
           </span>
         )}
       </h4>
-      <p className="dark:text-gray-300 text-[rgb(112,117,121)] text-lg mt-2.5 font-semibold text-center">
+      <p className="dark:text-gray-300 text-[rgb(112,117,121)] text-lg mt-1.5 md:mt-2.5 font-semibold text-center">
         {!isNextPage ? (
           ' Please enter your email'
         ) : (
           <>
-            <span className="text-center text-[16px] text-gray-400">
+            <span className="text-center md:text-[16px] text-sm dark:text-gray-400 text-gray-500">
               We have sent you a message in Chatgram
             </span>
             <br />
-            <span className="text-center text-[16px] text-gray-400">
+            <span className="text-center text-[16px] md:text-[16px] text-sm dark:text-gray-400  text-gray-500">
               with the code
             </span>
           </>
@@ -132,7 +135,7 @@ const Auth = () => {
       </p>
 
       {!isNextPage ? (
-        <form className="w-[28%] mx-auto max-w-[360px] mt-16">
+        <form className="md:w-[28%] mx-auto md:max-w-[360px] mt-16 w-10/12 ">
           <div className="relative w-full">
             <input
               type="text"
@@ -184,7 +187,7 @@ const Auth = () => {
           </button>
         </form>
       ) : (
-        <form className="w-[28%] mx-auto max-w-[360px] mt-16">
+        <form className="md:w-[28%] mx-auto md:max-w-[360px] mt-16 w-10/12">
           <div className="relative w-full">
             <input
               type="text"
@@ -216,7 +219,7 @@ const Auth = () => {
               resend new code
             </p>
           ) : (
-            <p className="text-sm text-gray-300  text-center mt-6 mb-4">
+            <p className="text-sm dark:text-gray-300 text-gray-500  text-center mt-6 mb-4">
               {newCodeTime} to request new code{' '}
             </p>
           )}

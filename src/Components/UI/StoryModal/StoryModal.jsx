@@ -380,14 +380,14 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
     <>
       <Backdrop show={show} preview={true} close={() => close(false)} />
       <div
-        className={`fixed top-0 left-0 w-full h-full z-30 ${
+        className={`fixed top-0 left-0 w-full h-full z-30  ${
           show
-            ? 'scale-100 opacity-100 translate-x-8'
+            ? 'scale-100 opacity-100 md:translate-x-8 '
             : 'scale-0 opacity-0 translate-x-0'
         } `}
       >
         {/* header */}
-        <section className="flex items-center justify-end  w-11/12 mx-auto py-5 my-3">
+        <section className="flex items-center justify-end w-[95%]  md:w-11/12 py-5 my-3">
           {/* right */}
           <div className="flex items-center gap-x-4 relative ">
             <div className="flex items-center gap-7 px-6 py-2.5 border dark:border-gray-500/40 rounded-xl z-10 border-gray-300">
@@ -515,7 +515,7 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
                         alt="story img"
                       />
                     ) : (
-                      <span className="text-base text-white font-bold">
+                      <span className="text-base text-white font-bold ">
                         {userNameSpliter(
                           StoryData[currentSlide]?.userid?.username ||
                             StoryData[currentSlide]?.userid?.email?.split(
@@ -526,7 +526,7 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
                     )}
                   </div>
                   <div className="space-y-1">
-                    <p className="text-white font-semibold">
+                    <p className="text-white font-semibold  truncate ">
                       {StoryData[currentSlide]?.userid?.username ||
                         StoryData[currentSlide]?.userid?.email?.split('@')[0]}
                     </p>
@@ -968,7 +968,7 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
           </div>
 
           {/* Buttons Slider */}
-          <div className="w-1/3 absolute top-1/2 -translate-x-1/2 -translate-y-1/2 left-1/2 flex items-center justify-between">
+          <div className="md:w-1/3 w-[83%] absolute top-1/2  -translate-x-1/2 -translate-y-1/2 left-1/2 flex items-center justify-between">
             <button
               className="btn btn-primary mask mask-squircle"
               onClick={
@@ -1005,7 +1005,7 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
             isDeleted ? 'modal-open' : ''
           }`}
         >
-          <div className="modal-box  w-[25%] ">
+          <div className="modal-box w-11/12  md:w-[25%] ">
             <h3 className="font-bold text-lg dark:text-white text-zinc-700 text-center">
               <svg
                 xmlns="http://www.w3.org/2000/svg"

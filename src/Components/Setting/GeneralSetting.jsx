@@ -182,8 +182,8 @@ const GeneralSetting = ({ close }) => {
         </p>
         <div className=" gap-x-3 my-1 gap-y-4 ">
           <div >
-            <div className="chat chat-start " >
-              <div className="chat-bubble w-[300px] px-3 dark:bg-gray-700 bg-gray-50 dark:shadow-none dark:border-transparent  shadow-lg shadow-gray-300/30 border border-gray-100">
+            <div className="chat chat-start" >
+              <div className="chat-bubble w-[260px] md:w-[300px] px-3 dark:bg-gray-700 bg-gray-50 dark:shadow-none dark:border-transparent  shadow-lg shadow-gray-300/30 border border-gray-100">
                 <div
                   data-rp-color={color}
                   className={`  mx-0 py-2 px-2 mb-2 w-full rounded-lg flex gap-2.5 cursor-pointer transition-all duration-200 overflow-hidden  `}
@@ -315,7 +315,7 @@ const GeneralSetting = ({ close }) => {
         </div>
         {isChange ? (
           <button
-            className="btn btn-success mask mask-squircle fixed bottom-7 ml-[245px] text-white grid place-items-center"
+            className="btn btn-success mask mask-squircle fixed bottom-7 ml-[210px] md:ml-[245px] text-white grid place-items-center"
             onClick={updateSettingHandler}
             disabled={isLoading}
           >
