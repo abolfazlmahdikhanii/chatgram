@@ -1,8 +1,14 @@
 import React, { useState } from 'react'
 import Box from '../UI/Box/Box'
 import { BiDotsVerticalRounded } from 'react-icons/bi'
+import { supabase } from '../../superbase'
 const SettingContainer = ({ title, onBack, children }) => {
   const [showMenu, setShowMenu] = useState(false)
+
+  const logOutHandler=async()=>{
+    const { error } = await supabase.auth.signOut()
+      if(error) return
+  }
   return (
     <Box style={'ml-3 overflow-hidden'}>
       {/* header */}
@@ -56,7 +62,7 @@ const SettingContainer = ({ title, onBack, children }) => {
           }`}
           onMouseLeave={() => setShowMenu(false)}
         >
-          <div className=" select-box--item ">
+          <div className=" select-box--item " onClick={logOutHandler}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
