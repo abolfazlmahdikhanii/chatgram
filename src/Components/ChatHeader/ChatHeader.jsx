@@ -87,7 +87,7 @@ const HeaderMessage = ({
   const { user } = useContext(UserContext)
    const navigate=useNavigate()
   return (
-    <section className="px-5 flex items-center justify-between relative">
+    <section className="md:px-5 flex items-center justify-between relative">
       {info ? (
         <div className="flex gap-4">
           <button
@@ -107,7 +107,7 @@ const HeaderMessage = ({
             isSave={info?.userid === user.userid}
           />
           <div className="w-full flex-col   flex">
-            <p className="font-semibold  dark:text-white capitalize text-[17px] text-gray-900">
+            <p className="font-semibold md:w-full w-[170px] truncate  dark:text-white capitalize text-[17px] text-gray-900">
               {user?.userid !== info?.userid
                 ? info?.username || info?.email.split('@')[0]
                 : 'Saved Messages'}
