@@ -264,7 +264,7 @@ const HeaderMessage = ({
         </div>
         <div
           className=" select-box--item text-red-500 hover:bg-red-400/20"
-          onClick={DeleteChat}
+          onClick={chatId!==user?.userid?DeleteChat:null}
         >
           <svg
             width={18}
