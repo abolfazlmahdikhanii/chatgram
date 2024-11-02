@@ -80,6 +80,8 @@ const SelectBox = ({
           show ? 'scale-100 opacity-100 ' : 'scale-0 opacity-0 '
         }`}
         onMouseLeave={close}
+        onTouchEnd={close}
+        onTouchCancel={close}
       >
         {/* item1 */}
         <label htmlFor="img" className="select-box--item" onClick={close}>

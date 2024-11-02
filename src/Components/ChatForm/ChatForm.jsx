@@ -154,7 +154,7 @@ const ChatForm = ({ setMessage }) => {
       }
 
       xhr.send(file) // Send the file
-     uploadFile.push(data.path)
+      uploadFile.push(data.path)
     }
     // setFileProgress(100)
 
@@ -586,7 +586,12 @@ const ChatForm = ({ setMessage }) => {
       )}
 
       {/* emoji */}
-      <div className="absolute bottom-16 left-10" onMouseOut={closeEmojiPicker}>
+      <div
+        className="absolute bottom-16 left-10"
+        onMouseOut={closeEmojiPicker}
+        onTouchEnd={closeEmojiPicker}
+        onTouchCancel={closeEmojiPicker}
+      >
         {showEmoji && (
           <Picker
             onEmojiSelect={(e) =>
