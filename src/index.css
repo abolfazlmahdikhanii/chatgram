@@ -171,7 +171,7 @@
         @apply rounded-xl overflow-hidden bg-indigo-500;
     }
     .side-menu {
-        @apply flex flex-col items-center justify-between overflow-y-auto overflow-x-hidden h-full;
+        @apply flex flex-col items-center justify-between overflow-y-auto overflow-x-hidden h-[100dvh];
     }
     .side-menu--list {
         @apply flex flex-col gap-6;
