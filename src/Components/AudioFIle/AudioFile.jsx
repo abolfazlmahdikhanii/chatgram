@@ -66,20 +66,31 @@ const AudioFile = ({ path, size, name, onRemove, isColor, setAudio,progress,url,
         wavesurfRef.current.getCurrentTime(),
         wavesurfRef.current.getDuration()
       )
+      
     })
     // Reset audio to the beginning on finish
-    wavesurfRef.current.on('finish', () => {
-      wavesurfRef.current.setTime(0)
-      setCurrentTime(0)
-      setAudio(null)
-      seekMusic(0, null)
-      setIsPlay(false)
-      setIsPlaying(false)
-    })
+    wavesurfRef.current.on('finish', () => resetAudio());
 
-    return () => wavesurfRef.current.destroy()
+   
+
+    return () => {
+      wavesurfRef.current.destroy()
+      wavesurfRef.current = null;
+    }
   }, [path, setAudio])
 
+  const resetAudio = () => {
+    if (wavesurfRef.current) {
+      wavesurfRef.current.stop(); // Stop playback
+      wavesurfRef.current.setTime(0); // Reset to the beginning
+    }
+    setCurrentTime(0); // Reset current time
+    setIsPlaying(false); // Set playing state to false
+    setAudio(null); // Reset the current audio
+    seekMusic(0, 0); // Reset music context state
+    setIsPlay(false);
+// Update context state
+  };
 
    // Toggle playback on button click
   const controlAudioHandler = () => {
@@ -106,12 +117,12 @@ const AudioFile = ({ path, size, name, onRemove, isColor, setAudio,progress,url,
   return (
     <li className="file-item-1 relative min-w-[220px] w-full h-fit md:min-w-[300px] px-2 py-3 gap-2 ">
       <button
-        className={`btn btn-square ${
-          isColor ? 'bg-gray-200 text-primary' : ''
+        className={`btn btn-square text-indigo-600 ${
+          isColor ? 'bg-gray-200 text-primary ' : ''
         }`}
         onClick={controlAudioHandler}
       >
-        {path === currentSong && !isPlay ? <FaPause /> : <FaPlay />}
+        {path === currentSong && isPlay ? <FaPause /> : <FaPlay />}
       </button>
       <div className="flex flex-col gap-2 max-w-[90%] w-full">
         {name && showName && (

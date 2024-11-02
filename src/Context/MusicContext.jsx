@@ -1,4 +1,4 @@
-import { createContext,useMemo,useState,useRef, useEffect } from "react";
+import { createContext,useMemo,useState,useRef, useEffect, useCallback } from "react";
 
 export const MusicControlContext=createContext({
     isPlay:false,
@@ -23,7 +23,7 @@ export const MusicControlProvider = ({ children }) => {
 
 
   
-    const playMusic = (song,container=containerBox) => {
+    const playMusic = useCallback((song,container=containerBox) => {
 
       if(currentSong!==song){
         setCurrentTimeMusic(0)
@@ -39,7 +39,7 @@ export const MusicControlProvider = ({ children }) => {
    
 
      
-    };
+    },[currentTimeMusic]);
   
    const playbackRateMusic=(speed,isSpeed)=>{
     // containerBox.setPlaybackRate(speed)
