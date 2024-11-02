@@ -236,7 +236,7 @@ const {user}=useContext(UserContext)
       style={{ left: `${pageX}px`, top: `${pageY}px` }}
       onMouseLeave={() => close()}
       onTouchEnd={() => close()}
-      onTouchCancel={() => close()}
+      
     >
       <div
         className={`menu dark:bg-[rgba(33,33,33,.75)] backdrop-blur-[50px] rounded-xl gap-1.5 w-[190px] bg-base-200/60`}

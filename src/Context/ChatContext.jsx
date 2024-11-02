@@ -631,7 +631,10 @@ export const ChatProvider = ({ children }) => {
 
     setISChatInfo(isInfo)
   }
-  const clearHistory = async (id) => {
+  const clearHistory = async (id,senderid) => {
+    if(id){
+
+    
     try {
       const { error } = await supabase
         .from('messages')
@@ -641,6 +644,18 @@ export const ChatProvider = ({ children }) => {
     } catch (error) {
       console.log(error)
     }
+  }
+  else{
+    try {
+      const { error } = await supabase
+        .from('messages')
+        .delete()
+        .eq('senderid', senderid)
+      if (error) throw error
+    } catch (error) {
+      console.log(error)
+    }
+  }
   }
   return (
     <ChatContext.Provider

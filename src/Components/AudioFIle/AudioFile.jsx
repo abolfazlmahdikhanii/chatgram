@@ -74,6 +74,7 @@ const AudioFile = ({ path, size, name, onRemove, isColor, setAudio,progress,url,
       setAudio(null)
       seekMusic(0, null)
       setIsPlay(false)
+      setIsPlaying(false)
     })
 
     return () => wavesurfRef.current.destroy()
@@ -110,7 +111,7 @@ const AudioFile = ({ path, size, name, onRemove, isColor, setAudio,progress,url,
         }`}
         onClick={controlAudioHandler}
       >
-        {path === currentSong || !isPlay ? <FaPause /> : <FaPlay />}
+        {path === currentSong && !isPlay ? <FaPause /> : <FaPlay />}
       </button>
       <div className="flex flex-col gap-2 max-w-[90%] w-full">
         {name && showName && (

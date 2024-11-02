@@ -18,6 +18,7 @@ const ChatHeader = ({
   getInfo,
   chatID,
   isMessage,
+  senderId
 }) => {
   const typingUsers = useTypingStatus()
 
@@ -58,6 +59,7 @@ const ChatHeader = ({
           chatId={chatID}
           isMessage={isMessage}
           setFriendID={setFriendID}
+          senderId={senderId}
         />
       ) : (
         <HeaderPinMessage pinMessage={pinMessage} setShowPin={showPinHandler} />
@@ -83,6 +85,7 @@ const HeaderMessage = ({
   chatId,
   isMessage,
   setFriendID,
+  senderId
 }) => {
   const { user } = useContext(UserContext)
   const navigate = useNavigate()
@@ -235,7 +238,7 @@ const HeaderMessage = ({
 
         <div
           className=" select-box--item "
-          onClick={() => clearHistory(chatId)}
+          onClick={() => clearHistory(chatId,senderId)}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -262,7 +265,7 @@ const HeaderMessage = ({
 
           <p className={`font-[700] text-[14px] ml-1`}>Clear History</p>
         </div>
-        {chatId !== user?.userid ? (
+        {senderId !== user?.userid ? (
           <div
             className=" select-box--item text-red-500 hover:bg-red-400/20"
             onClick={DeleteChat}

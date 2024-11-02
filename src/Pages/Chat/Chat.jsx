@@ -410,8 +410,9 @@ const Chat = () => {
             setShowChatInfo={setShowChatInfo}
             deleteChat={deleteChat}
             getInfo={getFriendinfo}
-            chatID={match.id}
+            chatID={match.id!==user?.userid?match.id:null}
             isMessage={groupedMessages.length}
+            senderId={match.id===user?.userid?match.id:null}
           />
 
           <main
