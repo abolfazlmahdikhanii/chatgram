@@ -10,6 +10,8 @@ const UserMenu = ({ show,pageX,pageY,chatId,closeMenu,deleteChat,markRead }) => 
             } fixed `}
             style={{ left: `${pageX - 200}px`, top: `${pageY}px` }}
             onMouseLeave={() => closeMenu(false)}
+            onTouchEnd={() => closeMenu(false)}
+            onTouchCancel={() => closeMenu(false)}
         >
             <div
                 className={`menu dark:bg-[rgba(39,45,53,.80)] backdrop-blur-xl rounded-xl gap-1.5 w-[200px] bg-base-300/80`}
