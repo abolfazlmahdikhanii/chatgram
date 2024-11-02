@@ -141,7 +141,7 @@ const ChatForm = ({ setMessage }) => {
         }
       }
 
-      xhr.onload = async () => {
+      xhr.onreadystatechange = async () => {
         if (xhr.status === 200) {
           console.log('File uploaded successfully')
         } else {
@@ -154,10 +154,11 @@ const ChatForm = ({ setMessage }) => {
       }
 
       xhr.send(file) // Send the file
-      uploadFile.push(data.path)
+     uploadFile.push(data.path)
     }
     // setFileProgress(100)
-    return uploadFile
+
+    if (files.length > files.length - 1) return uploadFile
   }
   const handleUploadFile = async (files) => {
     // Replace with your actual file data
@@ -322,7 +323,7 @@ const ChatForm = ({ setMessage }) => {
   const sendMessageHandler = async (content, replay = null, url) => {
     let fileUrl = ''
 
-    if (!content || content === '&nbsp;'||content==="</br>") return
+    if (!content || content === '&nbsp;' || content === '</br>') return
     setMessage(
       [
         {
@@ -400,7 +401,7 @@ const ChatForm = ({ setMessage }) => {
       })
       setMessage(newImageUpload, true)
       fileUrl = await handleUpload(selectedFile)
-      
+
       if (fileUrl) {
         for (let i = 0; i < fileUrl.length; i++) {
           const { data, error } = await supabase.from('messages').insert([

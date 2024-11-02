@@ -2,7 +2,7 @@ import React from 'react'
 
 const HeaderModal = ({title,clickClose}) => {
   return (
-    <div className="flex items-center gap-7 px-6 py-4 ">
+    <div className="flex items-center gap-7 px-6 pt-4 w-full mt-2">
         <button className="btn btn-square btn-sm" onClick={clickClose}>
           <svg
             xmlns="http://www.w3.org/2000/svg"

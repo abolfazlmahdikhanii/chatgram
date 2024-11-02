@@ -141,7 +141,7 @@ const Auth = () => {
         )}
       </p>
 
-      {!isNextPage ? (
+      {!isNextPage&&!email ? (
         <form className="md:w-[28%] mx-auto md:max-w-[360px] mt-16 w-10/12 ">
           <div className="relative w-full">
             <input
@@ -229,7 +229,7 @@ const Auth = () => {
             </p>
           ) : (
             <p className="text-sm dark:text-gray-300 text-gray-500  text-center mt-6 mb-4">
-              {newCodeTime} to request new code{' '}
+              <span className='text-indigo-500'>{newCodeTime} second</span> to request new code{' '}
             </p>
           )}
           <button

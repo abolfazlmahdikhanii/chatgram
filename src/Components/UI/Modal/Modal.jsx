@@ -55,7 +55,7 @@ const Modal = ({ userID }) => {
           {/* body */}
 
           <ul className="  w-full  flex flex-col gap-0.5">
-            {forwardList?.length > 0 &&
+            {forwardUserList?.length > 0 &&
               forwardUserList?.map((item, i) => (
                 <UserProfile
                   key={i + 1}

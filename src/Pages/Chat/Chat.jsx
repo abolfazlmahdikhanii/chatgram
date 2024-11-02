@@ -213,7 +213,7 @@ const Chat = () => {
       .order('sentat', { ascending: true })
 
     if (!error) {
-      setMessages(messages)
+      setMessages((prev) => [...prev, message])
       getPinMessage(messages)
       groupMessageHandler(messages)
       setIsLoad(false)

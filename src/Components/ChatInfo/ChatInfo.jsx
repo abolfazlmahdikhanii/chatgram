@@ -99,7 +99,7 @@ const ChatInfo = ({ setChatInfo, setClose, show }) => {
     
     <>
       <Box
-        style={`w-full transition-all duration-200 overflow-y-scroll h-full n-scroll max-h-[100vh] xl:relative [scroll-width:none]  absolute  inset-0  md:w-[54%] md:right-0 md:left-[unset] xl:w-full`}
+        style={`w-full transition-all duration-200 overflow-y-scroll h-full n-scroll max-h-[100svh] xl:relative [scroll-width:none]  absolute  inset-0  md:w-[54%] md:right-0 md:left-[unset] xl:w-full`}
         context={(e) => {
           e.preventDefault()
           // setShowContextMenu(true)

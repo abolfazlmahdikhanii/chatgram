@@ -53,11 +53,11 @@ const FileType = ({
   } = useContext(ChatContext)
 
   let mFile = null
-  const [url, setUrl] = useState(chatInfoUrl ? chatInfoUrl : '')
+  const [url, setUrl] = useState(chatInfoUrl ? chatInfoUrl : "")
   const [fileSize, setFileSize] = useState(0)
   useEffect(() => {
     if (src) download(src)
-  }, [path])
+  }, [src,url])
 
   useEffect(() => {
     const fetchFileSize = async () => {
@@ -72,10 +72,10 @@ const FileType = ({
 
     fetchFileSize()
   }, [url])
-  const download = useCallback(async (path) => {
+   const download = useCallback(async (path) => {
     const groupFile = []
   
-    // if (findItem(messageId)) return false
+  //   // if (findItem(messageId)) return false
     supabase.storage
       .from('uploads')
       .download(path)
@@ -92,24 +92,28 @@ const FileType = ({
         console.log(err)
       })
   }, [])
+
+
+
+
+
   // const download = async (path) => {
-  //   const groupFile = []
-
-  //   // if (findItem(messageId)) return false
-  //   const {data,error}=await supabase.storage
-  //     .from('uploads')
-  //     .createSignedUrl(path,120,{
-  //       // download:true,
+  //   try {
+  //     const { data, error } = await supabase.storage.from('uploads').createSignedUrl(path, 3600,{
   //       transform:{
-  //         quality:0.7
+  //         quality:60
   //       }
-  //     })
-  //     if(!error)setUrl(data.signedUrl)
+  //     });
+  //     if (error) throw error;
+  //     setUrl(data.signedUrl);
+  //   } catch (error) {
+  //     console.error('Image fetch error:', error.message);
+  //   }
+  // }
 
-  // }
-  // const findItem = (id) => {
-  //   return url.find((item) => item.messageID === id)
-  // }
+  const findItem = (id) => {
+    return url.find((item) => item.messageID === id)
+  }
   const handleDownload = async (url, src) => {
     const fileName = src.split('/').pop()
     const link = document.createElement('a')
@@ -126,7 +130,7 @@ const FileType = ({
         progress={fileProgress}
         messageId={messageId}
         idType={idType}
-        src={path?path:url}
+        src={url?url:src}
         onRemove={removeMessages}
         autoPlay={autoPlay}
         isChatInfo={isChatInfo}
@@ -154,7 +158,7 @@ const FileType = ({
   ) {
     mFile = (
       <AudioFile
-        path={path ? path : url}
+        path={url ? url : src}
         url={url}
         size={fileSize}
         progress={fileProgress}
@@ -210,7 +214,7 @@ const FileType = ({
           </button>
         )}
         <img
-          src={path ? path : url}
+          src={url ? url : src}
           alt=""
           className="object-cover w-full h-full rounded-xl min-w-[170px]"
           onClick={() =>
@@ -227,7 +231,7 @@ const FileType = ({
               name,
             })
           }
-          onError={(e) => (e.target.src = url)}
+          // onError={(e) => (e.target.src = new URL.createObjectURL(src))}
         />
       </li>
     )
