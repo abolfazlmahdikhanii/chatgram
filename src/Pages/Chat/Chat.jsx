@@ -384,7 +384,7 @@ const Chat = () => {
   return (
     <MusicControlProvider>
       <div
-        className={`grid transition-all duration-200 h-[97dvh]  ${
+        className={`grid transition-all duration-200 h-[93dvh]  ${
           showChatInfo ? 'xl:grid-cols-[1fr_340px] grid-cols-1' : 'grid-cols-1'
         } `}
       >
