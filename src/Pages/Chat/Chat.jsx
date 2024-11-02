@@ -384,7 +384,7 @@ const Chat = () => {
   return (
     <MusicControlProvider>
       <div
-        className={`grid transition-all duration-200 h-[93dvh]  ${
+        className={`grid transition-all duration-200 ${
           showChatInfo ? 'xl:grid-cols-[1fr_340px] grid-cols-1' : 'grid-cols-1'
         } `}
       >
@@ -415,7 +415,7 @@ const Chat = () => {
           />
 
           <main
-            className="flex flex-col justify-between h-screen  overflow-hidden mb-5 relative "
+            className="flex flex-col justify-between h-[100dvh]  overflow-hidden mb-5 relative "
             ref={chatRef}
           >
             <PinAudio path={audio} />
