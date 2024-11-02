@@ -136,7 +136,7 @@
         @apply bg-gray-600/50;
     }
     body {
-        @apply dark:bg-gray-950 scroll-smooth select-none   bg-gradient-to-tr from-violet-500 to-pink-400 dark:bg-gradient-to-t dark:from-[unset] dark:to-[unset] h-[100dvh] overflow-hidden ;
+        @apply dark:bg-gray-950 scroll-smooth select-none   bg-gradient-to-tr from-violet-500 to-pink-400 dark:bg-gradient-to-t dark:from-[unset] dark:to-[unset] h-[90dvh] overflow-hidden ;
     }
     .auth-wrapper {
         @apply bg-base-100 ;
