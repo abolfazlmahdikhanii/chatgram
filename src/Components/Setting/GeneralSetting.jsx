@@ -156,7 +156,7 @@ const GeneralSetting = ({ close }) => {
         )
       }}
     >
-      <div className="px-4 py-2 relative overflow-y-scroll n-scroll">
+      <div className="px-4 py-2 relative overflow-y-scroll overflow-x-hidden n-scroll">
         <p className="text-[#8774E1] text-[17px] font-semibold">Setting</p>
         <div className="px-1 py-6">
           <div className="flex items-center justify-between">
