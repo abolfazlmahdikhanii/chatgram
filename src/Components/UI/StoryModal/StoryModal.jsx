@@ -43,7 +43,7 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
   const [userLikeStory, setUserLikeStory] = useState([])
   const [storyInfoTab, setStoryInfoTab] = useState('views')
   const [isShowStoryInfo, setIsShowStoryInfo] = useState(false)
-  
+
   useEffect(() => {
     getStory()
     checkFriendHasStory()
@@ -390,7 +390,7 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
         <section className="flex items-center justify-end w-[95%]  md:w-11/12 py-5 my-3">
           {/* right */}
           <div className="flex items-center gap-x-4 relative ">
-            <div className="flex items-center gap-7 px-6 py-2.5 border dark:border-gray-500/40 rounded-xl z-10 border-gray-300">
+            <div className="flex items-center gap-7 px-6 py-2.5 border dark:border-gray-500/40 rounded-xl z-10 border-gray-400">
               <button onClick={handlePlay}>
                 {!isPlaying ? <FaPlay size={19} /> : <FaPause size={19} />}
               </button>
@@ -445,10 +445,10 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
               )}
             </div>
             <button
-              className="btn btn-ghost btn-md mask mask-squircle min-h-[42px] h-4 "
+              className="btn btn-ghost btn-md mask mask-squircle min-h-[42px] h-4 dark:text-white text-gray-700"
               onClick={() => close(false)}
             >
-              <IoCloseSharp size={22} color="#fff" />
+              <IoCloseSharp size={22} color="currentColor" />
             </button>
           </div>
         </section>
@@ -468,14 +468,14 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
                     StoryData?.map((_, i) => (
                       <div
                         key={i + 1}
-                        className="h-1 rounded-full bg-gray-700/60 backdrop-blur-xl w-full overflow-hidden"
+                        className="h-1 rounded-full dark:bg-gray-700/60 bg-gray-400 backdrop-blur-xl w-full overflow-hidden"
                         onClick={() => {
                           setCurrentSlide(i)
                           setTime(0)
                         }}
                       >
                         <div
-                          className={`bg-gray-100  origin-left absolute inset-0 ${
+                          className={`dark:bg-gray-100 bg-primary origin-left absolute inset-0 ${
                             i > currentSlide ? 'hidden' : 'block'
                           }`}
                           style={{
@@ -515,7 +515,7 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
                         alt="story img"
                       />
                     ) : (
-                      <span className="text-base text-white font-bold ">
+                      <span className="text-base dark:text-white font-bold text-gray-700">
                         {userNameSpliter(
                           StoryData[currentSlide]?.userid?.username ||
                             StoryData[currentSlide]?.userid?.email?.split(
@@ -526,11 +526,11 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
                     )}
                   </div>
                   <div className="space-y-1">
-                    <p className="text-white font-semibold  truncate ">
+                    <p className="dark:text-white text-gray-700 font-semibold  truncate ">
                       {StoryData[currentSlide]?.userid?.username ||
                         StoryData[currentSlide]?.userid?.email?.split('@')[0]}
                     </p>
-                    <p className="text-[12px] text-gray-200">
+                    <p className="text-[12px] dark:text-gray-200 text-gray-500">
                       {relativeTimeFormat(StoryData[currentSlide]?.createdat)}
                     </p>
                   </div>
@@ -554,7 +554,7 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
                         {item?.type?.startsWith('image') && (
                           <>
                             {!storyLoading && (
-                              <div className="skeleton-loader dark:bg-transparent bg-gray-300 w-full absolute inset-0">
+                              <div className="skeleton-loader dark:bg-transparent dark:bg-gray-300 bg-gray-600 w-full absolute inset-0">
                                 <div className="shimmer-effect blur-2xl"></div>
                               </div>
                             )}
@@ -971,23 +971,14 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
           <div className="md:w-1/3 w-[83%] absolute top-1/2  -translate-x-1/2 -translate-y-1/2 left-1/2 flex items-center justify-between">
             <button
               className="btn btn-primary mask mask-squircle"
-              onClick={
-                currentSlide === 0 && currentUser === friendsStory[0]
-                  ? backwardSliderHandler
-                  : null
-              }
+              onClick={backwardSliderHandler}
               disabled={currentSlide === 0 && currentUser === friendsStory[0]}
             >
               <IoIosArrowBack size={22} />
             </button>
             <button
               className="btn btn-primary mask mask-squircle"
-              onClick={
-                currentSlide === StoryData.length - 1 &&
-                currentUser === friendsStory[friendsStory.length - 1]
-                  ? forwardSliderHandler
-                  : null
-              }
+              onClick={forwardSliderHandler}
               disabled={
                 currentSlide === StoryData.length - 1 &&
                 currentUser === friendsStory[friendsStory.length - 1]

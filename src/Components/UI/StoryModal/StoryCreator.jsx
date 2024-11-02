@@ -189,7 +189,7 @@ const StoryCreator = ({ show, userId, close }) => {
                   )}
                   {!fileSrc?.src && !quote ? (
                     <div
-                      className={` flex-col items-center gap-y-2 text-gray-400 h-full justify-center ${
+                      className={` flex-col items-center gap-y-2 dark:text-gray-400 text-gray-500 h-full justify-center ${
                         isLoading ? 'hidden' : 'flex'
                       }`}
                     >
@@ -245,7 +245,7 @@ const StoryCreator = ({ show, userId, close }) => {
                       <div className="relative">
                         <label
                           htmlFor="imgUpload"
-                          className={` items-center flex-col text-gray-300 gap-y-1 ${
+                          className={` items-center flex-col dark:text-gray-300 text-gray-500 gap-y-1 ${
                             isLoading ? 'hidden' : 'flex'
                           }`}
                         >
@@ -282,7 +282,7 @@ const StoryCreator = ({ show, userId, close }) => {
                         />
                       </div>
                       <div
-                        className={` items-center flex-col text-gray-300 gap-y-1 ${
+                        className={` items-center flex-col dark:text-gray-300 text-gray-500 gap-y-1 ${
                           isLoading ? 'hidden' : 'flex'
                         }`}
                         onClick={() => setShowQuoteModal(true)}
@@ -321,7 +321,7 @@ const StoryCreator = ({ show, userId, close }) => {
                 </div>
 
                 {isUploadingLoading && (
-                  <div className="flex items-center gap-x-4 bg-gray-500/20 w-full backdrop-blur-md h-[100px] ml-3">
+                  <div className="flex items-center gap-x-4 bg-gray-500/20 w-full backdrop-blur-md h-[100px] ml-4">
                     <span className="loading loading-spinner loading-md "></span>
                     <p>Uploading ...</p>
                   </div>

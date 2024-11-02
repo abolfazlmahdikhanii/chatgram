@@ -62,7 +62,7 @@ const StoryEditor = ({ addContent, onHide }) => {
         <div className="w-[77%] h-[300px] flex items-center justify-center max-h-[500px]">
           <textarea
             id=""
-            className="bg-transparent resize-none focus-visible:outline-none h-full text-white w-11/12 text-center "
+            className="bg-transparent resize-none focus-visible:outline-none h-full text-gray-700 dark:text-white w-11/12 text-center "
             style={{ fontSize: `${fontSize}px`, color: selectedColor }}
             autoFocus
             dir="auto"
@@ -81,7 +81,7 @@ const StoryEditor = ({ addContent, onHide }) => {
           {colors.map((color, i) => (
             <SwiperSlide key={i + 1}>
               <div
-                className="w-7 h-7 rounded-full  border text-white grid place-items-center transition-all duration-200 cursor-pointer"
+                className="w-7 h-7 rounded-full  border text-gray-700 dark:text-white grid place-items-center transition-all duration-200 cursor-pointer"
                 style={{
                   background: color,
                   borderWidth: color === selectedColor ? '2px' : '1px',
