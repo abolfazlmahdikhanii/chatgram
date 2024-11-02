@@ -29,7 +29,7 @@ const ModalPerview = ({ show, close, images, onUpload,dis,setDis }) => {
       />
 
         {/* body */}
-  <div className="modal-body h-[70vh] md:h-[90%]  ">
+  <div className="modal-body h-[90%]  ">
         <ul className="md:max-h-[100%] grid grid-cols-[repeat(auto-fit,minmax(40%,1fr))] w-full gap-4 [grid-auto-rows:minmax(220px,1fr)]  ">
           {images?.map((img) => (
             <li
