@@ -79,7 +79,7 @@ const SelectBox = ({
         className={`select-box ${
           show ? 'scale-100 opacity-100 ' : 'scale-0 opacity-0 '
         }`}
-        onMouseLeave={close}
+        onMouseOut={close}
         onTouchEnd={close}
         onTouchCancel={close}
       >
