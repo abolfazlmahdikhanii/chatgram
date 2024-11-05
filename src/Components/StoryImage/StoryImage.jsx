@@ -28,7 +28,7 @@ const StoryImage = (props) => {
       })
   }, [])
   return (
-    <>
+    <div className='relative h-full'>
       {!storyLoading && (
         <div className="skeleton-loader dark:bg-gray-600 bg-gray-300 w-full inset-0 absolute">
           <div className="shimmer-effect bg-gradient-to-tr dark:from-gray-600 dark:to-gray-500 from-gray-300 to-gray-200"></div>
@@ -38,19 +38,19 @@ const StoryImage = (props) => {
         src={url}
         onLoad={() => setStoryLoading(true)}
         alt=""
-        className={`w-full h-auto object-contain max-h-[300px]`}
+        className={`w-full h-auto object-cover absolute inset-0  `}
       />
 
       {storyLoading && props?.content?.description && (
-        <div className="absolute z-30    w-full flex items-center justify-center">
+        <div className="z-30  w-full flex items-center justify-center absolute h-full"  >
           <p
-            style={{
-              fontSize: props?.content?.fontSize,
-              color: props?.content?.color,
-              top: props?.content?.y,
-              left: props?.content?.x,
-            }}
-            className=" w-fit min-w-[110px] dark:bg-slate-700/40 max-h-[150px] text-center px-5 py-2.5 bg-slate-500/20 rounded-xl text-white backdrop-blur "
+           style={{
+            fontSize: props?.content?.fontSize,
+            color: props?.content?.color,
+            top: props?.content?.y-100,
+            left: props?.content?.x,
+          }}
+            className=" w-fit min-w-[110px] dark:bg-slate-700/40 max-h-[150px] text-center px-5 py-2.5 bg-slate-500/20 rounded-xl text-white backdrop-blur absolute -translate-x-1/2 -translate-y-1/2"
           >
             {props?.content?.description}
           </p>
@@ -83,7 +83,7 @@ const StoryImage = (props) => {
           </a>
         </div>
       )}
-    </>
+    </div>
   )
 }
 
