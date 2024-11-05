@@ -4,6 +4,7 @@ import { FaPlay, FaPause } from 'react-icons/fa'
 import { MdOutlineDeleteOutline } from 'react-icons/md'
 import ProgressFile from '../UI/ProgressFile/ProgressFile'
 import { MusicControlContext } from '../../Context/MusicContext'
+import { ChatContext } from '../../Context/ChatContext'
 
 // Configuration options for WaveSurfer instance
 const formWaveSurferOptions = (ref, isColor) => ({
@@ -41,8 +42,21 @@ const AudioFile = ({ path, size, name, onRemove, isColor, setAudio,progress,url,
     currentSong,
     currentTimeMusic,
     setIsPlay,
+    
   } = useContext(MusicControlContext)
 
+  const {audio}=useContext(ChatContext)
+ const resetAudio = () => {
+    if (wavesurfRef.current) { // Stop playback
+      wavesurfRef.current.setTime(0); // Reset to the beginning
+    }
+    setCurrentTime(0); // Reset current time
+    setIsPlaying(false); // Set playing state to false
+    setAudio(null); // Reset the current audio
+    seekMusic(0, 0); // Reset music context state
+    setIsPlay(false);
+// Update context state
+  };
   useEffect(() => {
     const options = formWaveSurferOptions(waveFormRef.current, isColor)
     wavesurfRef.current = WaveSurfer.create(options)
@@ -53,6 +67,7 @@ const AudioFile = ({ path, size, name, onRemove, isColor, setAudio,progress,url,
     // Set duration and initial state for audio on WaveSurfer 'ready' event
     wavesurfRef.current.on('ready', () => {
       setDuration(wavesurfRef.current.getDuration())
+  
       if (!name) setShowName(false)
       if (currentSong === path) {
         wavesurfRef.current.setTime(currentTimeMusic)
@@ -75,22 +90,11 @@ const AudioFile = ({ path, size, name, onRemove, isColor, setAudio,progress,url,
 
     return () => {
       wavesurfRef.current.destroy()
-      wavesurfRef.current = null;
+      
     }
-  }, [path, setAudio])
+  }, [path,currentSong, setAudio])
 
-  const resetAudio = () => {
-    if (wavesurfRef.current) {
-      wavesurfRef.current.stop(); // Stop playback
-      wavesurfRef.current.setTime(0); // Reset to the beginning
-    }
-    setCurrentTime(0); // Reset current time
-    setIsPlaying(false); // Set playing state to false
-    setAudio(null); // Reset the current audio
-    seekMusic(0, 0); // Reset music context state
-    setIsPlay(false);
-// Update context state
-  };
+ 
 
    // Toggle playback on button click
   const controlAudioHandler = () => {
