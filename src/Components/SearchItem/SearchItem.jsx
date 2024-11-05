@@ -294,7 +294,7 @@ const SearchItem = ({
                 <button
                   className={`mask mask-squircle btn  absolute h-[20px] w-[20px] right-0 -bottom-1 grid place-items-center ${
                     isPendingRequest
-                      ? 'btn-primary bg-opacity-20 outline-primary/20 border-primary/20'
+                      ? 'btn-primary dark:bg-opacity-20 dark:outline-primary/20 dark:border-primary/20 bg-opacity-60 outline-primary/60 border-primary/60'
                       : 'btn-primary'
                   }`}
                   onClick={() =>
