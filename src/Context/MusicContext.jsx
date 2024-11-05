@@ -29,10 +29,10 @@ export const MusicControlProvider = ({ children }) => {
         setCurrentTimeMusic(0)
       }
       setCurrentSong(song);
+      setIsPlay(prev=>!prev);
       
       container.playPause()
       container.setTime(currentTimeMusic)
-      setIsPlay(prev=>!prev);
       setContainerBox(container)
    
       
