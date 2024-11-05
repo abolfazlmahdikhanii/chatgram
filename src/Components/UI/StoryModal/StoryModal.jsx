@@ -37,7 +37,7 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
   const videoRef = useRef(null)
   const { user } = useContext(UserContext)
   const [storyLoading, setStoryLoading] = useState(false)
-  const [isReaction, setIsReaction] = useState(false)
+  const [isReaction, setIsReaction] = useState([])
   const [friendsStory, setFriendsStory] = useState([])
   const [userViewStory, setUserViewStory] = useState([])
   const [userLikeStory, setUserLikeStory] = useState([])
@@ -163,6 +163,7 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
   }
   const handlePlay = () => {
     setIsPlaying((prev) => !prev)
+    setIsShowStoryInfo(false)
   }
   const forwardSliderHandler = () => {
     // setTime(0)
@@ -328,7 +329,6 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
     }
   }
   const getStoryLike = async (sid) => {
-    console.log(sid)
     try {
       let { data: storyReaction, error } = await supabase
         .from('storyReaction')
@@ -337,8 +337,12 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
         .eq('userid', user?.userid)
         .single()
       if (error) throw Error
-      if (storyReaction) setIsReaction(true)
-      else setIsReaction(false)
+      if (storyReaction) setIsReaction([sid])
+      else {
+        const filterReaction = isReaction.filter((item) => item !== sid)
+
+        setIsReaction(filterReaction)
+      }
     } catch (error) {
       console.log(error)
     }
@@ -358,13 +362,15 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
       .subscribe()
   }
   const storyLikeHandler = async (sid) => {
-    if (!isReaction) {
+    const reactionArr = []
+    if (!isReaction.includes(sid)) {
       const { data, error } = await supabase
         .from('storyReaction')
         .insert([{ storyid: sid, userid: user?.userid }])
         .select()
       if (error) console.log(error)
-      setIsReaction(true)
+    
+      setIsReaction(prev=>[...prev,sid])
     } else {
       const { data, error } = await supabase
         .from('storyReaction')
@@ -373,7 +379,9 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
         .eq('userid', user?.userid)
         .select()
       if (error) console.log(error)
-      setIsReaction(false)
+      const filterReaction = isReaction.filter((item) => item !== sid)
+
+      setIsReaction(filterReaction)
     }
   }
   return (
@@ -425,6 +433,7 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
                   onClick={() => {
                     setIsPlaying(false)
                     setIsDeleted(true)
+                    setIsShowStoryInfo(false)
                   }}
                 >
                   <svg
@@ -500,42 +509,79 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
                   isDeleted ? 'blur-md ' : ''
                 }`}
               >
-                <div className="flex items-center gap-x-3 w-full mt-16 ml-8">
-                  <div
-                    data-color={
-                      StoryData[currentSlide]?.userid?.userid !== user?.userid
-                        ? StoryData[currentSlide]?.userid?.bgProfile
-                        : 'purple'
-                    }
-                    className="w-[45px] h-[45px] mask mask-squircle z-[5] relative grid place-items-center "
-                  >
-                    {StoryData[currentSlide]?.userid?.avatar_url ? (
-                      <img
-                        src={StoryData[currentSlide]?.userid?.avatar_url}
-                        alt="story img"
-                      />
-                    ) : (
-                      <span className="text-base dark:text-white font-bold text-gray-700">
-                        {userNameSpliter(
-                          StoryData[currentSlide]?.userid?.username ||
-                            StoryData[currentSlide]?.userid?.email?.split(
-                              '@'
-                            )[0]
-                        )}
-                      </span>
-                    )}
+                <div className="flex items-center justify-between w-[94%] mt-16 ml-8 mr-8">
+                  <div className="flex items-center gap-x-3 w-full ">
+                    <div
+                      data-color={
+                        StoryData[currentSlide]?.userid?.userid !== user?.userid
+                          ? StoryData[currentSlide]?.userid?.bgProfile
+                          : 'purple'
+                      }
+                      className="w-[45px] h-[45px] mask mask-squircle z-[5] relative grid place-items-center "
+                    >
+                      {StoryData[currentSlide]?.userid?.avatar_url ? (
+                        <img
+                          src={StoryData[currentSlide]?.userid?.avatar_url}
+                          alt="story img"
+                        />
+                      ) : (
+                        <span className="text-base dark:text-white font-bold text-gray-700">
+                          {userNameSpliter(
+                            StoryData[currentSlide]?.userid?.username ||
+                              StoryData[currentSlide]?.userid?.email?.split(
+                                '@'
+                              )[0]
+                          )}
+                        </span>
+                      )}
+                    </div>
+                    <div className="space-y-1">
+                      <p className="dark:text-white text-gray-700 font-semibold  truncate ">
+                        {StoryData[currentSlide]?.userid?.username ||
+                          StoryData[currentSlide]?.userid?.email?.split('@')[0]}
+                      </p>
+                      <p className="text-[12px] dark:text-gray-200 text-gray-500">
+                        {relativeTimeFormat(StoryData[currentSlide]?.createdat)}
+                      </p>
+                    </div>
                   </div>
-                  <div className="space-y-1">
-                    <p className="dark:text-white text-gray-700 font-semibold  truncate ">
-                      {StoryData[currentSlide]?.userid?.username ||
-                        StoryData[currentSlide]?.userid?.email?.split('@')[0]}
-                    </p>
-                    <p className="text-[12px] dark:text-gray-200 text-gray-500">
-                      {relativeTimeFormat(StoryData[currentSlide]?.createdat)}
-                    </p>
-                  </div>
-                </div>
 
+                  {currentUser === user?.userid ? (
+                    <button
+                      className=" text-blue-500 "
+                      title="Story Info"
+                      onClick={() => {
+                        setIsPlaying(false)
+                        storyViewInfo(StoryData[currentSlide]?.storyid)
+                        setStoryInfoTab('views')
+                        setIsShowStoryInfo(true)
+                      }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke="currentColor"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="1.5"
+                          d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10M12 8v5"
+                        ></path>
+                        <path
+                          stroke="currentColor"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M11.995 16h.009"
+                        ></path>
+                      </svg>
+                    </button>
+                  ) : null}
+                </div>
                 <div
                   className={`flex items-center w-full h-full justify-center relative overflow-hidden ${
                     isShowStoryInfo ? 'blur-md ' : ''
@@ -680,16 +726,8 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
                     ))}
                 </div>
 
-                <div className="absolute bottom-6 left-4 flex items-center justify-between right-4">
-                  <div
-                    className="flex items-center gap-x-2.5 bg-gray-500/20 backdrop-blur-lg min-w-[100px] px-3 py-2.5 rounded-xl self-end"
-                    onClick={() => {
-                      setIsPlaying(false)
-                      storyViewInfo(StoryData[currentSlide]?.storyid)
-                      setStoryInfoTab('views')
-                      setIsShowStoryInfo(true)
-                    }}
-                  >
+                <div className="absolute bottom-6 left-4 flex items-center justify-between right-4 z-40">
+                  <div className="flex items-center gap-x-2.5 bg-gray-500/20 backdrop-blur-lg min-w-[100px] px-3 py-2.5 rounded-xl self-end">
                     <p className="w-7 h-7 bg-orange-600 mask mask-squircle text-white grid place-items-center">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -721,7 +759,7 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
                         fill="currentColor"
                         viewBox="0 0 24 24"
                         className={`${
-                          isReaction
+                          isReaction.includes(StoryData[currentSlide]?.storyid)
                             ? 'fill-red-500 text-red-500'
                             : 'fill-transparent'
                         }`}
@@ -800,13 +838,15 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
 
                       {storyInfoTab === 'views' && (
                         <>
-                          <p className="pt-5 text-gray-400">Viewers</p>
+                          <p className="pt-5 dark:text-gray-400 text-gray-700">
+                            Viewers
+                          </p>
                           <ul className="mt-4 space-y-0.5 px-1 ">
                             {userViewStory?.length ? (
                               userViewStory.map((info, i) => (
                                 <li
                                   key={info.id}
-                                  className={`w-full flex items-center gap-x-4  pb-3 border-b-gray-700 ${
+                                  className={`w-full flex items-center gap-x-4 border-b-gray-400  pb-3 dark:border-b-gray-700 ${
                                     i === userViewStory.length - 1
                                       ? 'border-none'
                                       : 'border-b'
@@ -827,11 +867,11 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
                                   />
                                   <div className="flex items-center justify-between w-full">
                                     <div className="flex flex-col gap-y-1">
-                                      <span className="text-gray-100 max-w-[132px] truncate inline-block">
+                                      <span className="dark:text-gray-100 text-gray-800 max-w-[132px] truncate inline-block">
                                         {info?.userid?.username ||
                                           info?.userid?.email.split('@')[0]}
                                       </span>
-                                      <span className="text-gray-400 text-xs">
+                                      <span className="dark:text-gray-400 text-gray-500 text-xs">
                                         {relativeTimeFormat(info?.viewedat)}
                                       </span>
                                     </div>
@@ -889,13 +929,15 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
 
                       {storyInfoTab === 'likes' && (
                         <>
-                          <p className="pt-5 text-gray-400">Likes</p>
+                          <p className="pt-5 dark:text-gray-400 text-gray-700">
+                            Likes
+                          </p>
                           <ul className="mt-4 space-y-0.5 px-1 h-full w-full">
                             {userLikeStory?.length ? (
                               userLikeStory.map((info, i) => (
                                 <li
                                   key={info.id}
-                                  className={`w-full flex items-center gap-x-4  pb-3 border-b-gray-700 ${
+                                  className={`w-full flex items-center gap-x-4 border-b-gray-400  pb-3 dark:border-b-gray-700 ${
                                     i === userLikeStory.length - 1
                                       ? 'border-none'
                                       : 'border-b'
@@ -916,11 +958,11 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
                                   />
                                   <div className="flex items-center justify-between w-full">
                                     <div className="flex flex-col gap-y-1">
-                                      <span className="text-gray-100 max-w-[132px] truncate inline-block">
+                                      <span className="dark:text-gray-100 text-gray-700 max-w-[132px] truncate inline-block">
                                         {info?.userid?.username ||
                                           info?.userid?.email.split('@')[0]}
                                       </span>
-                                      <span className="text-gray-400 text-xs">
+                                      <span className="dark:text-gray-400 text-gray-500 text-xs">
                                         {relativeTimeFormat(info?.viewedat)}
                                       </span>
                                     </div>
