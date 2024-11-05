@@ -29,7 +29,7 @@ const MessageItemContent = ({ message }) => {
       {message?.messageType === 'text' || !decodedContent ? (
         <TextContent txt={decodedContent} />
       ) : (
-        <div className="flex items-center gap-2" dir="auto">
+        <div className="flex items-center gap-2" dir="auto" >
           {getMessageContent()}
         </div>
       )}
@@ -44,6 +44,7 @@ const TextContent = ({ txt }) => {
       className="dark:text-gray-400 text-[13px] truncate max-w-[190px] w-full text-gray-500"
       dir="auto"
       dangerouslySetInnerHTML={{ __html: txt }}
+      title={txt}
     ></p>
   ) : (
     'media'
@@ -70,7 +71,7 @@ const ImgContent = ({ img }) => {
   return (
     <>
       <img className="w-4 h-4 rounded object-cover" src={url} alt="Image content" />
-      <p className="text-sm">Album</p>
+      <p className="text-sm" >Album</p>
     </>
   );
 };
