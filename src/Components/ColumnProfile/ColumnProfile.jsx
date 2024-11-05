@@ -15,7 +15,7 @@ const ColumnProfile = ({ id, chatID, chats, activeStatus, saveChat,setActiveSear
   return (
     <Link
       className="flex flex-col gap-2 justify-center items-center transition-all duration-300 hover:bg-gray-600/20 px-12 py-3 w-full rounded-2xl"
-      to={`/chat/${chatID}`}
+      to={`/chat/${chatID||user?.userid}`}
       onClick={() => {
         setFriendID(profile?.userid)
         setActiveSearch(false)
