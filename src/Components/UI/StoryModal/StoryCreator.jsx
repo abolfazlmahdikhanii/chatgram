@@ -163,7 +163,7 @@ const StoryCreator = ({ show, userId, close }) => {
               </div>
             )}
             <button
-              className="btn btn-ghost btn-md mask mask-squircle min-h-[42px] h-4 "
+              className="btn btn-ghost btn-md mask mask-squircle min-h-[42px] h-4 dark:text-white text-gray-700 "
               onClick={() => {
                 close(false)
                 setAddContent(null)
@@ -171,7 +171,7 @@ const StoryCreator = ({ show, userId, close }) => {
                 setFileUpload(null)
               }}
             >
-              <IoCloseSharp size={22} color="#fff" />
+              <IoCloseSharp size={22} color="currentColor" />
             </button>
           </div>
         </section>
