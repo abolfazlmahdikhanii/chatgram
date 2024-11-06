@@ -795,7 +795,7 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
 
                 {/* view Detail */}
                 {isShowStoryInfo && (
-                  <dialog className="modal  modal-bottom modal-open absolute bottom-0 left-0 right-0 h-full overflow-hidden z-[1]">
+                  <dialog className="modal  modal-bottom modal-open absolute bottom-0 left-0 right-0 h-full overflow-hidden z-[50]">
                     <div className="modal-box h-[350px] ">
                       <button
                         className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
@@ -1010,7 +1010,7 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
           </div>
 
           {/* Buttons Slider */}
-          <div className="md:w-1/3 w-[83%] absolute top-1/2  -translate-x-1/2 -translate-y-1/2 left-1/2 flex items-center justify-between">
+          <div className="md:w-1/3 w-[83%] absolute top-1/2  -translate-x-1/2 -translate-y-1/2 left-1/2 flex items-center justify-between z-[40]">
             <button
               className="btn btn-primary mask mask-squircle"
               onClick={backwardSliderHandler}
