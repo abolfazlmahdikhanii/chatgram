@@ -1,5 +1,5 @@
 import { createContext, useCallback, useState } from 'react'
-import chatData from '../data'
+
 import { supabase } from '../superbase'
 import messageType from '../Utility/messageTypeChecker'
 
@@ -246,7 +246,7 @@ export const ChatProvider = ({ children }) => {
     forwardType,
     forwardFormChat
   ) => {
-    // console.log(chatId);
+    
     const messagesData = []
     for (const checked of checkMessage) {
       let { data: message, error: err } = await supabase
