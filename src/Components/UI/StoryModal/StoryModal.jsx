@@ -103,20 +103,20 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
       setStoryData(stories)
       setStoryLoading(true)
     } catch (error) {
-      console.log(error)
+   
       setStoryLoading(false)
     }
   }
 
   const checkFriendHasStory = async () => {
-    try {
+ 
       setStoryLoading(false)
       let { data: users, error } = await supabase
         .from('active_stories')
         .select('userid')
         .in('userid', friends)
 
-      if (error) throw Error
+      if (error) return
 
       const uniqeFriend = [
         users
@@ -131,7 +131,7 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
 
       if (uniqeFriend[0] !== false) {
         setFriendsStory(uniqeFriend)
-        console.log('u', uniqeFriend)
+      
       } else {
         const newUniqueFriend = [
           ...new Set(
@@ -141,12 +141,10 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
           ),
         ]
         setFriendsStory(newUniqueFriend)
-        console.log('n', newUniqueFriend)
+     
       }
       setStoryLoading(true)
-    } catch (error) {
-      console.log(error)
-    }
+   
   }
   const findCurrentUser = (currUser) => {
     const findIndexUser = friendsStory?.findIndex((item) => item === currUser)
@@ -186,7 +184,7 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
     }
   }
   const backwardSliderHandler = () => {
-    // setTime(0)
+
 
     if (currentSlide > StoryData?.length - 1) {
       setCurrentSlide((prev) => prev - 1)
@@ -204,48 +202,34 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
       setCurrentSlide((prev) => prev - 1)
       setTime(0)
     }
-    // if (StoryData?.length-1 >= 0 && currentSlide >= 0) {
-    //   changeCurrentUserHandler(currentUserIndex)
-    //   setTime(0)
-    // }
-    // if (currentSlide === 0) {
-    //   setTime(0)
-    //   changeCurrentUserHandler(currentUserIndex)
-    //   setCurrentSlide(prev=>prev-1)
-    // }
+   
     if (currentUserIndex === 0 || currentUserIndex === 1) {
       if (currentSlide === 0) {
         setCurrentUser(friendsStory[0])
       }
     }
-    console.log(currentSlide)
+  
   }
 
   const storyViewInfo = async (sid) => {
-    try {
-      console.log(sid)
+    
+ 
       let { data: storyviews, error } = await supabase
         .from('storyviews')
         .select('*,userid(*)')
         .eq('storyid', sid)
-      if (error) throw Error
+      if (!error) 
       setUserViewStory(storyviews)
-    } catch (error) {
-      console.log(error)
-    }
+    
   }
   const storyLikeInfo = async (sid) => {
-    try {
+    
       let { data: storyReaction, error } = await supabase
         .from('storyReaction')
         .select('*,userid(*)')
         .eq('storyid', sid)
-      if (error) throw Error
-
-      setUserLikeStory(storyReaction)
-    } catch (error) {
-      console.log(error)
-    }
+      if (!error) setUserLikeStory(storyReaction)
+    
   }
   const handleOnLoad = () => {
     setLoading(false)
@@ -274,77 +258,66 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
     }
   }
   const updateUserView = async () => {
-    try {
+    
       const { data: view, error: err } = await supabase
         .from('storyviews')
         .select('*')
         .eq('storyid', StoryData[currentSlide]?.storyid)
         .eq('userid', user?.userid)
-      if (err) throw Error
+      if (!err) {
       if (!view.length) {
         const { data, error } = await supabase
           .from('storyviews')
           .insert([
             { storyid: StoryData[currentSlide]?.storyid, userid: user?.userid },
           ])
-        if (error) throw Error
+        if (error) return
       }
-    } catch (error) {
-      console.log(error)
     }
+    
   }
   const displayUserView = useCallback(
     async (sid) => {
-      try {
-        console.log(StoryData)
+  
+    
         const { data: view, error: err } = await supabase
           .from('storyviews')
           .select('*')
           .eq('storyid', sid)
 
-        if (err) throw Error
-
-        setStoryView(view.length)
-      } catch (error) {
-        console.log(error)
-      }
+        if (!err) setStoryView(view.length)
+    
     },
     [storyView]
   )
   const deleteStroy = async (e, id) => {
     e.preventDefault()
-
-    try {
+    
       const { error } = await supabase
         .from('stories')
         .delete()
         .eq('storyid', id)
         .eq('userid', user?.userid)
 
-      if (error) throw Error
+      if (!error){
       close()
       toast('Story is deleted!', toastOptions)
-    } catch (error) {
-      console.log(error)
-    }
+      }
   }
   const getStoryLike = async (sid) => {
-    try {
-      let { data: storyReaction, error } = await supabase
-        .from('storyReaction')
-        .select('*')
-        .eq('storyid', sid)
-        .eq('userid', user?.userid)
-        .single()
-      if (error) throw Error
+    let { data: storyReaction, error } = await supabase
+      .from('storyReaction')
+      .select('*')
+      .eq('storyid', sid)
+      .eq('userid', user?.userid)
+      .single()
+    if (!error) {
       if (storyReaction) setIsReaction([sid])
       else {
         const filterReaction = isReaction.filter((item) => item !== sid)
 
         setIsReaction(filterReaction)
       }
-    } catch (error) {
-      console.log(error)
     }
   }
   const subscribeToLikes = (storyId) => {
@@ -368,9 +341,7 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
         .from('storyReaction')
         .insert([{ storyid: sid, userid: user?.userid }])
         .select()
-      if (error) console.log(error)
-    
-      setIsReaction(prev=>[...prev,sid])
+      if (!error) setIsReaction((prev) => [...prev, sid])
     } else {
       const { data, error } = await supabase
         .from('storyReaction')
@@ -378,10 +349,11 @@ const StoryModal = ({ show, currentUserStory, close, friends }) => {
         .eq('storyid', sid)
         .eq('userid', user?.userid)
         .select()
-      if (error) console.log(error)
-      const filterReaction = isReaction.filter((item) => item !== sid)
+      if (!error) {
+        const filterReaction = isReaction.filter((item) => item !== sid)
 
-      setIsReaction(filterReaction)
+        setIsReaction(filterReaction)
+      }
     }
   }
   return (

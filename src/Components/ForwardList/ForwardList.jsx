@@ -13,7 +13,7 @@ const ForwardList = ({
   forwardContact,
   chatFilter,
 }) => {
-  console.log(chatFilter)
+
   return (
     <>
       {chat &&

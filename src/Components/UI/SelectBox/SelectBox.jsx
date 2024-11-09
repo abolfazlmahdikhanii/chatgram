@@ -29,7 +29,7 @@ const SelectBox = ({
   // uploader image
   const uploadImageHandler = (e) => {
     let images = []
-    console.log("");
+    
     for (let i = 0; i < e?.target.files?.length; i++) {
       images.push({
         id: crypto.randomUUID(),

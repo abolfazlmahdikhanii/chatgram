@@ -47,7 +47,7 @@ const StoryItem = ({
       if (stories && stories?.length > 0) setIsStory(true)
       else setIsStory(false)
     } catch (error) {
-      console.log(error)
+  
       return false
     }
   }

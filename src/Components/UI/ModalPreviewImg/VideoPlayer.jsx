@@ -68,11 +68,11 @@ const VideoPlayer = ({ src, setIsPiPActive, isPiPActive }) => {
     }
     const handleTogglePiP = () => {
         if (videoRef.current.pictureInPictureElement) {
-            console.log(videoRef)
+      
             videoRef.current
                     .exitPictureInPicture()
                     .then(() => {
-                        console.log("a")
+                  
                         setIsPiPActive({show:true,type:"video",src})
                     })
                     .catch((error) => {

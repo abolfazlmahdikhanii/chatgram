@@ -37,7 +37,7 @@ const Video = ({
   const formatTime = function (time) {
     let min = Math.floor(time / 60)
     let sec = Math.floor(time - min * 60)
-    //   setSecond(sec)
+
     return `${min}:${sec < 10 ? `0${sec}` : sec}`
   }
 
@@ -80,7 +80,7 @@ const Video = ({
       <video
         ref={videoRef}
         className="w-full h-full object-cover max-w-full max-h-[370px]"
-        // autoPlay={!autoPlay || currentTime >= 50 ? false : true}
+
 
         muted
         onLoadedMetadata={handleLoadedMetadata}

@@ -121,7 +121,7 @@ const GeneralSetting = ({ close }) => {
         .select()
       if (error) throw error
       // setUser(data[0])
-      console.log(data)
+
       saveToStorage(data[0].chatBg, data[0].fontSize,data[0].profileColor)
       setChatBg(data[0].chatBg)
       setFont(data[0].fontSize)

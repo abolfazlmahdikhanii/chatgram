@@ -85,32 +85,8 @@ const ChatForm = ({ setMessage }) => {
     updateTypingStatus(false)
   }, [])
 
-  // const handleUpload = async (files) => {
-  //   setFileProgress(0)
-  //   const uploadFile = []
-  //   for (const file of files) {
-  //     const { data: signedUrlData, error: urlError } = await supabase.storage
-  //       .from('uploads')
-  //       .upload(`chats/${param.id}/${Date.now()}_${file.name}`, file, {
-  //         onUploadProgress: (progressEvent) => {
-  //           const progress = Math.round(
-  //             (progressEvent.loaded * 100) / progressEvent.total
-  //           )
-  //           setFileProgress(progress)
-  //           console.log(progress)
-  //         },
-  //       })
 
-  //     if (urlError) {
-  //       console.log(urlError)
-  //       return false
-  //     }
-
-  //     uploadFile.push(signedUrlData.path)
-  //   }
-  //   // setFileProgress(100)
-  //   return uploadFile
-  // }
+ 
   const handleUpload = async (files) => {
     const uploadFile = []
     for (const file of files) {
@@ -525,7 +501,7 @@ const ChatForm = ({ setMessage }) => {
 
                     // e.key === "Backspace"&&edit ? setEdit(e.target.innerText) : edit;
                     setContent(inputRef.current.innerHTML)
-                    console.log(inputRef.current.innerHTML)
+                    
                   }}
                 >
                   {emoji &&

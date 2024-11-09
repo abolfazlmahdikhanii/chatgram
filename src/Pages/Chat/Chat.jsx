@@ -330,7 +330,7 @@ const Chat = () => {
   }
   const showNotification = async (title, message, content) => {
     if (document.hidden && window.Notification.permission === 'granted') {
-      console.log(content)
+
 
       const senderInfo = await getSenderinfo(message?.senderid)
       const reciverInfo = await getSenderinfo(message?.recipientid)
@@ -439,7 +439,7 @@ const Chat = () => {
                 <>
                   {messages?.content !== '' && groupedMessages.length ? (
                     groupedMessages?.map((group, i) => (
-                      // console.log(grouped[item])
+                   
 
                       <div key={i + 1 * 2}>
                         {group.date === group.date && (

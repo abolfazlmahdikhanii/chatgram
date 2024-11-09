@@ -89,33 +89,18 @@ const Message = ({
     }
   }, [hashId, messageid, navigate, location.pathname])
 
-  // useEffect(() => {
-  //   if (replayId) getReplayMessageInfo(replayId)
-  // }, [])
+  
 
   const formatTime = (date) => {
     const messageDate = new Date(sentat)
-    // console.log(messageDate.toLocaleString());
+
     return new Intl.DateTimeFormat('en', {
       hour: '2-digit',
       minute: '2-digit',
     }).format(messageDate)
   }
 
-  // const getReplayMessageInfo = async (id) => {
-  //   try {
-  //     let { data, error } = await supabase
-  //       .from('messages')
-  //       .select('messageid,content,messageType,name,senderid')
-  //       .eq('chatID', param.id)
-  //       .eq('messageid', id)
-  //       .single()
-  //       if(error) throw error
-  //       setReplayData(data)
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-  // }
+  
 
   const checkHandler = (id, check) => {
     checkMessageHandler(id, check)

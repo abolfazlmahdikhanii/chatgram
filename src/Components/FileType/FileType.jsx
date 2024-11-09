@@ -97,19 +97,7 @@ const FileType = ({
 
 
 
-  // const download = async (path) => {
-  //   try {
-  //     const { data, error } = await supabase.storage.from('uploads').createSignedUrl(path, 3600,{
-  //       transform:{
-  //         quality:60
-  //       }
-  //     });
-  //     if (error) throw error;
-  //     setUrl(data.signedUrl);
-  //   } catch (error) {
-  //     console.error('Image fetch error:', error.message);
-  //   }
-  // }
+  
 
   const findItem = (id) => {
     return url.find((item) => item.messageID === id)

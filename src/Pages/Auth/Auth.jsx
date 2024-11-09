@@ -60,8 +60,8 @@ const Auth = () => {
       })
       if (error) throw error
 
-      // location.reload()
-      console.log(session)
+  
+
     } catch (error) {
       setError('invalid code')
     } finally {

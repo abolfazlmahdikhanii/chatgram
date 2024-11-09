@@ -2,7 +2,7 @@ import React from 'react'
 import Backdrop from '../Backdrop/Backdrop'
 
 const AlertBox = ({showAlert,setShowAlert,title,dis}) => {
-    console.log(showAlert);
+   
   return (
     <div>
     <Backdrop show={showAlert} />

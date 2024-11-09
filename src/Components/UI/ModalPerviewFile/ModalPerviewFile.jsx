@@ -19,7 +19,7 @@ const ModalPerviewFile = ({
     const submitFormHandler = (caption) => {
   
         onUpload(caption)
-        console.log(caption)
+       
   
         close()
         

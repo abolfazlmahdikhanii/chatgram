@@ -69,7 +69,7 @@ const StoryCreator = ({ show, userId, close }) => {
             },
           ])
           .select('*')
-        if (error) console.log(error)
+        if (!error) 
         setIsUploadingLoading(false)
       }
     } else {
@@ -83,7 +83,7 @@ const StoryCreator = ({ show, userId, close }) => {
           },
         ])
         .select('*')
-      if (error) console.log(error)
+      if (!error) 
       setIsUploadingLoading(false)
     }
     close()

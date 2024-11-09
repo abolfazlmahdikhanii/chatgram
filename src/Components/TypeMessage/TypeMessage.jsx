@@ -11,13 +11,10 @@ const TypeMessage = ({ dis,type,name, w }) => {
       }, [dis]);
     
       const fetchImage = async (path) => {
-        try {
+      
           const { data, error } = await supabase.storage.from('uploads').createSignedUrl(path, 120);
-          if (error) throw error;
-          setUrl(data.signedUrl);
-        } catch (error) {
-          console.error('Image fetch error:', error.message);
-        }
+          if (!error) setUrl(data.signedUrl);
+       
       };
     let element = null
     if (dis) {

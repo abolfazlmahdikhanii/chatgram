@@ -30,7 +30,7 @@ const EditProfileSetting = ({ close, profile }) => {
   const updateProfileHandler = async (e) => {
     e.preventDefault()
     setIsLoading(true)
-    console.log(username)
+    
     try {
       const { data, error } = await supabase
         .from('users')

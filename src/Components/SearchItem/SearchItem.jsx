@@ -28,7 +28,7 @@ const SearchItem = ({
     useContext(ChatContext)
   const [isPendingRequest, setIsPendingRequest] = useState(isPending || false)
   const { user } = useContext(UserContext)
-  console.log(chats)
+
   useEffect(() => {
     checkIsFriends(chats?.userid)
      
@@ -52,17 +52,17 @@ const SearchItem = ({
           { event: '*', schema: 'public', table: 'messages' },
           (payload) => {
             const newMsg = payload.new
-            console.log(newMsg)
+         
             if (
               newMsg.chatID == isFriend?.requestid ||
               isFriend?.meID?.userid
             ) {
               setMessages(payload.new)
 
-              // console.log(payload.new);
+       
               fetchMessages()
               filterUnreadMessage()
-              // groupMessageHandler(messages)
+              
             }
           }
         )

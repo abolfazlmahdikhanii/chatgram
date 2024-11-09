@@ -34,14 +34,12 @@ const MessageItem = ({ isSave, onContext, messagesArr, chats, chatID }) => {
         { event: '*', schema: 'public', table: 'messages' },
         (payload) => {
           const newMsg = payload.new
-          console.log(newMsg)
+     
           if (newMsg.chatID == chatID) {
-            // setMessages(payload.new)
-
-            // console.log(payload.new);
+        
             fetchMessages()
             filterUnreadMessage()
-            // groupMessageHandler(messages)
+       
           }
           if (newMsg.chatID == null) {
             fetchSavedMessages()
@@ -126,7 +124,7 @@ const MessageItem = ({ isSave, onContext, messagesArr, chats, chatID }) => {
           )
         ]
     })
-    console.log(dis)
+
     return dis
   }
 
