@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import StoryItem from './StoryItem'
-import chatData from '../../data'
+
 import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/css'
 import StoryModal from '../UI/StoryModal/StoryModal'
@@ -68,18 +68,8 @@ const StorySlider = () => {
         spaceBetween={10}
         className="w-full px-2 pt-1 pb-5"
       >
-        {/* {!profileAdd?.stories ||
-          (profileAdd?.stories && profileAdd?.stories.length <= 0 && (
-            <SwiperSlide>
-              <StoryItem
-                addStory={true}
-                userName={profileAdd.userName}
-                profileImg={profileAdd.profileImg}
-                onCreateStory={addStoryHandler}
-                relation={profileAdd?.relation}
-              />
-            </SwiperSlide>
-          ))} */}
+  
+     
         {forwardUserList.map((item) => (
           <SwiperSlide key={user.id}>
             <StoryItem
