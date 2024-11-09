@@ -1,5 +1,4 @@
 import { createContext, useCallback, useState } from 'react'
-
 import { supabase } from '../superbase'
 import messageType from '../Utility/messageTypeChecker'
 
