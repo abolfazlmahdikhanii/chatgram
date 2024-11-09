@@ -1,13 +1,22 @@
-<<<<<<< HEAD
-## React + Vite
+
+## Real-Time Chat Application
 =======
-# React + Vite
+ A real-time, file-sharing chat app built with React and Supabase. This app allows users to connect, send chat requests, exchange messages,share files and share story .
 
+#Features
+- User Authentication: Secure user login and registration with Supabase.
+- Chat Requests: Start a chat by sending a request to connect with another user.
+- Real-Time Messaging: Instant messaging with connected users.
+- File Sharing: Send files with upload progress tracking.
+- Story Sharing: Share story with your friends.
+- Audio Playback: Embedded audio playback for shared audio files.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+#Tech Stack
+- Frontend: React and Tailwind CSS
+- Backend: Supabase (database and authentication)
+- File Upload: Supabase storage
+- Audio: WaveSurfer.js for audio playback
 
-Currently, two official plugins are available:
+#Project Demo
+Check out the live demo:[Chatgram App Demo](https://chatgram-seven.vercel.app/)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-"# chatgram" 
