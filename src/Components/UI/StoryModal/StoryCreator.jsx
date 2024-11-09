@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useContext } from 'react'
 import Backdrop from '../Backdrop/Backdrop'
-import chatData from '../../../data'
+
 import { IoCloseSharp } from 'react-icons/io5'
 import { FaPlay } from 'react-icons/fa6'
 import { FaPause } from 'react-icons/fa6'
