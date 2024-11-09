@@ -1,6 +1,6 @@
 
 ## Real-Time Chat Application
-=======
+==
  A real-time, file-sharing chat app built with React and Supabase. This app allows users to connect, send chat requests, exchange messages,share files and share story .
 
 #Features
