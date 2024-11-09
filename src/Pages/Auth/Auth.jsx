@@ -69,7 +69,7 @@ const Auth = () => {
     }
   }
   return (
-    <div className="h-full w-full mx-auto flex flex-col items-center auth-wrapper">
+    <div className="h-[100dvh] w-full mx-auto flex flex-col items-center auth-wrapper">
       {/* Header */}
       <div className="w-[200px] h-[200px] relative mb-5">
         <img
