@@ -13,7 +13,7 @@ import { supabase } from '../../../superbase'
 import { UserContext } from '../../../Context/UserContext'
 
 const StoryCreator = ({ show, userId, close }) => {
-  const StoryData = chatData
+ 
   const [fileUpload, setFileUpload] = useState({})
   const [fileSrc, setFileSrc] = useState({})
 
