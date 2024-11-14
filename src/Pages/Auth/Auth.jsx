@@ -141,7 +141,7 @@ const Auth = () => {
         )}
       </p>
 
-      {!isNextPage&&!email ? (
+      {!isNextPage&& ? (
         <form className="md:w-[28%] mx-auto md:max-w-[360px] mt-16 w-10/12 ">
           <div className="relative w-full">
             <input
