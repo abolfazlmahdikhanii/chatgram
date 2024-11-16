@@ -25,8 +25,19 @@ const Layout = () => {
   const { friendID, chatId } = useContext(ChatContext)
   const match = useParams()
 
-  
+  const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 768);
+  useEffect(() => {
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth < 768);
+    };
 
+    window.addEventListener('resize', handleResize);
+    
+    // Clean up the event listener on component unmount
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
  
   useEffect(() => {
     getSetting()
@@ -110,7 +121,7 @@ const Layout = () => {
         )}
 
         <Routes>
-          <Route path="/" element={<Home />} replace />
+          {!isSmallScreen&&<Route path="/" element={<Home />} replace />}
           <Route path="/chat/:id" element={<Chat />} />
         </Routes>
       </div>
