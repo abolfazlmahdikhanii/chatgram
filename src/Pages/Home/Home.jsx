@@ -5,7 +5,7 @@ const Home = ({ isSmall }) => {
   return (
     <>
     {
-      isSmall?
+      !isSmall?
     
       <div className="w-8/12  flex-col items-center justify-center mx-auto h-screen gap-16 p-4 flex ">
         <div>
