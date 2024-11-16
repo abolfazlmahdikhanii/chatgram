@@ -121,7 +121,7 @@ const Layout = () => {
         )}
 
         <Routes>
-          <Route path="/" element={!isSmallScreen?<Home />:null} replace />
+          <Route path="/" element={<Home isSmall={isSmallScreen} />} replace />
           <Route path="/chat/:id" element={<Chat />} />
         </Routes>
       </div>
