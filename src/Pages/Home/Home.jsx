@@ -1,6 +1,16 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
-const Home = ({ isSmall }) => {
+const Home = ({ isSmall,setFriendID }) => {
+
+  const navigate=useNavigate()
+
+  useEffect(()=>{
+     if(isSmall){
+      navigate("/")
+      setFriendID("")
+     }
+  },[])
   return (
     <>
     

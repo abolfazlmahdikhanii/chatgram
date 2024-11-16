@@ -46,9 +46,7 @@ const Layout = () => {
   useEffect(() => {
     setChatID(match?.id)
 
-    return()=>{
-      setFriendID(null)
-    }
+   
   }, [match?.id])
 
   const showSettingPanel = () => {
@@ -125,8 +123,8 @@ const Layout = () => {
         )}
 
         <Routes>
-          <Route path="/" element={<Home/> } />
-          <Route path="/chat/:id" element={<Chat />} />
+          <Route path="/" element={<Home isSmall={isSmallScreen} setFriendID={setFriendID}/> } />
+          <Route path="/chat/:id" element={<Chat />}  />
         </Routes>
       </div>
     </>
