@@ -22,7 +22,7 @@ const Layout = () => {
   const [chatID, setChatID] = useState(null)
   const { user, setChatBg, setFont, setColor } = useContext(UserContext)
 
-  const { friendID, chatId } = useContext(ChatContext)
+  const { friendID, chatId,setFriendID } = useContext(ChatContext)
   const match = useParams()
 
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 768);
@@ -45,6 +45,10 @@ const Layout = () => {
 
   useEffect(() => {
     setChatID(match?.id)
+
+    return()=>{
+      setFriendID(null)
+    }
   }, [match?.id])
 
   const showSettingPanel = () => {
