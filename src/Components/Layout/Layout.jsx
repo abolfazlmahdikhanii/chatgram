@@ -125,7 +125,7 @@ const Layout = () => {
         )}
 
         <Routes>
-          {!isSmallScreen&&!friendID?<Route path="/" element={<Home/> } />:null}
+          <Route path="/" element={<Home/> } />
           <Route path="/chat/:id" element={<Chat />} />
         </Routes>
       </div>
