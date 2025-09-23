@@ -10,7 +10,7 @@ const Home = ({ isSmall,setFriendID }) => {
       navigate("/")
       setFriendID("")
      }
-  },[])
+  },[isSmall])
   return (
     <>
     
