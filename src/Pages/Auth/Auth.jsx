@@ -56,7 +56,7 @@ const Auth = () => {
       const { session, error } = await supabase.auth.verifyOtp({
         email,
         token: otp,
-        type: 'magiclink',
+        type: 'email',
       })
       if (error) throw error
 
